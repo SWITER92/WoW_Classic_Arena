@@ -156,6 +156,8 @@ body.binding #slots2{display:block}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .score,.note{color:var(--muted);font-variant-numeric:tabular-nums}
 .note{font-size:12px}
+.lobby{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;padding:6px 8px;background:rgba(0,0,0,.35);border:1px solid #4a4030;border-radius:4px}.lobby .note{flex-basis:100%}
+.lteam{min-width:150px}.lteam h3{margin:0 0 3px;font:600 12px var(--wow);color:#ffd100}.lp{display:flex;align-items:center;gap:5px;font-size:13px;line-height:22px}.lp i{width:20px;height:20px;flex:none;border-radius:3px}.lp b{color:#fff;font-weight:600}.lp span{color:var(--muted)}.lp.me b{color:#ffd100}.lp.bot b{color:var(--muted)}.lp.wait{color:var(--muted);font-style:italic}
 .stats{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 18px;font-variant-numeric:tabular-nums}
 .stats div:nth-child(3n+1){color:var(--muted)}
 .panel{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));top:calc(44px + env(safe-area-inset-top,0px));width:min(470px,calc(100vw - 24px));max-height:calc(100% - 80px);background:rgba(0,0,8,.94);border:3px solid #8f7a52;outline:1px solid #000;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:auto;box-sizing:border-box;z-index:5}
@@ -263,7 +265,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
         <h2 style="margin-top:6px">Панель способностей</h2><button class="mbar" id="menuBar" aria-label="Открыть раскладку панели и клавиши"></button><button class="btn" id="btnLoadout">Способности и клавиши</button></div>
       <div class="group"><h2>Класс противника</h2><div class="opts" id="optE"></div><span class="note" id="buildE"></span></div>
       <div class="group" id="duoPick" hidden><h2 id="optAh">Союзник</h2><div class="opts" id="optA"></div><h2 style="margin-top:6px">Второй противник</h2><div class="opts" id="optE2"></div></div>
-      <div class="group"><h2>Игра по сети</h2><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><span class="note" id="netStatus">Создайте комнату и скажите другу код, или введите код друга.</span></div>
+      <div class="group"><h2>Игра по сети</h2><div class="opts"><input id="netNick" maxlength="16" placeholder="Ваш ник" aria-label="Ваш ник" style="width:150px;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"></div><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><span class="note" id="netStatus">Введите ник, создайте комнату и скажите другу код, или введите код друга.</span><div id="lobby" class="lobby" hidden></div></div>
       <div class="group"><h2>Сложность бота</h2><div class="opts" id="optD"></div></div>
       <div class="group" id="optPoison" hidden><h2>Яды разбойника</h2><span class="note">Правая рука</span><div class="opts" id="poisonMH"></div><span class="note">Левая рука</span><div class="opts" id="poisonOH"></div></div>
     </div>
@@ -1327,7 +1329,7 @@ function setOpacity(m,op){if(!m.mats||m.op===op)return;m.op=op;for(const x of m.
 /* ================= СОСТОЯНИЕ ================= */
 let now=0,state="menu",player=null,enemy=null,bot=null,units=[],bots=[],countEnd=0,roundStart=0,roundEnd=0;
 const projectiles=[],fxs=[],texts=[],zones=[];
-const settings={mode:"1v1",acls:"priest",ecls2:"rogue",pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
+const settings={nick:"",mode:"1v1",acls:"priest",ecls2:"rogue",pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
 try{Object.assign(settings,JSON.parse(store.get("arena-settings")||"{}"));}catch(e){}
 if(!CLASSES.includes(settings.pcls))settings.pcls="warrior";if(!CLASSES.includes(settings.ecls))settings.ecls="mage";if(!CLASSES.includes(settings.acls))settings.acls="priest";if(!CLASSES.includes(settings.ecls2))settings.ecls2="rogue";
 const DIFF={easy:{label:"Новичок",react:.85,think:.35,talents:false},normal:{label:"Гладиатор",react:.45,think:.2,talents:true},hard:{label:"Чемпион",react:.2,think:.1,talents:true}};
@@ -1337,7 +1339,7 @@ function botTalents(cls){return DIFF[settings.diff].talents?autoBuild(cls,PRESET
 class Unit{
   constructor(cls,isPlayer,x,z,talents,o={}){
     const c=B[cls];this.cls=cls;this.isPlayer=isPlayer;this.team=o.team??(isPlayer?0:1);this.talents=talents||{};this.K=buildK(this);this.resType=c.res;
-    this.name=isPlayer?"Вы":c.name+" (бот)";
+    this.name=isPlayer?(cleanNick(settings.nick)||"Вы"):c.name+" (бот)";
     this.maxHp=Math.round(c.hp*(1+(tv(this,"toughness")+tv(this,"arcaneFort")+this.K.hp)/100));this.hp=this.maxHp;
     this.maxRes=Math.round((c.maxRes+this.K.res)*(1+(tv(this,"arcaneMind")+this.K.resPct)/100));this.res=c.res==="rage"?c.startRes:this.maxRes;
     this.pos=new THREE.Vector3(x,0,z);this.vel=new THREE.Vector2();this.y=0;this.vy=0;this.air=false;this.airVel=new THREE.Vector2();
@@ -2683,7 +2685,10 @@ $("#talClose").onclick=()=>{$("#talents").hidden=true;renderMenu();};
 $("#btnTal").onclick=openTalents;$("#btnTal2").onclick=openTalents;
 
 /* ================= МЕНЮ И РАУНДЫ ================= */
-function setSetting(key,v){settings[key]=v;store.set("arena-settings",JSON.stringify(settings));renderMenu();}
+function setSetting(key,v){settings[key]=v;store.set("arena-settings",JSON.stringify(settings));renderMenu();try{netSendMe();renderLobby();}catch(e){}}
+/* ник: только буквы, цифры, пробел, _ и -, до 16 символов (он попадает в журнал боя и рамки) */
+const cleanNick=s=>String(s||"").replace(/[^\p{L}\p{N} _\-]/gu,"").replace(/\s+/g," ").trim().slice(0,16);
+const myNick=()=>cleanNick(settings.nick)||"Игрок";
 function renderMenu(){
   const om=$("#optMode");om.innerHTML="";for(const [k,l] of [["1v1","1 на 1"],["2v2","2 на 2"]]){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
   let netR=null;try{netR=NET.role;}catch(e){}const coopNet=!!netR&&settings.mode==="2v2";
@@ -2706,10 +2711,10 @@ function startRound(){
   player=new Unit(settings.pcls,true,-off,duo?-2.5:0,{...myTal[settings.pcls]});
   enemy=netOn&&!coop?new Unit(NET.peerInfo.cls,false,off,0,{...NET.peerInfo.tal}):new Unit(settings.ecls,false,off,duo?-2.5:0,botTalents(settings.ecls));
   units=[player,enemy];NET.friend=netOn&&!coop?enemy:null;
-  if(NET.friend)enemy.name="Друг ("+B[enemy.cls].name.toLowerCase()+")";
+  if(NET.friend)enemy.name=NET.peerInfo.nick||"Игрок";
   if(duo){
     const al=coop?new Unit(NET.peerInfo.cls,false,-off,2.5,{...NET.peerInfo.tal},{team:0,friendly:true,layer:3}):new Unit(settings.acls,false,-off,2.5,botTalents(settings.acls),{team:0,friendly:true,layer:3});
-    al.name=coop?"Друг ("+B[al.cls].name.toLowerCase()+")":B[al.cls].name+" (союзник)";if(coop)NET.friend=al;
+    al.name=coop?(NET.peerInfo.nick||"Игрок"):B[al.cls].name+" (союзник)";if(coop)NET.friend=al;
     const e2=new Unit(settings.ecls2,false,off,2.5,botTalents(settings.ecls2),{team:1,layer:4});
     units.push(al,e2);}
   for(const u of units)u.facing=u.team===0?Math.PI/2:-Math.PI/2;yaw=-Math.PI/2;pitch=.476;
@@ -2721,7 +2726,7 @@ function startRound(){
   buildTeams();
   buildBar();$("#menu").hidden=true;$("#result").hidden=true;$("#talents").hidden=true;$("#hud").hidden=false;
   state="countdown";countEnd=now+3;
-  if(netOn){NET.evq=[];NET.tx.send({t:"start",cls:settings.pcls,tal:myTal[settings.pcls],cd:3,me:units.indexOf(NET.friend),ros:units.map(u=>({cls:u.cls,tal:u.talents,team:u.team,host:u===player?1:0}))});}
+  if(netOn){NET.evq=[];NET.tx.send({t:"start",cls:settings.pcls,tal:myTal[settings.pcls],cd:3,me:units.indexOf(NET.friend),ros:units.map(u=>({cls:u.cls,tal:u.talents,team:u.team,host:u===player?1:0,nick:u===player?myNick():u===NET.friend?NET.peerInfo.nick:undefined}))});}
 }
 /* перед боем: бафы на весь бой и скрытность разбойника, как будто всё наложено заранее */
 function prepUnit(u){
@@ -2878,23 +2883,47 @@ async function netJoin(){netLeave();const code=($("#netCode").value||"").trim().
   try{NET.tx=netUseBC()?bcTransport(code,"client"):await peerTransport(code,"client");}catch(e){NET.role=null;return}
   netWire();renderNet();}
 function netWire(){const T=NET.tx;
-  T.onopen=()=>{if(NET.role==="client")T.send({t:"hello",cls:settings.pcls,tal:myTal[settings.pcls]});else T.send({t:"info",cls:settings.pcls,tal:myTal[settings.pcls]});};
-  T.onclose=()=>{netStatus("Связь с другом потеряна.");NET.peerInfo=null;renderNet();};
+  T.onopen=()=>netSendMe(true);
+  T.onclose=()=>{netStatus(`${NET.peerInfo?NET.peerInfo.nick:"Второй игрок"}: связь потеряна.`);NET.peerInfo=null;NET.hostLobby=null;renderNet();};
   T.onmsg=o=>{if(!o||typeof o!=="object")return;
     if(o.t==="ping"){T.onopen&&0;return}
     if(NET.role==="host"){
-      if(o.t==="hello"&&CLASSES.includes(o.cls)){NET.peerInfo={cls:o.cls,tal:o.tal&&typeof o.tal==="object"?o.tal:{}};T.send({t:"info",cls:settings.pcls,tal:myTal[settings.pcls]});netStatus(`Друг подключился: ${B[o.cls].name}. Нажмите «В бой».`);renderNet();}
+      if(o.t==="hello"&&CLASSES.includes(o.cls)){const first=!NET.peerInfo;NET.peerInfo={cls:o.cls,tal:o.tal&&typeof o.tal==="object"?o.tal:{},nick:cleanNick(o.nick)||"Игрок"};if(first){netSendMe(true);netStatus(`${NET.peerInfo.nick} зашёл в комнату. Нажмите «В бой».`);}renderNet();}
       else if(o.t==="in"){NET.rx=o;const f=NET.friend,t=units[o.tg],fr=units[o.fr];if(f&&t&&t.team!==f.team&&t.alive)setTarget(f,t);if(f)f.friend=fr&&fr.team===f.team?fr:null;}
       else if(o.t==="use"&&NET.friend&&typeof o.id==="string"&&META[o.id])netRemoteUse(o.id);
       else if(o.t==="cancel"&&NET.friend)cancelCast(NET.friend);
     }else{
-      if(o.t==="info"&&CLASSES.includes(o.cls)){NET.peerInfo={cls:o.cls,tal:o.tal||{}};netStatus(`Подключено к комнате ${NET.code}: у друга ${B[o.cls].name}. Хост начинает бой.`);renderNet();}
+      if(o.t==="info"&&CLASSES.includes(o.cls)){const first=!NET.peerInfo;NET.peerInfo={cls:o.cls,tal:o.tal||{},nick:cleanNick(o.nick)||"Игрок"};NET.hostLobby=netLobbyIn(o.lobby);if(first)netStatus(`Вы в комнате ${NET.code} у игрока ${NET.peerInfo.nick}. Бой начинает он.`);renderNet();}
       else if(o.t==="start")netClientStart(o);
       else if(o.t==="snap")NET.lastSnap=o;
       else if(o.t==="ev")for(const e of o.e)netPlay(e);
     }};}
-function netLeave(){if(NET.tx)NET.tx.close();Object.assign(NET,{role:null,tx:null,peerInfo:null,lastSnap:null,rx:null,evq:[]});renderNet();}
-function renderNet(){const on=!!NET.role;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
+function netLeave(){if(NET.tx)NET.tx.close();Object.assign(NET,{role:null,tx:null,peerInfo:null,hostLobby:null,lastSnap:null,rx:null,evq:[]});renderNet();}
+/* о себе второму игроку: ник, класс, таланты; хост добавляет формат боя и ботов, чтобы лобби у обоих было одинаковым */
+function netSendMe(force){const T=NET.tx;if(!T||!NET.role||(!force&&!T.open))return;
+  const me={nick:myNick(),cls:settings.pcls,tal:myTal[settings.pcls]};
+  if(NET.role==="client")T.send({t:"hello",...me});else T.send({t:"info",...me,lobby:{mode:settings.mode,ecls:settings.ecls,ecls2:settings.ecls2,acls:settings.acls,diff:settings.diff}});}
+function netLobbyIn(L){if(!L||typeof L!=="object")return null;const c=k=>CLASSES.includes(L[k])?L[k]:"warrior";
+  return{mode:L.mode==="2v2"?"2v2":"1v1",ecls:c("ecls"),ecls2:c("ecls2"),acls:c("acls"),diff:DIFF[L.diff]?L.diff:"normal"};}
+/* лобби: кто в комнате и за какую команду; у хоста и гостя один и тот же состав */
+function renderLobby(){const el=$("#lobby");if(!el)return;if(!NET.role){el.hidden=true;return}el.hidden=false;
+  const host=NET.role==="host",L=host?settings:(NET.hostLobby||{mode:"1v1"}),P=NET.peerInfo;
+  const hostP=host?{nick:myNick(),cls:settings.pcls,me:1}:P?{nick:P.nick,cls:P.cls}:null;
+  const guestP=host?(P?{nick:P.nick,cls:P.cls}:null):{nick:myNick(),cls:settings.pcls,me:1};
+  const bot=c=>({nick:"Бот",cls:c,bot:1}),wait={wait:1};
+  const t1=[hostP||wait],t2=[];
+  if(L.mode==="2v2"){t1.push(guestP||wait);t2.push(bot(L.ecls),bot(L.ecls2));}else t2.push(guestP||wait);
+  el.innerHTML="";
+  for(const [title,list] of [["Команда 1",t1],["Команда 2",t2]]){const col=document.createElement("div");col.className="lteam";
+    const h=document.createElement("h3");h.textContent=title;col.appendChild(h);
+    for(const p of list){const row=document.createElement("div");row.className="lp"+(p.me?" me":"")+(p.bot?" bot":"")+(p.wait?" wait":"");
+      if(p.wait){row.textContent="ждём игрока…";col.appendChild(row);continue}
+      const i=document.createElement("i");i.style.cssText=iconBg("cls_"+p.cls,20);row.appendChild(i);
+      const b=document.createElement("b");b.textContent=p.nick;row.appendChild(b);
+      const s=document.createElement("span");s.textContent=" · "+B[p.cls].name.toLowerCase()+(p.me?" (вы)":"")+(p===hostP?" · хост":"");row.appendChild(s);col.appendChild(row);}
+    el.appendChild(col);}
+  const n=document.createElement("div");n.className="note";n.textContent=`Комната ${NET.code} · ${L.mode==="2v2"?"2 на 2":"1 на 1"}`;el.appendChild(n);}
+function renderNet(){renderLobby();const on=!!NET.role;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
   const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{b.textContent=NET.role==="host"?"В бой (по сети)":"В бой";if(NET.role==="host")b.disabled=!NET.peerInfo;else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
   $("#optE").closest(".group").style.opacity=on&&settings.mode!=="2v2"?.4:1;}
 
@@ -2977,7 +3006,7 @@ function netClientStart(o){
   const R=Array.isArray(o.ros)?o.ros:[{cls:o.cls,tal:o.tal,team:0,host:1},{cls:settings.pcls,tal:myTal[settings.pcls],team:1}],me=o.me??1,my=R[me].team,off=ARENA_R*.7;let lay=2;
   units=R.map((r,i)=>{const mine=i===me,cls=CLASSES.includes(r.cls)?r.cls:"warrior",duo=R.length>2;
     const u=new Unit(mine?settings.pcls:cls,mine,(r.team===0?-1:1)*off,duo?(i<2?-2.5:2.5):0,mine?{...myTal[settings.pcls]}:(r.tal||{}),{team:r.team,friendly:r.team===my,layer:mine?1:lay++});
-    if(r.host)u.name="Друг ("+B[cls].name.toLowerCase()+")";u.facing=r.team===0?Math.PI/2:-Math.PI/2;return u;});
+    if(r.host)u.name=cleanNick(r.nick)||(NET.peerInfo&&NET.peerInfo.nick)||"Игрок";u.facing=r.team===0?Math.PI/2:-Math.PI/2;return u;});
   player=units[me];setTarget(player,units.find(u=>u.team!==my));yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.476;buildTeams();
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
   bot=null;castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;buildBar();
@@ -3001,6 +3030,7 @@ function netClientStep(dt){
   const t=performance.now();if(NET.tx&&t-NET.inAt>=40){NET.inAt=t;const u=player;
     NET.tx.send({t:"in",x:+u.pos.x.toFixed(3),z:+u.pos.z.toFixed(3),y:+u.y.toFixed(3),f:+u.facing.toFixed(3),mv:u.moving?1:0,ml:u.moveLocal,bo:+(u.bodyOff||0).toFixed(2),sp:+(u.speedNow||0).toFixed(2),air:u.air?1:0,jump:u.jumpAt||0,w:u.netWarp||0,tg:units.indexOf(enemy),fr:units.indexOf(player.friend)});}
 }
+{const ni=$("#netNick");ni.value=settings.nick||"";ni.oninput=()=>{settings.nick=cleanNick(ni.value);store.set("arena-settings",JSON.stringify(settings));clearTimeout(ni._t);ni._t=setTimeout(()=>{netSendMe();renderLobby();},300);};ni.onblur=()=>{ni.value=settings.nick;};}
 $("#netHost").onclick=netHost;$("#netJoin").onclick=netJoin;$("#netLeave").onclick=()=>{netLeave();netStatus("Вы вышли из комнаты.");};
 $("#netCode").addEventListener("keydown",e=>{if(e.key==="Enter")netJoin();});
 netWrapFn("endRound",(w)=>state==="fight"?["end",NU(w),units.map(u=>u.stats)]:null);
