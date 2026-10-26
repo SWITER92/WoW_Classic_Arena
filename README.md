@@ -20,6 +20,7 @@
   - Плавный зум и вид от первого лица, камера не проходит сквозь колонны.
   - Автобег на Num Lock, шаг на Num /.
 - **Цифры урона как в оригинале:** шрифт, всплытие, «толчок» крита, раздвигание, до 4 цифр над целью.
+- **Эффекты заклинаний из моделей клиента:** частицы, шлейфы и сетки 107 моделей Spells\*.m2, по формулам клиента: подготовка в руках, снаряд, попадание, ауры.
 - **Внешний вид:** модели, комплекты T1, эффекты заклинаний и звуки из клиента WoW, интерфейс в стиле 1.12.
 - **Настройки:** две панели по 12 ячеек со своей раскладкой и клавишами, громкость, экран 16:9 или во всё окно.
 
@@ -67,6 +68,7 @@ A World of Warcraft Classic (1.12) style arena that runs right in the browser. F
   - Smooth zoom and first-person view, and the camera doesn't pass through pillars.
   - Autorun on Num Lock, walk on Num /.
 - **Damage numbers like the original:** font, float, crit pop, spreading apart, up to 4 numbers over a target.
+- **Spell effects from the client's models:** particles, ribbons and meshes of 107 Spells\*.m2 models, simulated by the client's formulas: hand precast, missile, impact, auras.
 - **Look and feel:** models, T1 sets, spell effects and sounds from the WoW client, 1.12-style interface.
 - **Settings:** two 12-slot action bars with your own layout and keybinds, volume, 16:9 or full-window screen.
 
