@@ -10,5 +10,5 @@
 
 Twitch: https://www.twitch.tv/switer92
 Discord: https://discord.gg/zERZuZH
-Thx for support: SYNTASY.PRO(https://syntasy.pro/partners/r/p2_42d390b95ee9f6a177601b05)
+Thx for support: [SYNTASY.PRO](https://syntasy.pro/partners/r/p2_42d390b95ee9f6a177601b05)
 
