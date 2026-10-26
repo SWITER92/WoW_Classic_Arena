@@ -116,7 +116,7 @@ body.binding #slots2{display:block}
 #log span{color:#9f9f9f}
 #log b{color:var(--gold);font-weight:400}
 #fct{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.ft{position:absolute;font-family:var(--wow);white-space:nowrap;transform:translate(-50%,-50%);-webkit-text-stroke:3px #000;paint-order:stroke fill;line-height:1;will-change:transform,opacity}
+.ft{position:absolute;font-family:var(--wow);white-space:nowrap;transform:translate(-50%,-100%);line-height:1;will-change:left,top,opacity}
 #party{position:absolute;left:calc(8px + env(safe-area-inset-left,0px));top:calc(160px*var(--s) + 8px);display:flex;flex-direction:column;gap:4px;transform:scale(var(--s));transform-origin:0 0}
 #arenaf{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:34%;display:flex;flex-direction:column;gap:6px;transform:scale(var(--s));transform-origin:100% 0}
 .tm{position:relative;display:grid;grid-template-columns:30px 150px;gap:0 5px;padding:4px;background:rgba(0,0,0,.65);border:1px solid #3a3a3a;border-radius:3px;cursor:pointer;font-size:11px;color:#fff;pointer-events:auto}
@@ -353,7 +353,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
 const $=s=>document.querySelector(s);
 /* ================= БАЛАНС ================= */
 const DEF={
-  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, blockReduce:40, backpedal:0.65, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.96, gravity:19.29,
+  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, blockReduce:40, backpedal:0.643, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.96, gravity:19.29,
     combatDrop:5, oocHpRegen:1.5, oocManaMult:3, rageDecay:2, forbearance:60,
     stealth:{speed:30, front:3, back:1.5}},
   common:{abilities:{
@@ -2288,19 +2288,46 @@ function flashBtn(id){const i=layout.indexOf(id);const b=i>=0&&slotEl(i);if(!b)r
 let errT=0;function showErr(s){const e=$("#err");e.textContent=s;e.style.opacity=1;errT=now+1.2;}
 function logRaw(h){if(state!=="fight")return;const l=$("#log");const d=document.createElement("div");const t=(now-roundStart).toFixed(1);d.innerHTML=`<span>[${t}]</span> ${h}`;l.prepend(d);while(l.children.length>9)l.lastChild.remove();}
 function log(u,what,t){logRaw(`<b>${u.name}</b>: ${what}${t?` → ${t.name}`:""}`);}
-/* всплывающие цифры как в 1.12: ваш урон жёлтым над целью (автоатака белым), криты крупно с «толчком»;
-   урон по вам и исцеление — на вашем портрете, как CombatFeedback */
-function worldText(u,s,color,size,crit){const el=document.createElement("div");el.className="ft";el.textContent=s;el.style.color=color;el.style.fontSize=size+"px";$("#fct").appendChild(el);
-  texts.push({el,u,t0:now,dx:(Math.random()-.5)*40,crit,life:crit?1.9:1.5});}
+/* всплывающий текст по правилам клиента 1.12 (WORLDTEXTSTRING, разобран в azeroth-survivors-re):
+   категории 0 число, 1 «поглощено», 2 крит, 3 слово (промах/уклонение...). Позиция фиксируется над головой в момент удара,
+   число всплывает на 2 ярда за 1.5 с, крит стоит на месте и «толкается» до 2x; размер не зависит от дистанции;
+   не больше 4 надписей на цель, они раздвигаются, чтобы не налезать друг на друга */
+const FCT=[{rise:2,fi:150,fo:760,dur:1500,v:.018333},{rise:2,fi:150,fo:90,dur:1500,v:.018333},
+  {rise:0,fi:150,fo:1000,dur:1500,v:.0275,crit:1},{rise:2,fi:150,fo:1000,dur:1500,v:.018333}];
+const FCT_GOLD="#ffde00",fctCtx=document.createElement("canvas").getContext("2d");
+function worldText(u,s,color,cat){cat=cat|0;let slot=-1;for(let k=0;k<4;k++)if(!texts.some(t=>t.u===u&&t.slot===k)){slot=k;break}
+  if(slot<0)return;const el=document.createElement("div");el.className="ft";el.textContent=s;el.style.color=color;$("#fct").appendChild(el);
+  fctCtx.font='100px "FrizQT","Philosopher",Georgia,serif';
+  texts.push({el,u,slot,cat,t0:now,x:u.pos.x,y:u.y+2.2,z:u.pos.z,w100:fctCtx.measureText(s).width});}
+function fctScale(c,life){if(!c.crit)return c.v;const f=life<.1?.1+(2-.1)*life/.1:life<.2?2-(life-.1)/.1:1;return c.v*f;}
+function fctAlpha(c,e){if(e<c.fi){const k=Math.max(0,e/c.dur);return[k,k*127/255]}
+  if(e>=c.fo){const k=1-(e-c.fo)/(c.dur-c.fo);return[k,Math.min(127/255,k)]}return[1,127/255];}
+/* SmartScreenRect: первый занявший место не двигается, следующий выталкивается вверх, вправо, вниз, влево (поиск в ширину) */
+function fctSeat(claimed,r,W,H){const ov=q=>claimed.find(c=>q[2]>c[0]&&q[0]<c[2]&&q[3]>c[1]&&q[1]<c[3]);
+  const push=(q,k)=>{const c=ov(q);if(!c)return q;q=q.slice();let d;
+    if(k===0){d=q[3]-c[1];q[1]-=d;q[3]-=d}else if(k===2){d=c[2]-q[0];q[0]+=d;q[2]+=d}else if(k===3){d=c[3]-q[1];q[1]+=d;q[3]+=d}else{d=q[2]-c[0];q[0]-=d;q[2]-=d}return q};
+  const off=q=>q[0]<0||q[2]>W||q[1]<0||q[3]>H;const bound=Math.min(400,(Math.trunc(W/(r[2]-r[0]))+1)*(Math.trunc(H/(r[3]-r[1]))+1));
+  const queue=[r];for(let n=0;n<bound&&queue.length;n++){const q=queue.shift();if(off(q))continue;
+    for(const k of [0,2,3,1]){const c=push(q,k);if(c===q)return q;queue.push(c)}}return r;}
+function updateTexts(){const W=STAGE.w,H=STAGE.h,diag=Math.hypot(W,H),claimed=[],sx=Math.round(.002*W),sy=Math.round(.002*H);
+  for(let i=texts.length-1;i>=0;i--){const t=texts[i];if((now-t.t0)*1000>=FCT[t.cat].dur){t.el.remove();texts.splice(i,1)}}
+  const ord=texts.slice().sort((a,b)=>(units.indexOf(a.u)-units.indexOf(b.u))||(b.slot-a.slot));
+  for(const t of ord){const c=FCT[t.cat],e=(now-t.t0)*1000,life=e/c.dur;
+    tmp.set(t.x,t.y+c.rise*life,t.z).project(camera);
+    if(tmp.z>1||Math.abs(tmp.x)>1||Math.abs(tmp.y)>1){t.el.remove();texts.splice(texts.indexOf(t),1);continue}
+    const v=fctScale(c,life),px=Math.round(v*diag),cw=(t.w100*px/100+Math.round(.002*diag))*diag/W,ch=v*diag*diag/H;
+    let x=(tmp.x+1)/2*W,y=(1-tmp.y)/2*H;x=Math.min(Math.max(x,cw/2),W-cw/2);y=Math.min(Math.max(y,ch/2),H-ch/2);
+    const r=fctSeat(claimed,[x-cw/2,y-ch/2,x+cw/2,y+ch/2],W,H);claimed.push(r);
+    const[a,sa]=fctAlpha(c,e);const st=t.el.style;st.fontSize=px+"px";st.left=(r[0]+r[2])/2+"px";st.top=(r[1]+r[3])/2+"px";
+    st.opacity=a;st.textShadow=`${sx}px ${sy}px 0 rgba(0,0,0,${a>0?Math.min(1,sa/a):0})`;}}
 let fbkT=0;function portraitText(s,color,big){const e=$("#pfbk");e.textContent=s;e.style.color=color;e.style.fontSize=(big?26:19)+"px";e.style.opacity=1;fbkT=now;}
 function combatText(src,t,amt,crit,o,school,blocked,absorbed){
-  const txt=String(amt)+(blocked?" (блок)":"")+(absorbed?` (поглощено ${absorbed})`:"");
-  if(t!==player&&src===player){const col=o.auto?"#ffffff":"#ffff00";if(amt>0||!absorbed)worldText(t,amt>0?txt:"Поглощено",col,crit?40:26,crit);else worldText(t,"Поглощено","#ffffff",22);}
+  if(t!==player&&src===player){if(amt>0)worldText(t,String(amt),o.auto?"#ffffff":FCT_GOLD,crit?2:0);else if(absorbed)worldText(t,"Поглощено","#ffffff",1);}
   else if(t===player){portraitText(amt>0?String(amt):"Поглощено",amt>0?"#ff2020":"#ffffff",crit);}
 }
-function combatMiss(src,t,word){if(t!==player)worldText(t,word,"#ffffff",22);else portraitText(word,"#ffffff");}
-function statusText(u,s,color){worldText(u,s,color,18);}
-function healText(u,amt,crit){if(u===player)portraitText("+"+amt,"#20ff20",crit);else worldText(u,"+"+amt,"#20ff20",crit?30:22,crit);}
+function combatMiss(src,t,word){if(t!==player)worldText(t,word,"#ffffff",3);else portraitText(word,"#ffffff");}
+function statusText(u,s,color){worldText(u,s,color,3);}
+function healText(u,amt,crit){if(u===player)portraitText("+"+amt,"#20ff20",crit);else worldText(u,"+"+amt,"#20ff20",crit?2:0);}
 /* портреты */
 const porCtx={p:$("#ppor").getContext("2d"),t:$("#tpor").getContext("2d")};let porN=0;const headV=new THREE.Vector3();
 function renderPortraits(){
@@ -2342,13 +2369,13 @@ canvas.addEventListener("pointermove",e=>{if(!drag||drag.id!==e.pointerId)return
   if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);}
   const locked=document.pointerLockElement===canvas,mx=locked?e.movementX:e.clientX-drag.x,my=locked?e.movementY:e.clientY-drag.y;
   drag.mv+=Math.abs(mx)+Math.abs(my);if(!drag.touch&&drag.mv>4&&!locked)mouseLook(true);
-  yaw-=mx*.006;pitch=Math.max(-1.2,Math.min(1.5,pitch+my*.005));drag.x=e.clientX;drag.y=e.clientY;
+  yaw-=mx*.006;pitch=Math.max(-1.2,Math.min(1.553,pitch+my*.005));drag.x=e.clientX;drag.y=e.clientY;
   if(rmb&&player&&player.alive&&!incap(player))player.facing=yaw+Math.PI;});
 const endDrag=e=>{if(drag&&e.pointerId===drag.id){drag=null;lmb=rmb=false;mouseLook(false);}};
 canvas.addEventListener("pointerup",e=>{if(drag&&drag.mv<6)clickTarget(drag.sx,drag.sy);if(drag&&!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(!e.buttons){drag=null;mouseLook(false);}}else endDrag(e);});
 canvas.addEventListener("pointercancel",endDrag);
 canvas.addEventListener("contextmenu",e=>e.preventDefault());
-canvas.addEventListener("wheel",e=>{e.preventDefault();const st=e.deltaY>0?1:-1;camDist=camDist<1&&st>0?2:Math.max(0,Math.min(25,camDist+st*(camDist<6?1:2)));if(camDist<1.5&&st<0)camDist=0;},{passive:false});
+canvas.addEventListener("wheel",e=>{e.preventDefault();const st=e.deltaY>0?1:-1;camDist=Math.max(0,Math.min(25,Math.round(camDist)+st));},{passive:false});
 const joy={x:0,y:0,id:null};const jEl=$("#joy"),kEl=$("#knob");
 jEl.addEventListener("pointerdown",e=>{touchMode=true;joy.id=e.pointerId;jEl.setPointerCapture(e.pointerId);jmove(e);});
 jEl.addEventListener("pointermove",e=>{if(joy.id===e.pointerId)jmove(e);});
@@ -2366,7 +2393,7 @@ function playerInput(dt){
   const canTurn=u.alive&&!incap(u)&&!u.charging;
   const K=c=>keys[c]&&!movesBound.has(c);
   let turn=0;if(!rmb){if(K("KeyA")||K("ArrowLeft"))turn++;if(K("KeyD")||K("ArrowRight"))turn--;}
-  if(turn&&canTurn){const d=turn*Math.PI*dt;u.facing+=d;if(!lmb)yaw+=d;}
+  if(turn&&canTurn){/* клиент 1.12: π рад/с, на бегу и в прыжке ×0.75 */const d=turn*Math.PI*(u.moving||u.air?.75:1)*dt;u.facing+=d;if(!lmb)yaw+=d;}
   let f=0,s=0;
   if(lmb&&rmb)autoRun=false;
   if(K("KeyW")||K("ArrowUp")||(lmb&&rmb)||autoRun)f++;if(K("KeyS")||K("ArrowDown"))f--;
@@ -2834,7 +2861,7 @@ function camHit(px,py,pz,dx,dy,dz,d){
   return t;
 }
 function placeCamera(dt){
-  camCur+=(camDist-camCur)*Math.min(1,(dt||.016)*9);
+  {/* зум как в клиенте: шаг 1 ярд, камера едет 8.33 ярда/с */const dd=camDist-camCur,mv=8.33*(dt||.016);camCur=Math.abs(dd)<=mv?camDist:camCur+Math.sign(dd)*mv;}
   const p=player.pos,py=player.y+1.95;
   const dx=Math.sin(yaw)*Math.cos(pitch),dy=Math.sin(pitch),dz=Math.cos(yaw)*Math.cos(pitch);
   let d=camCur;const h=camHit(p.x,py,p.z,dx,dy,dz,d+.4);if(h<d+.4)d=Math.max(.2,h-.4);
@@ -2868,12 +2895,7 @@ function frame(){
     placeCamera(dt);
   }else{const a=now*.06;camera.position.set(Math.sin(a)*30,14,Math.cos(a)*30);camera.lookAt(0,4,0);}
   for(let i=fxs.length-1;i>=0;i--){const f=fxs[i],k=(now-f.t0)/f.dur;if(k>=1){scene.remove(f.mesh);fxs.splice(i,1);continue}f.fn(k);}
-  for(let i=texts.length-1;i>=0;i--){const t=texts[i],k=(now-t.t0)/t.life;if(k>=1){t.el.remove();texts.splice(i,1);continue}
-    tmp.set(t.u.pos.x,t.u.y+2.6,t.u.pos.z).project(camera);
-    if(tmp.z>1){t.el.style.opacity=0;continue}
-    const age=now-t.t0,sc=t.crit?(age<.12?1+(.12-age)/.12*1.1:1):1,rise=t.crit?Math.max(0,age-.35)*55:age*65;
-    t.el.style.left=((tmp.x+1)/2*STAGE.w+t.dx)+"px";t.el.style.top=((1-tmp.y)/2*STAGE.h-rise)+"px";t.el.style.transform=`translate(-50%,-50%) scale(${sc})`;
-    t.el.style.opacity=k<.65?1:1-(k-.65)/.35;}
+  updateTexts();
   if(fbkT){const k=(now-fbkT)/1.1;const e=$("#pfbk");if(k>=1){e.style.opacity=0;fbkT=0;}else e.style.opacity=k<.6?1:1-(k-.6)/.4;}
   if(errT&&now>errT){$("#err").style.opacity=0;errT=0;}
   updatePfx(dt);
