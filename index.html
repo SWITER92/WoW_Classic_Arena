@@ -329,7 +329,8 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
   <h3>Управление и правила</h3>
   <ul>
     <li><b>W / S</b> вперёд и назад (назад медленнее). <b>A / D</b> поворот, с зажатой правой кнопкой мыши шаг вбок. <b>Q / E</b> шаг вбок. <b>Пробел</b> прыжок.</li>
-    <li><b>Левая кнопка мыши</b> вращает камеру вокруг персонажа. <b>Правая</b> поворачивает персонажа вслед за камерой. <b>Обе кнопки</b> бег вперёд. Колесо приближает камеру.</li>
+    <li><b>Левая кнопка мыши</b> вращает камеру вокруг персонажа. <b>Правая</b> поворачивает персонажа вслед за камерой. <b>Обе кнопки</b> бег вперёд. Пока кнопка зажата, курсор скрыт. Колесо приближает камеру, до упора вид от первого лица. Камера сама за спину не доворачивается.</li>
+    <li><b>Num Lock</b> автобег (W или S его снимают). <b>Num /</b> шаг вместо бега.</li>
     <li><b>Две панели.</b> Нижняя: 1…0, −, =. Верхняя: Shift+1…Shift+=. Кнопка «Клавиши» назначает любые клавиши, «Способности» (P) открывает книгу, откуда иконки перетаскиваются на панель.</li>
     <li><b>В бою и вне боя.</b> Любой урон или контроль вводит в бой на 5 с. Вне боя здоровье и мана восстанавливаются быстрее, ярость гаснет, можно есть и пить, войти в скрытность и сделать Рывок. Значок ⚔ на портрете значит «в бою».</li>
     <li><b>Скрытность.</b> Разбойник начинает бой невидимым. Его видно ближе 3 м спереди и 1,5 м сзади. Урон и удары по площади выбивают из скрытности.</li>
@@ -352,7 +353,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
 const $=s=>document.querySelector(s);
 /* ================= БАЛАНС ================= */
 const DEF={
-  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, blockReduce:40, backpedal:0.65, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.2, gravity:20,
+  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, blockReduce:40, backpedal:0.65, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.96, gravity:19.29,
     combatDrop:5, oocHpRegen:1.5, oocManaMult:3, rageDecay:2, forbearance:60,
     stealth:{speed:30, front:3, back:1.5}},
   common:{abilities:{
@@ -1720,8 +1721,11 @@ function moveUnit(u,dt){
   if(stealthed(u))sp*=1-B.general.stealth.speed/100;
   if(u.isPlayer&&!u.bot&&!touchMode){
     const n=Math.hypot(mx,mz)||1,fx=Math.sin(u.facing),fz=Math.cos(u.facing),f=(mx*fx+mz*fz)/n,s=(mx*fz-mz*fx)/n;
-    if(f<-.3){sp*=B.general.backpedal;u.moveLocal="back";}else if(f>.5)u.moveLocal="run";else u.moveLocal=s<0?"right":"left";
-  }else{u.facing=Math.atan2(mx,mz);u.moveLocal="run";}
+    if(f<-.3){sp*=B.general.backpedal;u.moveLocal="back";}else if(f>.3)u.moveLocal="run";else u.moveLocal=s<0?"right":"left";
+    /* по диагонали модель разворачивается в сторону бега, как в WoW */
+    u.bodyOff=Math.abs(s)>.3&&Math.abs(f)>.3?angDiff(f>0?Math.atan2(mx,mz):Math.atan2(-mx,-mz),u.facing):0;
+    if(u.walking){sp=Math.min(sp,2.5);if(u.moveLocal==="run")u.moveLocal="walk";}
+  }else{u.facing=Math.atan2(mx,mz);u.moveLocal="run";u.bodyOff=0;}
   u.speedNow=sp;
   u.vel.set(mx*sp,mz*sp);
   u.pos.x+=mx*sp*dt;u.pos.z+=mz*sp*dt;collide(u.pos);
@@ -2305,14 +2309,14 @@ function renderPortraits(){
   for(const [u,k] of [[player,"p"],[enemy,"t"]]){if(!u)continue;const m=u.model,layer=m.layer;m.g.updateMatrixWorld(true);
     if(m.head&&!has(u,"incap"))m.head.getWorldPosition(headV);else headV.set(u.pos.x,u.y+(has(u,"incap")?1.1:2.0),u.pos.z);
     const f=u.facing;porCam.position.set(headV.x+Math.sin(f)*1.05,headV.y+.06,headV.z+Math.cos(f)*1.05);porCam.lookAt(headV.x,headV.y-.04,headV.z);porCam.layers.set(layer);
-    porR.render(scene,porCam);
+    const gv0=m.g.visible;if(u===player)m.g.visible=true;porR.render(scene,porCam);m.g.visible=gv0;
     const c=porCtx[k];c.clearRect(0,0,128,128);c.save();c.beginPath();c.arc(64,64,62,0,Math.PI*2);c.clip();c.fillStyle="#000";c.fillRect(0,0,128,128);c.drawImage(porR.domElement,0,0,128,128);
     if(!u.alive){c.fillStyle="rgba(80,80,80,.6)";c.fillRect(0,0,128,128);}c.restore();}
   scene.background=SKY;scene.fog=FOG;
 }
 
 /* ================= ВВОД: управление как в WoW ================= */
-const keys={};let yaw=-Math.PI/2,pitch=.476,camDist=15,touchMode=false,lmb=false,rmb=false;
+const keys={};let autoRun=false,walkMode=false,yaw=-Math.PI/2,pitch=.476,camDist=15,touchMode=false,lmb=false,rmb=false;
 addEventListener("keydown",e=>{if(e.target.tagName==="TEXTAREA")return;
   if(bindMode&&player&&!$("#hud").hidden){handleBindKey(e);return}
   keys[e.code]=true;
@@ -2323,22 +2327,28 @@ addEventListener("keydown",e=>{if(e.target.tagName==="TEXTAREA")return;
   if((e.code==="F1"||e.code==="F2")&&player&&!$("#hud").hidden){e.preventDefault();if(e.code==="F1")pickFriend(player);else{const a=allies(player).find(x=>x!==player);if(a)pickFriend(a);}return}
   if(e.code==="Space"&&!movesBound.has("Space")&&player&&$("#menu").hidden&&$("#result").hidden){e.preventDefault();touchMode=false;jump(player);}
   if(/^Key[WASDQE]$/.test(e.code))touchMode=false;
+  if((e.code==="KeyW"||e.code==="KeyS"||e.code==="ArrowUp"||e.code==="ArrowDown")&&!movesBound.has(e.code))autoRun=false;
+  if(e.code==="NumLock"&&player&&!$("#hud").hidden){autoRun=!autoRun;}
+  if(e.code==="NumpadDivide"&&player&&!$("#hud").hidden){walkMode=!walkMode;}
   if(e.code==="Escape"){$("#settings").hidden=true;$("#balance").hidden=true;$("#help").hidden=true;$("#book").hidden=true;}});
 addEventListener("keyup",e=>{keys[e.code]=false;});
 addEventListener("blur",()=>{for(const k in keys)keys[k]=false;lmb=rmb=false;});
 let drag=null;
 canvas.addEventListener("pointerdown",e=>{if(e.pointerType==="touch"){touchMode=true;if(e.clientX-STAGE.x<STAGE.w*.4)return;}else touchMode=false;
-  drag={x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY,id:e.pointerId,touch:e.pointerType==="touch"};canvas.setPointerCapture(e.pointerId);
-  if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(rmb&&player)player.facing=yaw+Math.PI;}});
+  drag={x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY,mv:0,id:e.pointerId,touch:e.pointerType==="touch"};canvas.setPointerCapture(e.pointerId);
+  if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(rmb&&player&&player.alive&&!incap(player))player.facing=yaw+Math.PI;}});
+function mouseLook(on){try{if(on&&document.pointerLockElement!==canvas&&canvas.requestPointerLock){const r=canvas.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}else if(!on&&document.pointerLockElement===canvas)document.exitPointerLock();}catch(e){}}
 canvas.addEventListener("pointermove",e=>{if(!drag||drag.id!==e.pointerId)return;
   if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);}
-  yaw-=(e.clientX-drag.x)*.006;pitch=Math.max(-.25,Math.min(1.4,pitch+(e.clientY-drag.y)*.005));drag.x=e.clientX;drag.y=e.clientY;
+  const locked=document.pointerLockElement===canvas,mx=locked?e.movementX:e.clientX-drag.x,my=locked?e.movementY:e.clientY-drag.y;
+  drag.mv+=Math.abs(mx)+Math.abs(my);if(!drag.touch&&drag.mv>4&&!locked)mouseLook(true);
+  yaw-=mx*.006;pitch=Math.max(-1.2,Math.min(1.5,pitch+my*.005));drag.x=e.clientX;drag.y=e.clientY;
   if(rmb&&player&&player.alive&&!incap(player))player.facing=yaw+Math.PI;});
-const endDrag=e=>{if(drag&&e.pointerId===drag.id){drag=null;lmb=rmb=false;}};
-canvas.addEventListener("pointerup",e=>{if(drag&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<6)clickTarget(e.clientX,e.clientY);if(drag&&!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(!e.buttons)drag=null;}else endDrag(e);});
+const endDrag=e=>{if(drag&&e.pointerId===drag.id){drag=null;lmb=rmb=false;mouseLook(false);}};
+canvas.addEventListener("pointerup",e=>{if(drag&&drag.mv<6)clickTarget(drag.sx,drag.sy);if(drag&&!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(!e.buttons){drag=null;mouseLook(false);}}else endDrag(e);});
 canvas.addEventListener("pointercancel",endDrag);
 canvas.addEventListener("contextmenu",e=>e.preventDefault());
-canvas.addEventListener("wheel",e=>{camDist=Math.max(2.5,Math.min(25,camDist+e.deltaY*.012));e.preventDefault();},{passive:false});
+canvas.addEventListener("wheel",e=>{e.preventDefault();const st=e.deltaY>0?1:-1;camDist=camDist<1&&st>0?2:Math.max(0,Math.min(25,camDist+st*(camDist<6?1:2)));if(camDist<1.5&&st<0)camDist=0;},{passive:false});
 const joy={x:0,y:0,id:null};const jEl=$("#joy"),kEl=$("#knob");
 jEl.addEventListener("pointerdown",e=>{touchMode=true;joy.id=e.pointerId;jEl.setPointerCapture(e.pointerId);jmove(e);});
 jEl.addEventListener("pointermove",e=>{if(joy.id===e.pointerId)jmove(e);});
@@ -2356,14 +2366,13 @@ function playerInput(dt){
   const canTurn=u.alive&&!incap(u)&&!u.charging;
   const K=c=>keys[c]&&!movesBound.has(c);
   let turn=0;if(!rmb){if(K("KeyA")||K("ArrowLeft"))turn++;if(K("KeyD")||K("ArrowRight"))turn--;}
-  if(turn&&canTurn){const d=turn*3.2*dt;u.facing+=d;if(!lmb)yaw+=d;}
+  if(turn&&canTurn){const d=turn*Math.PI*dt;u.facing+=d;if(!lmb)yaw+=d;}
   let f=0,s=0;
-  if(K("KeyW")||K("ArrowUp")||(lmb&&rmb))f++;if(K("KeyS")||K("ArrowDown"))f--;
+  if(lmb&&rmb)autoRun=false;
+  if(K("KeyW")||K("ArrowUp")||(lmb&&rmb)||autoRun)f++;if(K("KeyS")||K("ArrowDown"))f--;
   if(K("KeyQ")||(rmb&&K("KeyA")))s--;if(K("KeyE")||(rmb&&K("KeyD")))s++;
   const fx=Math.sin(u.facing),fz=Math.cos(u.facing),rx=-Math.cos(u.facing),rz=Math.sin(u.facing);
-  u.moveDir.set(fx*f+rx*s,fz*f+rz*s);
-  /* камера сама возвращается за спину, когда персонаж бежит и камера не зажата левой кнопкой */
-  if(!lmb&&!rmb&&(f||s)&&canTurn)yaw+=angDiff(u.facing+Math.PI,yaw)*Math.min(1,dt*3);
+  u.moveDir.set(fx*f+rx*s,fz*f+rz*s);u.walking=walkMode;
 }
 
 /* ================= ТАЛАНТЫ: ОКНО ================= */
@@ -2747,7 +2756,10 @@ function updateModel(u,dt){
   const m=u.model;m.g.position.set(u.pos.x,u.y,u.pos.z);
   const t=other(u);
   if((!u.isPlayer||touchMode)&&!u.moving&&!u.charging&&!u.air&&t&&u.alive&&!incap(u)&&canSee(u,t))u.facing=Math.atan2(t.pos.x-u.pos.x,t.pos.z-u.pos.z);
-  m.g.rotation.y=u.facing;
+  /* разворот тела при беге по диагонали и переступание на месте при повороте стоя */
+  const bo=u.moving&&!u.air?(u.bodyOff||0):0;m.off=(m.off||0)+(bo-(m.off||0))*Math.min(1,dt*12);
+  m.g.rotation.y=u.facing+m.off;
+  const dF=angDiff(u.facing,m.lastF??u.facing);m.lastF=u.facing;m.turnT=Math.abs(dF)>dt*.8?now:(m.turnT||0);if(Math.abs(dF)>dt*.8)m.turnDir=dF>0?1:-1;
   /* скрытность: свой разбойник полупрозрачный, чужой не виден, пока его не заметили */
   const st=stealthed(u);
   if(u.team===player.team)setOpacity(m,st?.42:1);
@@ -2781,6 +2793,7 @@ function updateModel(u,dt){
       else if(u.moving){
         if(st){base="stealthwalk";speed=(u.speedNow||5)/4.2;}
         else{base=u.moveLocal;speed=(u.speedNow||7)/B[u.cls].speed;if(base==="back")speed=(u.speedNow||4.5)/4.5;if(base==="walk")speed=1;}}
+      else if(now-(m.turnT||0)<.12&&!u.cast&&!st){base=m.turnDir>0?"left":"right";speed=.75;}
       else if(u.eating)base="sit";
       else if(u.cast&&u.cast.channel)base=META[u.cast.id].target?"channel":"channelomni";
       else if(u.cast)base="castloop";
@@ -2806,11 +2819,29 @@ function updateModel(u,dt){
   if(u.cast){m.glow.material.color.setHex((SCH_FX[META[u.cast.id].school]||SCH_FX.arcane).c0);m.glow.scale.setScalar(.45*(1+.3*Math.sin(now*14)));m.glow.quaternion.copy(camera.quaternion);
     if(m.spellBone){m.g.updateMatrixWorld(true);m.spellBone.getWorldPosition(m.glow.position);if(m.g.visible)emitCastHands(u,dt);}else m.glow.position.set(u.pos.x+.5,u.y+1.1,u.pos.z);}
 }
-function placeCamera(){
-  const tp=player.pos,ty=1.9+player.y*.6;let d=camDist;
-  for(let i=0;i<12;i++){const x=tp.x+Math.sin(yaw)*Math.cos(pitch)*d,z=tp.z+Math.cos(yaw)*Math.cos(pitch)*d;if(Math.hypot(x,z)<ARENA_R+.5||d<3)break;d*=.88;}
-  camera.position.set(tp.x+Math.sin(yaw)*Math.cos(pitch)*d,Math.max(.35,ty+Math.sin(pitch)*d),tp.z+Math.cos(yaw)*Math.cos(pitch)*d);
-  camera.lookAt(tp.x,ty,tp.z);
+/* камера как в WoW: точка вращения у головы, зум колесом с плавным подлётом, стены и колонны подталкивают камеру к персонажу,
+   вплотную вид от первого лица. Персонаж стоит ниже центра экрана, чтобы впереди было видно больше. Сама за спину не доворачивается */
+let camCur=15,camFP=false;
+function camHit(px,py,pz,dx,dy,dz,d){
+  let t=d;
+  /* колонны: вертикальные цилиндры высотой 11 м */
+  for(const pl of PILLARS){const ox=px-pl.x,oz=pz-pl.z,R=pl.r+.45,a=dx*dx+dz*dz;if(a<1e-6)continue;const b=ox*dx+oz*dz,c=ox*ox+oz*oz-R*R;
+    if(c<0)continue;const disc=b*b-a*c;if(disc<0)continue;const s=(-b-Math.sqrt(disc))/a;if(s>0&&s<t&&py+dy*s<11.5)t=s;}
+  /* стена арены изнутри */
+  {const a=dx*dx+dz*dz,b=px*dx+pz*dz,R=ARENA_R+.3,c=px*px+pz*pz-R*R;if(a>1e-6){const s=(-b+Math.sqrt(Math.max(0,b*b-a*c)))/a;if(s>0&&s<t&&py+dy*s<9)t=s;}}
+  /* земля */
+  if(dy<0){const s=(py-.3)/-dy;if(s<t)t=s;}
+  return t;
+}
+function placeCamera(dt){
+  camCur+=(camDist-camCur)*Math.min(1,(dt||.016)*9);
+  const p=player.pos,py=player.y+1.95;
+  const dx=Math.sin(yaw)*Math.cos(pitch),dy=Math.sin(pitch),dz=Math.cos(yaw)*Math.cos(pitch);
+  let d=camCur;const h=camHit(p.x,py,p.z,dx,dy,dz,d+.4);if(h<d+.4)d=Math.max(.2,h-.4);
+  camFP=camCur<.9;player.model.g.visible=!camFP;
+  if(camFP){camera.position.set(p.x,py,p.z);camera.lookAt(p.x-dx,py-dy,p.z-dz);return}
+  camera.position.set(p.x+dx*d,py+dy*d,p.z+dz*d);
+  camera.lookAt(p.x,py+d*.11,p.z);
 }
 /* один шаг симуляции: ввод игрока, боты, движение, бой, снаряды, модели */
 function step(dt,live,pbot){
@@ -2834,7 +2865,7 @@ function frame(){
     if(NET.role==="client")netClientStep(dt);else step(dt,true);
     netHostTick();
     renderFrame(player,"p");if(enemy)renderFrame(enemy,"t");renderBar();renderTeams();
-    placeCamera();
+    placeCamera(dt);
   }else{const a=now*.06;camera.position.set(Math.sin(a)*30,14,Math.cos(a)*30);camera.lookAt(0,4,0);}
   for(let i=fxs.length-1;i>=0;i--){const f=fxs[i],k=(now-f.t0)/f.dur;if(k>=1){scene.remove(f.mesh);fxs.splice(i,1);continue}f.fn(k);}
   for(let i=texts.length-1;i>=0;i--){const t=texts[i],k=(now-t.t0)/t.life;if(k>=1){t.el.remove();texts.splice(i,1);continue}
