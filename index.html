@@ -3218,7 +3218,8 @@ function placeCamera(dt){
   camFP=camCur<.9;player.model.g.visible=!camFP;
   if(camFP){camera.position.set(p.x,py,p.z);camera.lookAt(p.x-dx,py-dy,p.z-dz);return}
   camera.position.set(p.x+dx*d,py+dy*d,p.z+dz*d);
-  camera.lookAt(p.x,py+d*.11,p.z);
+  /* как в клиенте: камера смотрит прямо на точку над головой персонажа, без сдвига вверх */
+  camera.lookAt(p.x,py,p.z);
 }
 /* один шаг симуляции: ввод игрока, боты, движение, бой, снаряды, модели */
 function step(dt,live,pbot){
