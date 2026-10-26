@@ -122,6 +122,8 @@ body.binding #slots2{display:block}
 .tm{position:relative;display:grid;grid-template-columns:30px 150px;gap:0 5px;padding:4px;background:rgba(0,0,0,.65);border:1px solid #3a3a3a;border-radius:3px;cursor:pointer;font-size:11px;color:#fff;pointer-events:auto}
 .tm.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
 .tm.dead{opacity:.45}
+.tm.fr{border-color:#3fd35a;box-shadow:0 0 0 1px #3fd35a}
+.tm.fr::after{content:"лечение";position:absolute;right:4px;bottom:-1px;font-size:9px;color:#7dff8f}
 .tm>i{grid-row:1/4;width:30px;height:30px;background-image:url(assets/ui/icons.webp);border:1px solid #000}
 .tm>b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:12px}
 .tm .fb{position:relative;width:150px;height:9px}
@@ -334,6 +336,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
     <li><b>Глобальный кулдаун.</b> После большинства способностей остальные недоступны 1,5 с. Заклинания с кастом и каналы читаются только стоя.</li>
     <li><b>Прерывание</b> сбивает заклинание и блокирует его школу. <b>Убывание контроля:</b> оглушение, обездвиживание, выведение из строя и страх считаются отдельно: 100%, 50%, 25%, затем иммунитет на 18 с.</li>
     <li><b>Снятие эффектов.</b> Рамка отрицательного эффекта показывает тип: синяя магия, зелёная яд, коричневая болезнь, красная физический (не снимается). Рассеивание жреца снимает магию, Очищение паладина магию, яд и болезнь.</li>
+    <li><b>2 на 2.</b> <b>Tab</b> или щелчок по врагу (или его рамке справа) меняет цель. Лечение, щиты и защитные благословения идут на союзника, если выбрать его клавишей <b>F2</b> или щелчком по нему или его рамке; <b>F1</b> возвращает их на себя. Дальность до союзника 40 м.</li>
     <li><b>Знак отличия</b> есть у всех: снимает оглушение, страх, превращение и обездвиживание раз в 2 минуты.</li>
     <li><b>Усталость.</b> Через 60 с боя любое исцеление слабеет на 1% в секунду.</li>
   </ul>
@@ -799,10 +802,10 @@ function eff(u,id){
   return a;
 }
 /* исцеление заклинанием: таланты на силу исцеления, крит ×1.5 */
-function healSpell(u,a,id){
+function healSpell(u,a,id,f){f=f||u;
   let amt=roll(a.heal)*(1+u.K.heal/100);const crit=Math.random()*100<critChance(u,"holy",u,{});
   if(crit)amt*=B.general.spellCritMult;
-  heal(u,amt,a.name,crit);healFx(u,a.heal[1]>900);
+  heal(f,amt,a.name,crit,u);healFx(f,a.heal[1]>900);if(f!==u){if(inCombat(f))enterCombat(u);log(u,a.name,f);}
   if(crit){if(rk(u,"illumination")&&Math.random()*100<tv(u,"illumination")&&a.cost){u.res=Math.min(u.maxRes,u.res+a.cost);statusText(u,"Озарение","#ffe9a0");}
     if(rk(u,"inspiration"))addAura(u,{type:"inspire",name:"Вдохновение",pct:tv(u,"inspiration"),until:now+10,good:true});}
 }
@@ -1044,28 +1047,28 @@ const META={
   hammer:{school:"holy",target:true,
     desc:a=>`Бросает молот: оглушение на ${a.stun} с.`,
     exec(u,t,a){castFx(u);projectile(u,t,a.speed,"holy",()=>cc(u,t,"stun",a.stun,a.name),"hammer");}},
-  flashlight:{school:"holy",target:false,icon:"pflash",noCombat:true,
-    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас на ${a.heal[0]}–${a.heal[1]}.`,
-    exec(u,t,a){castFx(u,"castomni");healSpell(u,a);}},
-  holylight:{school:"holy",target:false,noCombat:true,
-    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас на ${a.heal[0]}–${a.heal[1]}.`,
-    exec(u,t,a){castFx(u,"castomni");healSpell(u,a);}},
+  flashlight:{school:"holy",target:false,ally:true,icon:"pflash",noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
+  holylight:{school:"holy",target:false,ally:true,noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
   bubble:{school:"holy",target:false,gcd:false,freeCC:["stun"],forbear:true,noCombat:true,
     desc:a=>`Неуязвимость к урону и контролю на ${a.dur} с, снимает отрицательные эффекты. После него ${B.general.forbearance} с нельзя применять Божественный щит, Благословение защиты и Возложение рук.`,
     exec(u,t,a){u.auras=u.auras.filter(x=>x.good);addAura(u,{type:"immune",name:a.name,until:now+a.dur,good:true});forbear(u);log(u,a.name);}},
-  freedom:{school:"holy",target:false,noCombat:true,
+  freedom:{school:"holy",target:false,ally:true,noCombat:true,
     desc:a=>`Снимает замедление и обездвиживание и защищает от них ${a.dur} с.`,
-    exec(u,t,a){u.auras=u.auras.filter(x=>x.type!=="root"&&x.type!=="slow");addAura(u,{type:"freedom",name:a.name,until:now+a.dur,good:true,mb:true});castFx(u,"castomni");log(u,a.name);}},
-  bop:{school:"holy",target:false,freeCC:["stun"],forbear:true,noCombat:true,
+    exec(u,t,a){const f=F(u);f.auras=f.auras.filter(x=>x.type!=="root"&&x.type!=="slow");addAura(f,{type:"freedom",name:a.name,until:now+a.dur,good:true,mb:true});castFx(u,"castomni");log(u,a.name,f!==u?f:0);}},
+  bop:{school:"holy",target:false,ally:true,freeCC:["stun"],forbear:true,noCombat:true,
     desc:a=>`${a.dur} с иммунитета к физическому урону и физическим приёмам, но вы тоже не бьёте оружием. Вызывает Воздержанность на ${B.general.forbearance} с.`,
-    exec(u,t,a){u.auras=u.auras.filter(x=>!(x.dt==="none"&&["stun","incap","root","slow","dot","disarm"].includes(x.type)));addAura(u,{type:"bop",name:a.name,until:now+a.dur,good:true,mb:true});forbear(u);castFx(u,"castomni");log(u,a.name);}},
-  cleanse:{school:"holy",target:false,noCombat:true,
-    desc:a=>`Снимает с вас по одному эффекту магии, яда и болезни.`,
-    exec(u,t,a){let n=0;for(const dt of ["magic","poison","disease"]){const x=pickDispel(u.auras.filter(z=>!z.good&&z.dt===dt&&z.until>now));if(x){u.auras=u.auras.filter(z=>z!==x);n++;}}
+    exec(u,t,a){const f=F(u);f.auras=f.auras.filter(x=>!(x.dt==="none"&&["stun","incap","root","slow","dot","disarm"].includes(x.type)));addAura(f,{type:"bop",name:a.name,until:now+a.dur,good:true,mb:true});forbear(f);castFx(u,"castomni");log(u,a.name,f!==u?f:0);}},
+  cleanse:{school:"holy",target:false,ally:true,noCombat:true,
+    desc:a=>`Снимает с вас или союзника по одному эффекту магии, яда и болезни.`,
+    exec(u,t,a){const f=F(u);let n=0;for(const dt of ["magic","poison","disease"]){const x=pickDispel(f.auras.filter(z=>!z.good&&z.dt===dt&&z.until>now));if(x){f.auras=f.auras.filter(z=>z!==x);n++;}}
       castFx(u,"castomni");log(u,`${a.name}${n?"":" — снимать нечего"}`);}},
-  loh:{school:"holy",target:false,forbear:true,once:true,noCombat:true,
+  loh:{school:"holy",target:false,ally:true,forbear:true,once:true,noCombat:true,
     desc:a=>`Раз за бой. Полностью восстанавливает здоровье, мана падает до нуля. Вызывает Воздержанность.`,
-    exec(u,t,a){u.lohUsed=true;castFx(u,"castomni");heal(u,u.maxHp,a.name);healFx(u,true);u.res=0;forbear(u);}},
+    exec(u,t,a){const f=F(u);u.lohUsed=true;castFx(u,"castomni");heal(f,f.maxHp,a.name,false,u);healFx(f,true);u.res=0;forbear(f);}},
   consecration:{school:"holy",target:false,hostile:true,
     desc:a=>`Земля под вами ${a.dur} с жжёт Светом: ${a.dps} урона в секунду врагам в радиусе ${a.radius} м. Выбивает из скрытности.`,
     exec(u,t,a){castFx(u,"castomni");addZone(u,a);log(u,a.name);}},
@@ -1098,26 +1101,26 @@ const META={
   holyfire:{school:"holy",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона Светом и ещё ${a.dot} за ${a.dotDur} с.`,
     exec(u,t,a){castFx(u);projectile(u,t,30,"holy",()=>{damage(u,t,roll(a.dmg),a.name,"holy",{spell:true,id:"holyfire",cost:a.cost});if(t.alive)addDot(t,u,a.name,a.dot*dmgMult(u,"holy",{id:"holyfire"}),a.dotDur,"holy");});}},
-  pws:{school:"holy",target:false,sfOk:true,noCombat:true,
-    desc:a=>`Щит, поглощающий ${a.absorb} урона, на ${a.dur} с.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"absorb",name:a.name,amount:a.absorb,max:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
-  flash:{school:"holy",target:false,noCombat:true,
-    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас на ${a.heal[0]}–${a.heal[1]}.`,
-    exec(u,t,a){castFx(u,"castomni");healSpell(u,a);}},
-  gheal:{school:"holy",target:false,noCombat:true,
-    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас на ${a.heal[0]}–${a.heal[1]}.`,
-    exec(u,t,a){castFx(u,"castomni");healSpell(u,a);}},
-  renew:{school:"holy",target:false,noCombat:true,
+  pws:{school:"holy",target:false,ally:true,sfOk:true,noCombat:true,
+    desc:a=>`Щит на вас или союзника, поглощающий ${a.absorb} урона, на ${a.dur} с.`,
+    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"absorb",name:a.name,amount:a.absorb,max:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
+  flash:{school:"holy",target:false,ally:true,noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
+  gheal:{school:"holy",target:false,ally:true,noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
+  renew:{school:"holy",target:false,ally:true,noCombat:true,
     desc:a=>`Исцеляет на ${a.heal} за ${a.dur} с.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"hot",name:a.name,per:a.heal*(1+u.K.heal/100)/a.dur,next:now+1,until:now+a.dur+.05,good:true,mb:true});log(u,a.name);}},
+    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"hot",name:a.name,src:u,per:a.heal*(1+u.K.heal/100)/a.dur,next:now+1,until:now+a.dur+.05,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
   scream:{school:"shadow",target:false,hostile:true,
     desc:a=>`Враги в радиусе ${a.radius} м в страхе бегут ${a.dur} с. Урон может снять страх.`,
     exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0x9b6bff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
-  dispel:{school:"holy",target:false,sfOk:true,noCombat:true,
-    desc:a=>`Снимает с вас ${a.count} магических эффекта. Если снимать нечего, снимает ${a.count} магических баффа с противника в радиусе ${a.range} м (Божественный щит и Ледяная глыба не снимаются).`,
+  dispel:{school:"holy",target:false,ally:true,sfOk:true,noCombat:true,
+    desc:a=>`Снимает с вас или союзника ${a.count} магических эффекта. Если снимать нечего, снимает ${a.count} магических баффа с противника в радиусе ${a.range} м (Божественный щит и Ледяная глыба не снимаются).`,
     exec(u,t,a){castFx(u,"castomni");
-      let n=0;for(let i=0;i<a.count;i++){const x=pickDispel(u.auras.filter(z=>!z.good&&z.dt==="magic"&&z.until>now));if(!x)break;u.auras=u.auras.filter(z=>z!==x);n++;}
-      if(n){log(u,`${a.name}: снято с себя ${n}`);return}
+      const f=F(u);let n=0;for(let i=0;i<a.count;i++){const x=pickDispel(f.auras.filter(z=>!z.good&&z.dt==="magic"&&z.until>now));if(!x)break;f.auras=f.auras.filter(z=>z!==x);n++;}
+      if(n){log(u,`${a.name}: снято ${f===u?"с себя":"с союзника"} ${n}`);return}
       if(t&&t.alive&&canSee(u,t)&&dist(u,t)<=a.range&&los(u.pos,t.pos)){
         for(let i=0;i<a.count;i++){const x=t.auras.find(z=>z.good&&z.mb&&z.until>now);if(!x)break;t.auras=t.auras.filter(z=>z!==x);n++;statusText(t,`−${x.name}`,"#9fd0ff");}
         if(n){enterCombat(u,t);burstFx(t.pos,0x9fd0ff);}}
@@ -1355,6 +1358,10 @@ function other(u){
   if(best){setTarget(u,best);return best}
   return t||units.find(f=>f.team!==u.team)||null;
 }
+/* цель для лечения и защиты: союзник, выбранный игроком или ботом, иначе вы сами */
+function healTarget(u){const f=u.friend;return f&&f!==u&&f.alive&&f.team===u.team?f:u}
+const F=u=>u.allyNow||u;
+const ALLY_RANGE=()=>B.general.allyRange||40;
 function teamDead(team){return !units.some(x=>x.team===team&&x.alive)}
 const dist=(a,b)=>Math.hypot(a.pos.x-b.pos.x,a.pos.z-b.pos.z);
 const aura=(u,type)=>u.auras.find(a=>a.type===type&&a.until>now);
@@ -1410,7 +1417,9 @@ function canUse(u,id){
   if(m.finisher&&!(u.cp>0))return "Нет приёмов серии";
   if(m.ooc&&inCombat(u))return "Только вне боя";
   if(m.once&&u.lohUsed)return "Уже использовано в этом бою";
-  if(m.forbear&&has(u,"forbear"))return "Воздержанность: пока нельзя";
+  const ft=m.ally?healTarget(u):u;
+  if(m.forbear&&has(ft,"forbear"))return ft===u?"Воздержанность: пока нельзя":"На союзнике Воздержанность";
+  if(ft!==u){if(dist(u,ft)>ALLY_RANGE())return "Союзник слишком далеко";if(!los(u.pos,ft.pos))return "Союзник вне поля зрения";}
   if(m.needSeal&&!has(u,"seal"))return "Нет активной печати";
   if(m.stealthOnly&&!stealthed(u))return "Нужна скрытность";
   if(id==="food"&&(u.moving||u.air))return "Нельзя есть на ходу";
@@ -1447,7 +1456,7 @@ function tryUse(u,id){
   if(a.cast){
     if(pomReady(u)){u.pomAt=now+tv(u,"pom");statusText(u,"Присутствие разума","#d7b0ff");finish(u,id,t);return true}
     const nb=aura(u,"numb");const ct=a.cast*(nb?1+nb.pct/100:1);
-    u.cast={id,start:now,end:now+ct,target:t};return true}
+    u.cast={id,start:now,end:now+ct,target:t,ally:m.ally?healTarget(u):null};return true}
   finish(u,id,t);return true;
 }
 /* оплата способности: ресурс, восстановление, выход из скрытности, вход в бой */
@@ -1458,12 +1467,13 @@ function pay(u,id,a,m,t){
   if(!m.keepStealth)breakStealth(u);
   if((m.target||m.hostile)&&!m.noCombat){enterCombat(u);if(m.target&&t)enterCombat(t);}
 }
-function finish(u,id,t){
-  const a=eff(u,id),m=META[id];
+function finish(u,id,t,ally){
+  const a=eff(u,id),m=META[id];u.allyNow=m.ally?(ally&&ally.alive?ally:healTarget(u)):null;
   pay(u,id,a,m,t);u.lastHit={};
   if(m.target&&m.school==="phys"&&t&&has(t,"bop")&&id!=="blind"){statusText(t,"Невосприимчив","#cfd6df");logRaw(`<b>${u.name}</b>: ${a.name} — цель под защитой от физического урона`);}
   else{m.exec(u,t,a);sfxUse(u,id);useFx(u,id);}
   if(u.cls==="mage"&&ab(u.cls,id).cost&&Math.random()*100<tv(u,"clearcast"))addAura(u,{type:"clearcast",name:"Ясность мысли",until:now+15,good:true});
+  u.allyNow=null;
   if(u.isPlayer)flashBtn(id);
 }
 function cancelCast(u,why){if(!u.cast)return;const nm=ab(u.cls,u.cast.id).name;u.cast=null;castFailU(u,why||"Прервано");if(why){log(u,`${nm}: ${why}`);if(u.isPlayer)showErr(why);}}
@@ -1527,7 +1537,7 @@ function critMult(s,school,o){
   return B.general.spellCritMult+(tv(s,"potency")+s.K.critMult)/100+(school==="frost"?tv(s,"iceShards")/100:0);
 }
 function dampenPct(){const G=B.general,t=now-roundStart-G.dampenStart;return state==="fight"&&t>0?Math.min(G.dampenMax,Math.floor(t*G.dampenPerSec)):0}
-function heal(u,amt,name,crit){if(!u.alive)return;const hr=aura(u,"healred");if(hr)amt*=1-hr.pct/100;amt*=1-dampenPct()/100;amt=Math.round(amt);if(amt<=0)return;u.hp=Math.min(u.maxHp,u.hp+amt);u.stats.heal+=amt;healText(u,amt,crit);}
+function heal(u,amt,name,crit,src){if(!u.alive)return;const hr=aura(u,"healred");if(hr)amt*=1-hr.pct/100;amt*=1-dampenPct()/100;amt=Math.round(amt);if(amt<=0)return;u.hp=Math.min(u.maxHp,u.hp+amt);(src||u).stats.heal+=amt;healText(u,amt,crit);}
 function addDot(t,src,name,total,dur,school){if(total<1||!t.alive||isImmune(t))return;if(school==="phys"&&has(t,"bop"))return;
   addAura(t,{type:"dot",name,src,school,per:total/dur,next:now+1,until:now+dur+.05,phys:school==="phys",dt:school==="phys"?"none":"magic"});enterCombat(src,t);}
 function addZone(u,a){
@@ -1614,7 +1624,7 @@ function updateUnit(u,dt){
   if(!u.alive)return;
   for(const a of u.auras.slice()){
     if(a.type==="dot"&&now>=a.next){a.next+=1;damage(a.src,u,a.per,a.name,a.school,{dot:true});if(!u.alive)return;}
-    if(a.type==="hot"&&now>=a.next){a.next+=1;heal(u,a.per,a.name);schoolBurst(u.pos.x,u.y+1,u.pos.z,"holy",5,1.5,.35);}
+    if(a.type==="hot"&&now>=a.next){a.next+=1;heal(u,a.per,a.name,false,a.src&&a.src.alive!==undefined?a.src:u);schoolBurst(u.pos.x,u.y+1,u.pos.z,"holy",5,1.5,.35);}
     if(a.type==="bloodrage"&&now>=a.next){a.next+=1;u.res=Math.min(u.maxRes,u.res+a.per);}
   }
   const G=B.general,ooc=!inCombat(u);
@@ -1649,8 +1659,9 @@ function updateUnit(u,dt){
       if(m.target&&(!tt.alive||!canSee(u,tt))){castFailU(u,"Нет цели");}
       else if(m.target&&dist(u,tt)>a.range+2){log(u,`${a.name}: цель слишком далеко`);if(u.isPlayer){showErr("Слишком далеко");castFail("Слишком далеко");}}
       else if(m.target&&!los(u.pos,tt.pos)){log(u,`${a.name}: цель скрылась за колонной`);if(u.isPlayer){showErr("Цель вне поля зрения");castFail("Цель вне поля зрения");}}
+      else if(c.ally&&c.ally!==u&&(!c.ally.alive||dist(u,c.ally)>ALLY_RANGE()+2||!los(u.pos,c.ally.pos))){castFailU(u,"Союзник недоступен");}
       else if((a.cost||0)>u.res){if(u.isPlayer){showErr("Не хватает "+RES_NAME[u.resType]);castFail("Не хватает "+RES_NAME[u.resType]);}}
-      else{finish(u,c.id,tt);castOkU(u,a.name);}
+      else{finish(u,c.id,tt,c.ally);castOkU(u,a.name);}
     }
   }
   /* автоатака: воин, разбойник, паладин. Ждёт, пока цель выведена из строя вашим же эффектом, который снимается уроном */
@@ -1740,12 +1751,40 @@ class Bot{
     if(canSee(u,e))this.lastPos={x:e.pos.x,z:e.pos.z};
     if(now<this.next)return;this.next=now+this.D.think;
     if(this.trinket())return;
+    if(this.healAlly())return;
     this[u.cls]();
   }
   /* 2 на 2: добиваем самого слабого видимого врага, цель меняем неохотно */
   pickTarget(){const u=this.u,cur=other(u);let best=null,bs=1e9;
     for(const f of foes(u)){let s=f.hp/f.maxHp+dist(u,f)/60;if(!canSee(u,f))s+=3;if(isImmune(f))s+=2;if(f.auras.some(a=>a.breakOnDmg&&a.until>now))s+=1.5;if(f===cur)s-=.2;if(s<bs){bs=s;best=f;}}
     if(best&&best!==cur){setTarget(u,best);this.lastPos=null;this.seen=null;}}
+  /* 2 на 2: жрец и паладин лечат и защищают союзника, если сами не в большей опасности */
+  healAlly(){
+    const u=this.u;u.friend=null;if(units.length<3||(u.cls!=="priest"&&u.cls!=="paladin"))return false;
+    if(u.cast||incap(u)||has(u,"silence"))return false;
+    const al=allies(u).find(x=>x!==u&&x.alive);if(!al)return false;
+    const p=al.hp/al.maxHp,me=u.hp/u.maxHp,d=dist(u,al),near=d<=ALLY_RANGE()-2&&los(u.pos,al.pos);
+    const ccd=al.auras.some(x=>!x.good&&x.until>now&&x.dt==="magic"&&["incap","fear","root","silence","stun"].includes(x.type)&&x.until-now>1.5);
+    if(me<p-.1||me<.3)return false;
+    if(!near){if(p<.6){this.moveTo(al.pos);return true}return false}
+    u.friend=al;const use=id=>this.ready(id)&&tryUse(u,id);
+    const hot=foes(u).some(e=>MELEE[e.cls]&&dist(u,e)<7);
+    if(u.cls==="priest"){
+      if(ccd&&use("dispel"))return true;
+      if(p<.9&&!has(al,"absorb")&&use("pws"))return true;
+      if(p<.8&&!has(al,"hot")&&use("renew"))return true;
+      if(p<.45&&use("flash")){this.stop();return true}
+      if(p<.6&&!hot&&use("gheal")){this.stop();return true}
+    }else{
+      if(p<.2&&use("loh"))return true;
+      if(p<.3&&foes(u).some(e=>MELEE[e.cls]&&dist(al,e)<6)&&use("bop"))return true;
+      if(ccd&&use("cleanse"))return true;
+      if(rooted(al)&&use("freedom"))return true;
+      if(p<.35&&!hot&&use("holylight")){this.stop();return true}
+      if(p<.6&&use("flashlight")){this.stop();return true}
+    }
+    u.friend=null;return false;
+  }
   /* знак отличия: под долгим контролем, когда это опасно */
   trinket(){
     const u=this.u,e=this.e;if(!this.ready("trinket"))return false;
@@ -2281,6 +2320,7 @@ addEventListener("keydown",e=>{if(e.target.tagName==="TEXTAREA")return;
   if(si>=0&&player&&!$("#hud").hidden){e.preventDefault();if(!e.repeat&&layout[si]&&state==="fight")tryUse(player,layout[si]);return}
   if(e.code==="KeyP"&&!e.ctrlKey&&!e.altKey&&player&&!$("#hud").hidden){toggleBook();return}
   if(e.code==="Tab"&&player&&!$("#hud").hidden){e.preventDefault();cycleTarget();return}
+  if((e.code==="F1"||e.code==="F2")&&player&&!$("#hud").hidden){e.preventDefault();if(e.code==="F1")pickFriend(player);else{const a=allies(player).find(x=>x!==player);if(a)pickFriend(a);}return}
   if(e.code==="Space"&&!movesBound.has("Space")&&player&&$("#menu").hidden&&$("#result").hidden){e.preventDefault();touchMode=false;jump(player);}
   if(/^Key[WASDQE]$/.test(e.code))touchMode=false;
   if(e.code==="Escape"){$("#settings").hidden=true;$("#balance").hidden=true;$("#help").hidden=true;$("#book").hidden=true;}});
@@ -2375,7 +2415,7 @@ function setSetting(key,v){settings[key]=v;store.set("arena-settings",JSON.strin
 function renderMenu(){
   const om=$("#optMode");om.innerHTML="";for(const [k,l] of [["1v1","1 на 1"],["2v2","2 на 2"]]){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
   let netR=null;try{netR=NET.role;}catch(e){}const coopNet=!!netR&&settings.mode==="2v2";
-  $("#modeNote").textContent=settings.mode==="2v2"?(coopNet?"По сети: вы с другом вместе против двух ботов.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель."):(netR?"По сети: дуэль с другом.":"Дуэль против бота.");
+  $("#modeNote").textContent=settings.mode==="2v2"?(coopNet?"По сети: вы с другом вместе против двух ботов. F2 или щелчок по другу: лечить его, F1: себя.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель. Лечение и защита идут на союзника после F2 или щелчка по нему, F1 возвращает на себя."):(netR?"По сети: дуэль с другом.":"Дуэль против бота.");
   $("#duoPick").hidden=settings.mode!=="2v2";$("#optAh").hidden=$("#optA").hidden=!!coopNet;
   for(const [el,key] of [[$("#optP"),"pcls"],[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
   const od=$("#optD");od.innerHTML="";for(const [k,v] of Object.entries(DIFF)){const b=document.createElement("button");b.className="opt txt";b.textContent=v.label;b.setAttribute("aria-pressed",settings.diff===k);b.onclick=()=>setSetting("diff",k);od.appendChild(b);}
@@ -2458,21 +2498,22 @@ renderMenu();
 
 
 /* ================= ЦЕЛИ И РАМКИ КОМАНД (2 на 2) ================= */
+function pickFriend(f){if(!player||!f)return;player.friend=f===player?null:f;renderTeams(true);if(f!==player)statusText(f,"Цель лечения","#7dff8f");}
 function pickTarget(t){if(!player||!t||t.team===player.team||!t.alive||!canSee(player,t))return;setTarget(player,t);renderTeams(true);}
 function cycleTarget(){const L=foes(player).filter(f=>canSee(player,f));if(!L.length)return;L.sort((a,b)=>dist(player,a)-dist(player,b));const i=L.indexOf(enemy);pickTarget(L[(i+1)%L.length]);}
 function clickTarget(x,y){if(!player||units.length<3)return;let best=null,bd=60;
-  for(const f of foes(player)){if(!canSee(player,f))continue;tmp.set(f.pos.x,f.y+1.1,f.pos.z).project(camera);if(tmp.z>1)continue;
+  for(const f of units){if(f===player||!f.alive||!canSee(player,f))continue;tmp.set(f.pos.x,f.y+1.1,f.pos.z).project(camera);if(tmp.z>1)continue;
     const sx=STAGE.x+(tmp.x+1)/2*STAGE.w,sy=STAGE.y+(1-tmp.y)/2*STAGE.h,d=Math.hypot(sx-x,sy-y);if(d<bd){bd=d;best=f;}}
-  if(best)pickTarget(best);}
+  if(best){if(best.team===player.team)pickFriend(best);else pickTarget(best);}}
 function buildTeams(){const pa=$("#party"),ar=$("#arenaf"),on=units.length>2;pa.hidden=ar.hidden=!on;pa.innerHTML=ar.innerHTML="";if(!on)return;
   for(const u of units){if(u===player)continue;const el=document.createElement("div");el.className="tm";
     el.innerHTML=`<i style="${iconBg("cls_"+u.cls,30)}"></i><b></b><div class="fb"><i style="--c:var(--hp)"></i><span class="out"></span></div><div class="fb r"><i style="--c:${RES_COLOR[u.resType]}"></i></div><em></em>`;
-    el.onclick=()=>pickTarget(u);u.tmEl=el;(u.team===player.team?pa:ar).appendChild(el);}
+    el.onclick=()=>u.team===player.team?pickFriend(u):pickTarget(u);u.tmEl=el;(u.team===player.team?pa:ar).appendChild(el);}
   renderTeams(true);}
 let teamsT=0;
 function renderTeams(force){if(units.length<3)return;if(!force&&now-teamsT<.1)return;teamsT=now;
   for(const u of units){const el=u.tmEl;if(!el)continue;const vis=u.team===player.team||canSee(player,u);
-    el.classList.toggle("sel",u===enemy);el.classList.toggle("dead",!u.alive);
+    el.classList.toggle("sel",u===enemy);el.classList.toggle("fr",u===player.friend);el.classList.toggle("dead",!u.alive);
     el.querySelector("b").textContent=u.name;
     const hp=el.querySelector(".fb i"),rs=el.querySelector(".fb.r i");hp.style.width=(vis||!u.alive?u.hp/u.maxHp*100:100)+"%";rs.style.width=(vis?u.res/u.maxRes*100:0)+"%";
     el.querySelector(".fb span").textContent=!u.alive?"Мёртв":vis?Math.ceil(u.hp/u.maxHp*100)+"%":"Скрыт";
@@ -2571,7 +2612,7 @@ function netWire(){const T=NET.tx;
     if(o.t==="ping"){T.onopen&&0;return}
     if(NET.role==="host"){
       if(o.t==="hello"&&CLASSES.includes(o.cls)){NET.peerInfo={cls:o.cls,tal:o.tal&&typeof o.tal==="object"?o.tal:{}};T.send({t:"info",cls:settings.pcls,tal:myTal[settings.pcls]});netStatus(`Друг подключился: ${B[o.cls].name}. Нажмите «В бой».`);renderNet();}
-      else if(o.t==="in"){NET.rx=o;const f=NET.friend,t=units[o.tg];if(f&&t&&t.team!==f.team&&t.alive)setTarget(f,t);}
+      else if(o.t==="in"){NET.rx=o;const f=NET.friend,t=units[o.tg],fr=units[o.fr];if(f&&t&&t.team!==f.team&&t.alive)setTarget(f,t);if(f)f.friend=fr&&fr.team===f.team?fr:null;}
       else if(o.t==="use"&&NET.friend&&typeof o.id==="string"&&META[o.id])netRemoteUse(o.id);
       else if(o.t==="cancel"&&NET.friend)cancelCast(NET.friend);
     }else{
@@ -2685,7 +2726,7 @@ function netClientStep(dt){
     if(d<.6||!p.t.alive){scene.remove(p.m);projectiles.splice(i,1);continue}projFx(p,dt);p.m.position.addScaledVector(tmp.sub(p.m.position).normalize(),Math.min(d,p.speed*dt));}
   for(const u of units)updateModel(u,dt);
   const t=performance.now();if(NET.tx&&t-NET.inAt>=40){NET.inAt=t;const u=player;
-    NET.tx.send({t:"in",x:+u.pos.x.toFixed(3),z:+u.pos.z.toFixed(3),y:+u.y.toFixed(3),f:+u.facing.toFixed(3),mv:u.moving?1:0,ml:u.moveLocal,sp:+(u.speedNow||0).toFixed(2),air:u.air?1:0,jump:u.jumpAt||0,w:u.netWarp||0,tg:units.indexOf(enemy)});}
+    NET.tx.send({t:"in",x:+u.pos.x.toFixed(3),z:+u.pos.z.toFixed(3),y:+u.y.toFixed(3),f:+u.facing.toFixed(3),mv:u.moving?1:0,ml:u.moveLocal,sp:+(u.speedNow||0).toFixed(2),air:u.air?1:0,jump:u.jumpAt||0,w:u.netWarp||0,tg:units.indexOf(enemy),fr:units.indexOf(player.friend)});}
 }
 $("#netHost").onclick=netHost;$("#netJoin").onclick=netJoin;$("#netLeave").onclick=()=>{netLeave();netStatus("Вы вышли из комнаты.");};
 $("#netCode").addEventListener("keydown",e=>{if(e.key==="Enter")netJoin();});
