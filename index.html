@@ -2581,7 +2581,7 @@ function renderPortraits(){
 }
 
 /* ================= ВВОД: управление как в WoW ================= */
-const keys={};let autoRun=false,walkMode=false,yaw=-Math.PI/2,pitch=.476,camDist=15,touchMode=false,lmb=false,rmb=false;
+const keys={};let autoRun=false,walkMode=false,yaw=-Math.PI/2,pitch=.3,camDist=15,touchMode=false,lmb=false,rmb=false;
 addEventListener("keydown",e=>{if(e.target.tagName==="TEXTAREA")return;
   if(bindMode&&player&&!$("#hud").hidden){handleBindKey(e);return}
   keys[e.code]=true;
@@ -2715,7 +2715,7 @@ function startRound(){
     const al=new Unit(settings.acls,false,-off,2.5,botTalents(settings.acls),{team:0,friendly:true,layer:3});al.name=B[al.cls].name+" (союзник)";
     const e2=new Unit(settings.ecls2,false,off,2.5,botTalents(settings.ecls2),{team:1,layer:4});
     units.push(al,e2);}
-  for(const u of units)u.facing=u.team===0?Math.PI/2:-Math.PI/2;yaw=-Math.PI/2;pitch=.476;
+  for(const u of units)u.facing=u.team===0?Math.PI/2:-Math.PI/2;yaw=-Math.PI/2;pitch=.3;
   setTarget(player,enemy);
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
   bots=units.filter(u=>u!==player).map(u=>new Bot(u,u.team===0?enemy:player,settings.diff));bot=bots[0];
@@ -2740,7 +2740,7 @@ function startNetRound(){
     if(g){u.name=g.nick;u.netId=p.id;g.unit=u;if(!NET.friend)NET.friend=u;}else if(p.bot&&p.team===my)u.name=B[cls].name+" (союзник)";
     u.facing=p.team===0?Math.PI/2:-Math.PI/2;return u;});
   player=units.find(u=>u.isPlayer);enemy=units.find(u=>u.team!==my);
-  yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.476;setTarget(player,enemy);
+  yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.3;setTarget(player,enemy);
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
   bots=units.filter(u=>u!==player).map(u=>u.netId?new NetCtl(u):new Bot(u,units.find(f=>f.team!==u.team),settings.diff));bot=bots.find(b=>b instanceof Bot)||null;
   roundBegin();
@@ -3087,7 +3087,7 @@ function netClientStart(o){
   units=R.map((r,i)=>{const mine=i===me,cls=CLASSES.includes(r.cls)?r.cls:"warrior",duo=R.length>2;
     const u=new Unit(mine?settings.pcls:cls,mine,(r.team===0?-1:1)*off,duo?(i<2?-2.5:2.5):0,mine?{...myTal[settings.pcls]}:(r.tal||{}),{team:r.team,friendly:r.team===my,layer:mine?1:lay++});
     if(!mine&&r.nick)u.name=cleanNick(r.nick)||"Игрок";else if(!mine&&r.team===my)u.name=B[cls].name+" (союзник)";u.facing=r.team===0?Math.PI/2:-Math.PI/2;return u;});
-  player=units[me];setTarget(player,units.find(u=>u.team!==my));yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.476;buildTeams();
+  player=units[me];setTarget(player,units.find(u=>u.team!==my));yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.3;buildTeams();
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
   bot=null;castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;buildBar();
   $("#menu").hidden=true;$("#result").hidden=true;$("#talents").hidden=true;$("#hud").hidden=false;
@@ -3123,7 +3123,9 @@ function resize(){const iw=innerWidth,ih=innerHeight,wide=(settings.aspect||"wid
   if(wide){w=Math.min(iw,Math.round(ih*16/9));h=Math.round(w*9/16);}
   Object.assign(STAGE,{x:Math.round((iw-w)/2),y:Math.round((ih-h)/2),w,h});const r=document.documentElement.style;
   r.setProperty("--sx",STAGE.x+"px");r.setProperty("--sy",STAGE.y+"px");r.setProperty("--sw",w+"px");r.setProperty("--sh",h+"px");document.documentElement.classList.toggle("wide",wide);
-  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();uiScale();}
+  renderer.setSize(w,h,false);camera.aspect=w/h;
+  /* угол обзора как в клиенте: 90° по диагонали, на 16:9 это около 44° по вертикали */
+  camera.fov=90/Math.sqrt(camera.aspect*camera.aspect+1);camera.updateProjectionMatrix();uiScale();}
 addEventListener("resize",resize);resize();
 const tmp=new THREE.Vector3();let last=performance.now();
 function updateModel(u,dt){
