@@ -117,6 +117,16 @@ body.binding #slots2{display:block}
 #log b{color:var(--gold);font-weight:400}
 #fct{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ft{position:absolute;font-family:var(--wow);white-space:nowrap;transform:translate(-50%,-50%);-webkit-text-stroke:3px #000;paint-order:stroke fill;line-height:1;will-change:transform,opacity}
+#party{position:absolute;left:calc(8px + env(safe-area-inset-left,0px));top:calc(160px*var(--s) + 8px);display:flex;flex-direction:column;gap:4px;transform:scale(var(--s));transform-origin:0 0}
+#arenaf{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:34%;display:flex;flex-direction:column;gap:6px;transform:scale(var(--s));transform-origin:100% 0}
+.tm{position:relative;display:grid;grid-template-columns:30px 150px;gap:0 5px;padding:4px;background:rgba(0,0,0,.65);border:1px solid #3a3a3a;border-radius:3px;cursor:pointer;font-size:11px;color:#fff;pointer-events:auto}
+.tm.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.tm.dead{opacity:.45}
+.tm>i{grid-row:1/4;width:30px;height:30px;background-image:url(assets/ui/icons.webp);border:1px solid #000}
+.tm>b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:12px}
+.tm .fb{position:relative;width:150px;height:9px}
+.tm .fb.r{height:5px;margin-top:1px}
+.tm em{position:absolute;right:4px;top:3px;font-style:normal;font-size:10px;color:#ffd060}
 #topbtns{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:4px}
 .btn{background:url(assets/ui/pbtnup.png) 0 0/160% 145.5% no-repeat;border:0;padding:5px 14px 6px;font-size:13px;color:var(--gold);min-width:84px;min-height:24px;text-shadow:1px 1px 0 #000}
 .btn:hover{background-image:url(assets/ui/pbtnhl.png),url(assets/ui/pbtnup.png);background-size:160% 145.5%;color:#fff}
@@ -222,6 +232,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
     <div id="tdr" class="out"></div>
   </div>
   <div id="buffs"></div>
+  <div id="party" hidden></div><div id="arenaf" hidden></div>
   <div id="castwrap"><div class="cbar" id="pcast" hidden><i></i><em></em><span class="out"></span></div></div>
   <div id="barwrap"><div id="bar"><div class="strip s0"></div><div class="strip s1"></div><div class="cap l"></div><div class="cap r"></div><div id="slots"></div><div id="slots2"></div></div></div>
   <div id="tip" hidden></div>
@@ -240,14 +251,16 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
 <div id="menu" class="overlay">
   <div class="card">
     <div class="group">
-      <h2>Арена 1 на 1 · прототип</h2>
+      <h2>Арена · прототип</h2>
       <h1>Кольцо Клинков</h1>
-      <p class="lead">Дуэль на арене Гурубаши. Колонны закрывают обзор, заклинания читаются только стоя, повторный контроль одного типа слабеет. Пять классов, таланты и все цифры настраиваются.</p>
+      <p class="lead">Бой на арене Гурубаши: дуэль или 2 на 2. Колонны закрывают обзор, заклинания читаются только стоя, повторный контроль одного типа слабеет. Пять классов, таланты и все цифры настраиваются.</p>
     </div>
     <div class="pick">
+      <div class="group"><h2>Формат боя</h2><div class="opts" id="optMode"></div><span class="note" id="modeNote"></span></div>
       <div class="group"><h2>Ваш класс</h2><div class="opts" id="optP"></div><span class="note" id="buildP"></span>
         <h2 style="margin-top:6px">Панель способностей</h2><button class="mbar" id="menuBar" aria-label="Открыть раскладку панели и клавиши"></button><button class="btn" id="btnLoadout">Способности и клавиши</button></div>
       <div class="group"><h2>Класс противника</h2><div class="opts" id="optE"></div><span class="note" id="buildE"></span></div>
+      <div class="group" id="duoPick" hidden><h2 id="optAh">Союзник</h2><div class="opts" id="optA"></div><h2 style="margin-top:6px">Второй противник</h2><div class="opts" id="optE2"></div></div>
       <div class="group"><h2>Игра по сети</h2><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><span class="note" id="netStatus">Создайте комнату и скажите другу код, или введите код друга.</span></div>
       <div class="group"><h2>Сложность бота</h2><div class="opts" id="optD"></div></div>
       <div class="group" id="optPoison" hidden><h2>Яды разбойника</h2><span class="note">Правая рука</span><div class="opts" id="poisonMH"></div><span class="note">Левая рука</span><div class="opts" id="poisonOH"></div></div>
@@ -879,7 +892,7 @@ const META={
     exec(u,t,a){swingFx(u);addAura(t,{type:"disarm",name:a.name,pct:a.pct,until:now+a.dur,dt:"none"});statusText(t,a.name,"#ffd100");log(u,a.name,t);}},
   shout:{school:"phys",target:false,hostile:true,
     desc:a=>`Страх на ${a.dur} с у врагов в радиусе ${a.radius} м.`,
-    exec(u,t,a){roarFx(u);novaFx(u.pos,a.radius,0xff6a3a);log(u,a.name);if(t.alive&&dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
+    exec(u,t,a){roarFx(u);novaFx(u.pos,a.radius,0xff6a3a);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
   zerkrage:{school:"phys",target:false,gcd:false,st:["berserker"],freeCC:["fear","incap"],
     desc:a=>`Снимает страх и выведение из строя и защищает от них ${a.dur} с. Даёт ${a.rage} ярости.`,
     exec(u,t,a){u.auras=u.auras.filter(x=>x.type!=="fear"&&x.type!=="incap");addAura(u,{type:"zerk",name:a.name,until:now+a.dur,good:true});u.res=Math.min(u.maxRes,u.res+a.rage);roarFx(u);log(u,a.name);}},
@@ -911,10 +924,10 @@ const META={
   cone:{school:"frost",target:false,hostile:true,
     desc:a=>`Конус перед магом на ${a.range} м: ${a.dmg[0]}–${a.dmg[1]} урона льдом и замедление на ${a.slow}% на ${a.dur} с.`,
     exec(u,t,a){castFx(u,"castomni");coneFx(u,a.range,0xaee6ff);log(u,a.name);
-      if(t.alive&&dist(u,t)<=a.range&&inCone(u,t,Math.PI/3)){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)slowAura(u,t,a.name,a.slow,a.dur,"magic");}}},
+      for(const t of foes(u))if(dist(u,t)<=a.range&&inCone(u,t,Math.PI/3)){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)slowAura(u,t,a.name,a.slow,a.dur,"magic");}}},
   nova:{school:"frost",target:false,hostile:true,
     desc:a=>`Вокруг мага в радиусе ${a.radius.toFixed(0)} м: ${a.dmg[0]}–${a.dmg[1]} урона и обездвиживание на ${a.root} с.`,
-    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xaee6ff);log(u,a.name);if(t.alive&&dist(u,t)<=a.radius){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)cc(u,t,"root",a.root,a.name);}}},
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xaee6ff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)cc(u,t,"root",a.root,a.name);}}},
   poly:{school:"arcane",target:true,
     desc:a=>`Каст ${a.cast.toFixed(2)} с. Превращает цель в овцу на ${a.dur} с. Любой урон снимает эффект.`,
     exec(u,t,a){castFx(u);burstFx(t.pos,0xc792ff);cc(u,t,"incap",a.dur,a.name);}},
@@ -935,7 +948,7 @@ const META={
     exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"frostarmor",name:a.name,pct:a.reduce,slow:a.slow,slowDur:a.slowDur,until:Infinity,good:true,mb:true});}},
   explosion:{school:"arcane",target:false,hostile:true,
     desc:a=>`Урон тайной магией ${a.dmg[0]}–${a.dmg[1]} вокруг мага в радиусе ${a.radius} м. Выбивает из скрытности.`,
-    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xc792ff);log(u,a.name);if(t.alive&&dist(u,t)<=a.radius)damage(u,t,roll(a.dmg),a.name,"arcane",{spell:true,cost:a.cost});}},
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xc792ff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)damage(u,t,roll(a.dmg),a.name,"arcane",{spell:true,cost:a.cost});}},
   evocation:{school:"arcane",target:false,breakOnDmg:true,noCombat:true,
     desc:a=>`Канал ${a.channel} с: восстанавливает ${a.pct}% маны. Урон прерывает.`,
     tick(u,t,a){u.res=Math.min(u.maxRes,u.res+u.maxRes*a.pct/100/a.ticks);}},
@@ -998,9 +1011,9 @@ const META={
   vanish:{school:"phys",target:false,gcd:false,keepStealth:true,noCombat:true,
     desc:a=>`Мгновенно уходите в скрытность даже в бою и сбрасываете замедления и обездвиживание. Заклинания, которые читали в вас, срываются.`,
     exec(u,t,a){u.auras=u.auras.filter(x=>x.type!=="root"&&x.type!=="slow");addAura(u,{type:"stealth",name:ab("rogue","stealth").name,until:Infinity,good:true});
-      burstFx(u.pos,0x555566);const e=other(u);if(e&&e.cast&&e.cast.target===u){cancelCast(e,"Цель исчезла");}
+      burstFx(u.pos,0x555566);for(const e of foes(u)){if(e.cast&&e.cast.target===u)cancelCast(e,"Цель исчезла");if(e.charging&&e.charging.t===u)e.charging=null;}
       for(let i=projectiles.length-1;i>=0;i--)if(projectiles[i].t===u){scene.remove(projectiles[i].m);projectiles.splice(i,1);}
-      if(e&&e.charging&&e.charging.t===u)e.charging=null;log(u,a.name);}},
+      log(u,a.name);}},
   evasion:{school:"phys",target:false,gcd:false,keepStealth:true,noCombat:true,
     desc:a=>`Шанс уклонения +${a.dodge}% на ${a.dur} с.`,
     exec(u,t,a){addAura(u,{type:"evasion",name:a.name,pct:a.dodge,until:now+a.dur,good:true});log(u,a.name);}},
@@ -1099,7 +1112,7 @@ const META={
     exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"hot",name:a.name,per:a.heal*(1+u.K.heal/100)/a.dur,next:now+1,until:now+a.dur+.05,good:true,mb:true});log(u,a.name);}},
   scream:{school:"shadow",target:false,hostile:true,
     desc:a=>`Враги в радиусе ${a.radius} м в страхе бегут ${a.dur} с. Урон может снять страх.`,
-    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0x9b6bff);log(u,a.name);if(t.alive&&dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0x9b6bff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
   dispel:{school:"holy",target:false,sfOk:true,noCombat:true,
     desc:a=>`Снимает с вас ${a.count} магических эффекта. Если снимать нечего, снимает ${a.count} магических баффа с противника в радиусе ${a.range} м (Божественный щит и Ледяная глыба не снимаются).`,
     exec(u,t,a){castFx(u,"castomni");
@@ -1149,7 +1162,7 @@ const camera=new THREE.PerspectiveCamera(55,1,0.1,600);
 const hemi=new THREE.HemisphereLight(0xdfeeff,0x5a4a2c,0.85);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffe6c0,1.15);sun.position.set(40,70,25);sun.castShadow=true;
 sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-50,right:50,top:50,bottom:-50,near:1,far:200});sun.shadow.bias=-0.0006;scene.add(sun);
-for(const l of [hemi,sun]){l.layers.enable(1);l.layers.enable(2);}
+for(const l of [hemi,sun])for(let i=1;i<=5;i++)l.layers.enable(i);
 /* портреты в рамках рисуются живыми: отдельный маленький рендерер смотрит на голову модели (слои 1 и 2) */
 let porR=null;try{porR=new THREE.WebGLRenderer({alpha:true,antialias:true});porR.setPixelRatio(1);porR.setSize(128,128,false);porR.outputEncoding=THREE.sRGBEncoding;}catch(e){porR=null}
 const porCam=new THREE.PerspectiveCamera(30,1,.05,30);
@@ -1232,7 +1245,7 @@ function hueShiftTexture(src,T){
 }
 /* смещения точек крепления экипировки от костей модели (подобраны по снимкам) */
 const GEAR_OFF={helm:[.02,.17,0],shoulderL:[-.04,-.02,-.14],shoulderR:[-.04,-.02,.14],mainhand:[0,-.05,0],offhand:[0,-.05,0]};
-function buildModel(cls,isPlayer){
+function buildModel(cls,isPlayer,layer){
   const g=new THREE.Group(),body=new THREE.Group();g.add(body);
   const m={g,body,legs:null,arms:null,mixer:null,acts:null,base:null,once:null,onceUntil:0,walk:0,swing:0,swingN:0,head:null};
   if(ASSETS.human){
@@ -1262,7 +1275,7 @@ function buildModel(cls,isPlayer){
   {const wool=std(0xf2efe8,{roughness:1});const m1=new THREE.Mesh(new THREE.SphereGeometry(.7,14,12),wool);m1.scale.set(1,.8,1.3);m1.position.y=.9;m1.castShadow=true;sheep.add(m1);
    const h=new THREE.Mesh(new THREE.SphereGeometry(.28,10,10),std(0x2a2522));h.position.set(0,1.15,.9);sheep.add(h);
    for(const s of [-1,1])for(const z of [-.5,.5]){const l=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.5),std(0x2a2522));l.position.set(s*.35,.25,z);sheep.add(l);}}
-  const layer=isPlayer?1:2;g.traverse(o=>o.layers.enable(layer));
+  layer=layer||(isPlayer?1:2);m.layer=layer;g.traverse(o=>o.layers.enable(layer));
   const ring=new THREE.Mesh(new THREE.RingGeometry(1.0,1.25,40),new THREE.MeshBasicMaterial({color:isPlayer?0x5fd36e:0xe05a4f,transparent:true,opacity:.85,side:THREE.DoubleSide}));
   ring.rotation.x=-Math.PI/2;ring.position.y=.04;g.add(ring);
   const stars=new THREE.Group();stars.position.y=2.45;stars.visible=false;g.add(stars);
@@ -1308,18 +1321,18 @@ function makeUpperClips(g){
 function setOpacity(m,op){if(!m.mats||m.op===op)return;m.op=op;for(const x of m.mats){x.transparent=op<1;x.opacity=op;x.depthWrite=op>=1;x.needsUpdate=true;}}
 
 /* ================= СОСТОЯНИЕ ================= */
-let now=0,state="menu",player=null,enemy=null,bot=null,countEnd=0,roundStart=0,roundEnd=0;
+let now=0,state="menu",player=null,enemy=null,bot=null,units=[],bots=[],countEnd=0,roundStart=0,roundEnd=0;
 const projectiles=[],fxs=[],texts=[],zones=[];
-const settings={pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
+const settings={mode:"1v1",acls:"priest",ecls2:"rogue",pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
 try{Object.assign(settings,JSON.parse(store.get("arena-settings")||"{}"));}catch(e){}
-if(!CLASSES.includes(settings.pcls))settings.pcls="warrior";if(!CLASSES.includes(settings.ecls))settings.ecls="mage";
+if(!CLASSES.includes(settings.pcls))settings.pcls="warrior";if(!CLASSES.includes(settings.ecls))settings.ecls="mage";if(!CLASSES.includes(settings.acls))settings.acls="priest";if(!CLASSES.includes(settings.ecls2))settings.ecls2="rogue";
 const DIFF={easy:{label:"Новичок",react:.85,think:.35,talents:false},normal:{label:"Гладиатор",react:.45,think:.2,talents:true},hard:{label:"Чемпион",react:.2,think:.1,talents:true}};
 let wins={w:0,l:0};try{Object.assign(wins,JSON.parse(store.get("arena-wins")||"{}"));}catch(e){}
 function botTalents(cls){return DIFF[settings.diff].talents?autoBuild(cls,PRESETS[cls][BOT_PRESET[cls]]):{}}
 
 class Unit{
-  constructor(cls,isPlayer,x,z,talents){
-    const c=B[cls];this.cls=cls;this.isPlayer=isPlayer;this.talents=talents||{};this.K=buildK(this);this.resType=c.res;
+  constructor(cls,isPlayer,x,z,talents,o={}){
+    const c=B[cls];this.cls=cls;this.isPlayer=isPlayer;this.team=o.team??(isPlayer?0:1);this.talents=talents||{};this.K=buildK(this);this.resType=c.res;
     this.name=isPlayer?"Вы":c.name+" (бот)";
     this.maxHp=Math.round(c.hp*(1+(tv(this,"toughness")+tv(this,"arcaneFort")+this.K.hp)/100));this.hp=this.maxHp;
     this.maxRes=Math.round((c.maxRes+this.K.res)*(1+(tv(this,"arcaneMind")+this.K.resPct)/100));this.res=c.res==="rage"?c.startRes:this.maxRes;
@@ -1327,12 +1340,22 @@ class Unit{
     this.facing=0;this.moveDir=new THREE.Vector2();this.moving=false;this.moveLocal="run";this.cp=0;this.lastHit={};
     this.auras=[];this.cds={};this.gcdUntil=0;this.cast=null;this.dr={};this.swingAt=0;this.alive=true;this.charging=null;
     this.combatUntil=0;this.eating=null;this.stance=cls==="warrior"?"battle":null;this.opUntil=0;this.ohNext=false;
-    this.stats={dmg:0,cc:0,interrupts:0,crits:0,heal:0};this.model=buildModel(cls,isPlayer);scene.add(this.model.g);
+    this.stats={dmg:0,cc:0,interrupts:0,crits:0,heal:0};this.model=buildModel(cls,o.friendly??isPlayer,o.layer||(isPlayer?1:2));scene.add(this.model.g);
     this.abilities=abilityList(this);
   }
   dispose(){scene.remove(this.model.g);scene.remove(this.model.glow);if(this.model.fx)scene.remove(this.model.fx);}
 }
-const other=u=>u===player?enemy:player;
+/* враги юнита: живые из другой команды. Цель держится, пока жива; иначе берётся ближайший живой враг */
+const foes=u=>units.filter(x=>x.team!==u.team&&x.alive);
+const allies=u=>units.filter(x=>x.team===u.team);
+function setTarget(u,t){u.target=t;if(u===player)enemy=t;}
+function other(u){
+  if(!u)return null;const t=u.target;if(t&&t.alive&&t.team!==u.team)return t;
+  let best=null,bd=1e9;for(const f of units)if(f.team!==u.team&&f.alive){const d=dist(u,f)+(u===player||canSee(u,f)?0:100);if(d<bd){bd=d;best=f;}}
+  if(best){setTarget(u,best);return best}
+  return t||units.find(f=>f.team!==u.team)||null;
+}
+function teamDead(team){return !units.some(x=>x.team===team&&x.alive)}
 const dist=(a,b)=>Math.hypot(a.pos.x-b.pos.x,a.pos.z-b.pos.z);
 const aura=(u,type)=>u.auras.find(a=>a.type===type&&a.until>now);
 const has=(u,type)=>!!aura(u,type);
@@ -1345,7 +1368,7 @@ const inCombat=u=>now<(u.combatUntil||0);
 function enterCombat(...us){for(const u of us)if(u)u.combatUntil=now+B.general.combatDrop;}
 function breakStealth(u){if(!stealthed(u))return;u.auras=u.auras.filter(a=>a.type!=="stealth");u.cds.stealth=now+ab("rogue","stealth").cd;}
 /* видит ли наблюдатель o юнита s: разбойника в скрытности замечают только вблизи, спереди дальше, чем сзади */
-function canSee(o,s){if(!stealthed(s))return true;const G=B.general.stealth,d=dist(o,s);return d<G.back||(d<G.front&&inFront(o,s))}
+function canSee(o,s){if(!stealthed(s)||o.team===s.team)return true;const G=B.general.stealth,d=dist(o,s);return d<G.back||(d<G.front&&inFront(o,s))}
 function slowPct(u){if(has(u,"freedom"))return 0;let m=0;for(const a of u.auras)if(a.type==="slow"&&a.until>now)m=Math.max(m,a.pct);return m*(1-tv(u,"hardened")/100)}
 function addAura(u,a){u.auras=u.auras.filter(x=>x.name!==a.name);if(!a.good&&a.dt===undefined)a.dt="magic";u.auras.push(a);}
 function lockedSchool(u,school){return u.auras.some(a=>a.type==="lockout"&&a.until>now&&a.school===school)}
@@ -1570,7 +1593,7 @@ function damage(src,t,base,name,school,o){
     if(school==="shadow"&&o.spell&&!o.dot&&o.id!=="flay"&&t.hp>0&&Math.random()*100<tv(src,"blackout"))cc(src,t,"stun",3,"Затмение");
     if(rk(src,"vindication")&&(o.melee||o.auto||o.id==="judgement")&&Math.random()<.2)addAura(t,{type:"weak",name:"Возмездие",pct:tv(src,"vindication"),until:now+10,dt:"magic"});
   }
-  if(t.hp<=0){t.alive=false;t.cast=null;endRound(src);return amt}
+  if(t.hp<=0){t.alive=false;t.cast=null;t.auras=t.auras.filter(a=>a.type==="dampen");log(t,"погибает");if(teamDead(t.team))endRound(src);return amt}
   if(rk(t,"lastStand")&&!t.lastStandUsed&&t.hp<t.maxHp*.2){t.lastStandUsed=true;heal(t,t.maxHp*tv(t,"lastStand")/100,"Последний рубеж");logRaw(`<b>${t.name}</b>: Последний рубеж`);}
   if(rk(t,"spiritRedemption")&&!t.srUsed&&t.hp<t.maxHp*.2){t.srUsed=true;heal(t,t.maxHp*tv(t,"spiritRedemption")/100,"Дух воздаяния");logRaw(`<b>${t.name}</b>: Дух воздаяния`);}
   if(rk(t,"coldSnap")&&!t.coldSnapUsed&&t.hp<t.maxHp*tv(t,"coldSnap")/100){t.coldSnapUsed=true;t.cds.nova=0;statusText(t,"Холодная хватка","#9fdcff");}
@@ -1684,7 +1707,7 @@ function moveUnit(u,dt){
   const spr=has(u,"justice")?null:aura(u,"sprint");
   let sp=B[u.cls].speed*(1-slowPct(u)/100)*(has(u,"justice")?1:1+u.K.speed/100)*(spr?1+spr.pct/100:1);
   if(stealthed(u))sp*=1-B.general.stealth.speed/100;
-  if(u.isPlayer&&!touchMode){
+  if(u.isPlayer&&!u.bot&&!touchMode){
     const n=Math.hypot(mx,mz)||1,fx=Math.sin(u.facing),fz=Math.cos(u.facing),f=(mx*fx+mz*fz)/n,s=(mx*fz-mz*fx)/n;
     if(f<-.3){sp*=B.general.backpedal;u.moveLocal="back";}else if(f>.5)u.moveLocal="run";else u.moveLocal=s<0?"right":"left";
   }else{u.facing=Math.atan2(mx,mz);u.moveLocal="run";}
@@ -1698,25 +1721,31 @@ function updateZones(){
     if(now>=z.until||state!=="fight"){scene.remove(z.mesh);zones.splice(i,1);continue}
     z.mesh.material.opacity=.3+.1*Math.sin(now*5);z.mesh.rotation.z+=.004;
     if(Math.random()<.6){const a=Math.random()*6.283,r=Math.sqrt(Math.random())*z.r;pfx(z.x+Math.cos(a)*r,.15,z.z+Math.sin(a)*r,{t:Math.random()<.5?FXT.flame:FXT.star,v:[0,rnd(1,2.2),0],life:rnd(.5,.9),s0:.45,s1:.15,c0:0xfff0a0,c1:0xff8a10,spin:2});}
-    if(now>=z.next){z.next+=1;const t=other(z.src);if(t&&t.alive&&Math.hypot(t.pos.x-z.x,t.pos.z-z.z)<=z.r)damage(z.src,t,z.dps,z.name,"holy",{spell:true,id:"consecration",noProc:true});}}
+    if(now>=z.next){z.next+=1;for(const t of foes(z.src))if(Math.hypot(t.pos.x-z.x,t.pos.z-z.z)<=z.r)damage(z.src,t,z.dps,z.name,"holy",{spell:true,id:"consecration",noProc:true});}}
 }
 
 /* ================= БОТ ================= */
 const LOSS={stun:1,incap:1,fear:1};
 class Bot{
-  constructor(u,e,diff){this.u=u;this.e=e;u.bot=this;this.D=DIFF[diff];this.next=0;this.seen=null;this.seenAt=0;this.lastPos=null;this.wander=null;
+  get e(){return other(this.u)}
+  constructor(u,e,diff){this.u=u;if(e)setTarget(u,e);u.bot=this;this.D=DIFF[diff];this.next=0;this.seen=null;this.seenAt=0;this.lastPos=null;this.wander=null;
     if(u.cls==="rogue"){const caster=!MELEE[e.cls];u.poisonMH=caster?"numb":"deadly";u.poisonOH="crip";}}
   ready(id){const u=this.u;if(!u.abilities.includes(id))return false;const m=u.moving;if(!u.air)u.moving=false;const r=canUse(u,id);u.moving=m;return !r}
   use(id){return this.ready(id)&&tryUse(this.u,id)}
   update(){
     const u=this.u,e=this.e;
     if(!u.alive||state!=="fight"){u.moveDir.set(0,0);return}
+    if(units.length>2&&now>=(this.tgtAt||0)){this.tgtAt=now+1.5;this.pickTarget();}
     if(e.cast){if(this.seen!==e.cast){this.seen=e.cast;this.seenAt=now+this.D.react*(.7+Math.random()*.6);}}else this.seen=null;
     if(canSee(u,e))this.lastPos={x:e.pos.x,z:e.pos.z};
     if(now<this.next)return;this.next=now+this.D.think;
     if(this.trinket())return;
     this[u.cls]();
   }
+  /* 2 на 2: добиваем самого слабого видимого врага, цель меняем неохотно */
+  pickTarget(){const u=this.u,cur=other(u);let best=null,bs=1e9;
+    for(const f of foes(u)){let s=f.hp/f.maxHp+dist(u,f)/60;if(!canSee(u,f))s+=3;if(isImmune(f))s+=2;if(f.auras.some(a=>a.breakOnDmg&&a.until>now))s+=1.5;if(f===cur)s-=.2;if(s<bs){bs=s;best=f;}}
+    if(best&&best!==cur){setTarget(u,best);this.lastPos=null;this.seen=null;}}
   /* знак отличия: под долгим контролем, когда это опасно */
   trinket(){
     const u=this.u,e=this.e;if(!this.ready("trinket"))return false;
@@ -2223,10 +2252,10 @@ function worldText(u,s,color,size,crit){const el=document.createElement("div");e
 let fbkT=0;function portraitText(s,color,big){const e=$("#pfbk");e.textContent=s;e.style.color=color;e.style.fontSize=(big?26:19)+"px";e.style.opacity=1;fbkT=now;}
 function combatText(src,t,amt,crit,o,school,blocked,absorbed){
   const txt=String(amt)+(blocked?" (блок)":"")+(absorbed?` (поглощено ${absorbed})`:"");
-  if(t===enemy&&src===player){const col=o.auto?"#ffffff":"#ffff00";if(amt>0||!absorbed)worldText(t,amt>0?txt:"Поглощено",col,crit?40:26,crit);else worldText(t,"Поглощено","#ffffff",22);}
+  if(t!==player&&src===player){const col=o.auto?"#ffffff":"#ffff00";if(amt>0||!absorbed)worldText(t,amt>0?txt:"Поглощено",col,crit?40:26,crit);else worldText(t,"Поглощено","#ffffff",22);}
   else if(t===player){portraitText(amt>0?String(amt):"Поглощено",amt>0?"#ff2020":"#ffffff",crit);}
 }
-function combatMiss(src,t,word){if(t===enemy)worldText(t,word,"#ffffff",22);else portraitText(word,"#ffffff");}
+function combatMiss(src,t,word){if(t!==player)worldText(t,word,"#ffffff",22);else portraitText(word,"#ffffff");}
 function statusText(u,s,color){worldText(u,s,color,18);}
 function healText(u,amt,crit){if(u===player)portraitText("+"+amt,"#20ff20",crit);else worldText(u,"+"+amt,"#20ff20",crit?30:22,crit);}
 /* портреты */
@@ -2234,7 +2263,7 @@ const porCtx={p:$("#ppor").getContext("2d"),t:$("#tpor").getContext("2d")};let p
 function renderPortraits(){
   if(!porR||++porN%2)return;
   scene.background=null;scene.fog=null;
-  for(const [u,k,layer] of [[player,"p",1],[enemy,"t",2]]){const m=u.model;m.g.updateMatrixWorld(true);
+  for(const [u,k] of [[player,"p"],[enemy,"t"]]){if(!u)continue;const m=u.model,layer=m.layer;m.g.updateMatrixWorld(true);
     if(m.head&&!has(u,"incap"))m.head.getWorldPosition(headV);else headV.set(u.pos.x,u.y+(has(u,"incap")?1.1:2.0),u.pos.z);
     const f=u.facing;porCam.position.set(headV.x+Math.sin(f)*1.05,headV.y+.06,headV.z+Math.cos(f)*1.05);porCam.lookAt(headV.x,headV.y-.04,headV.z);porCam.layers.set(layer);
     porR.render(scene,porCam);
@@ -2251,6 +2280,7 @@ addEventListener("keydown",e=>{if(e.target.tagName==="TEXTAREA")return;
   const ks=keyStr(e),si=binds.indexOf(ks);
   if(si>=0&&player&&!$("#hud").hidden){e.preventDefault();if(!e.repeat&&layout[si]&&state==="fight")tryUse(player,layout[si]);return}
   if(e.code==="KeyP"&&!e.ctrlKey&&!e.altKey&&player&&!$("#hud").hidden){toggleBook();return}
+  if(e.code==="Tab"&&player&&!$("#hud").hidden){e.preventDefault();cycleTarget();return}
   if(e.code==="Space"&&!movesBound.has("Space")&&player&&$("#menu").hidden&&$("#result").hidden){e.preventDefault();touchMode=false;jump(player);}
   if(/^Key[WASDQE]$/.test(e.code))touchMode=false;
   if(e.code==="Escape"){$("#settings").hidden=true;$("#balance").hidden=true;$("#help").hidden=true;$("#book").hidden=true;}});
@@ -2258,14 +2288,14 @@ addEventListener("keyup",e=>{keys[e.code]=false;});
 addEventListener("blur",()=>{for(const k in keys)keys[k]=false;lmb=rmb=false;});
 let drag=null;
 canvas.addEventListener("pointerdown",e=>{if(e.pointerType==="touch"){touchMode=true;if(e.clientX-STAGE.x<STAGE.w*.4)return;}else touchMode=false;
-  drag={x:e.clientX,y:e.clientY,id:e.pointerId,touch:e.pointerType==="touch"};canvas.setPointerCapture(e.pointerId);
+  drag={x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY,id:e.pointerId,touch:e.pointerType==="touch"};canvas.setPointerCapture(e.pointerId);
   if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(rmb&&player)player.facing=yaw+Math.PI;}});
 canvas.addEventListener("pointermove",e=>{if(!drag||drag.id!==e.pointerId)return;
   if(!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);}
   yaw-=(e.clientX-drag.x)*.006;pitch=Math.max(-.25,Math.min(1.4,pitch+(e.clientY-drag.y)*.005));drag.x=e.clientX;drag.y=e.clientY;
   if(rmb&&player&&player.alive&&!incap(player))player.facing=yaw+Math.PI;});
 const endDrag=e=>{if(drag&&e.pointerId===drag.id){drag=null;lmb=rmb=false;}};
-canvas.addEventListener("pointerup",e=>{if(drag&&!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(!e.buttons)drag=null;}else endDrag(e);});
+canvas.addEventListener("pointerup",e=>{if(drag&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<6)clickTarget(e.clientX,e.clientY);if(drag&&!drag.touch){lmb=!!(e.buttons&1);rmb=!!(e.buttons&2);if(!e.buttons)drag=null;}else endDrag(e);});
 canvas.addEventListener("pointercancel",endDrag);
 canvas.addEventListener("contextmenu",e=>e.preventDefault());
 canvas.addEventListener("wheel",e=>{camDist=Math.max(2.5,Math.min(25,camDist+e.deltaY*.012));e.preventDefault();},{passive:false});
@@ -2343,7 +2373,11 @@ $("#btnTal").onclick=openTalents;$("#btnTal2").onclick=openTalents;
 /* ================= МЕНЮ И РАУНДЫ ================= */
 function setSetting(key,v){settings[key]=v;store.set("arena-settings",JSON.stringify(settings));renderMenu();}
 function renderMenu(){
-  for(const [el,key] of [[$("#optP"),"pcls"],[$("#optE"),"ecls"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
+  const om=$("#optMode");om.innerHTML="";for(const [k,l] of [["1v1","1 на 1"],["2v2","2 на 2"]]){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
+  let netR=null;try{netR=NET.role;}catch(e){}const coopNet=!!netR&&settings.mode==="2v2";
+  $("#modeNote").textContent=settings.mode==="2v2"?(coopNet?"По сети: вы с другом вместе против двух ботов.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель."):(netR?"По сети: дуэль с другом.":"Дуэль против бота.");
+  $("#duoPick").hidden=settings.mode!=="2v2";$("#optAh").hidden=$("#optA").hidden=!!coopNet;
+  for(const [el,key] of [[$("#optP"),"pcls"],[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
   const od=$("#optD");od.innerHTML="";for(const [k,v] of Object.entries(DIFF)){const b=document.createElement("button");b.className="opt txt";b.textContent=v.label;b.setAttribute("aria-pressed",settings.diff===k);b.onclick=()=>setSetting("diff",k);od.appendChild(b);}
   $("#score").textContent=`Побед ${wins.w} · поражений ${wins.l}`;
   const pt=myTal[settings.pcls],free=B.general.maxTalentPoints-totalPts(pt);$("#buildP").textContent=`Таланты: ${buildSummary(settings.pcls,pt)}${free>0?` (свободно ${free})`:""}`;
@@ -2355,20 +2389,27 @@ function renderMenu(){
 function startRound(){
   if(NET.role==="client"){showErr("Новый бой начинает хост");return}
   const netOn=NET.role==="host"&&NET.peerInfo&&NET.tx&&NET.tx.open;
-  for(const u of [player,enemy])if(u)u.dispose();
-  for(const p of projectiles)scene.remove(p.m);projectiles.length=0;
-  for(const t of texts)t.el.remove();texts.length=0;$("#log").innerHTML="";
-  for(const z of zones)scene.remove(z.mesh);zones.length=0;
-  const off=ARENA_R*.7;
-    player=new Unit(settings.pcls,true,-off,0,{...myTal[settings.pcls]});enemy=netOn?new Unit(NET.peerInfo.cls,false,off,0,{...NET.peerInfo.tal}):new Unit(settings.ecls,false,off,0,botTalents(settings.ecls));
-  if(netOn)enemy.name="Друг ("+B[enemy.cls].name.toLowerCase()+")";
-  player.facing=Math.PI/2;enemy.facing=-Math.PI/2;yaw=-Math.PI/2;pitch=.476;
+  clearArena();
+  const off=ARENA_R*.7,duo=settings.mode==="2v2",coop=netOn&&duo;
+  player=new Unit(settings.pcls,true,-off,duo?-2.5:0,{...myTal[settings.pcls]});
+  enemy=netOn&&!coop?new Unit(NET.peerInfo.cls,false,off,0,{...NET.peerInfo.tal}):new Unit(settings.ecls,false,off,duo?-2.5:0,botTalents(settings.ecls));
+  units=[player,enemy];NET.friend=netOn&&!coop?enemy:null;
+  if(NET.friend)enemy.name="Друг ("+B[enemy.cls].name.toLowerCase()+")";
+  if(duo){
+    const al=coop?new Unit(NET.peerInfo.cls,false,-off,2.5,{...NET.peerInfo.tal},{team:0,friendly:true,layer:3}):new Unit(settings.acls,false,-off,2.5,botTalents(settings.acls),{team:0,friendly:true,layer:3});
+    al.name=coop?"Друг ("+B[al.cls].name.toLowerCase()+")":B[al.cls].name+" (союзник)";if(coop)NET.friend=al;
+    const e2=new Unit(settings.ecls2,false,off,2.5,botTalents(settings.ecls2),{team:1,layer:4});
+    units.push(al,e2);}
+  for(const u of units)u.facing=u.team===0?Math.PI/2:-Math.PI/2;yaw=-Math.PI/2;pitch=.476;
+  setTarget(player,enemy);
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
-  bot=netOn?new NetCtl(enemy):new Bot(enemy,player,settings.diff);castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;
-  for(const u of [player,enemy])prepUnit(u);
+  bots=units.filter(u=>u!==player).map(u=>u===NET.friend?new NetCtl(u):new Bot(u,u.team===0?enemy:player,settings.diff));bot=bots[0];
+  castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;
+  for(const u of units)prepUnit(u);
+  buildTeams();
   buildBar();$("#menu").hidden=true;$("#result").hidden=true;$("#talents").hidden=true;$("#hud").hidden=false;
   state="countdown";countEnd=now+3;
-  if(netOn){NET.evq=[];NET.tx.send({t:"start",cls:settings.pcls,tal:myTal[settings.pcls],cd:3});}
+  if(netOn){NET.evq=[];NET.tx.send({t:"start",cls:settings.pcls,tal:myTal[settings.pcls],cd:3,me:units.indexOf(NET.friend),ros:units.map(u=>({cls:u.cls,tal:u.talents,team:u.team,host:u===player?1:0}))});}
 }
 /* перед боем: бафы на весь бой и скрытность разбойника, как будто всё наложено заранее */
 function prepUnit(u){
@@ -2376,14 +2417,24 @@ function prepUnit(u){
   if(u.cls==="priest"){const a=B.priest.abilities.innerfire;addAura(u,{type:"innerfire",name:a.name,pct:a.reduce,dmg:a.dmg,until:Infinity,good:true,mb:true});}
   if(u.cls==="rogue")addAura(u,{type:"stealth",name:B.rogue.abilities.stealth.name,until:Infinity,good:true});
 }
+function clearArena(){
+  for(const u of units)u.dispose();if(player&&!units.includes(player))player.dispose();if(enemy&&!units.includes(enemy))enemy.dispose();units=[];bots=[];
+  for(const p of projectiles)scene.remove(p.m);projectiles.length=0;
+  for(const t of texts)t.el.remove();texts.length=0;$("#log").innerHTML="";
+  for(const z of zones)scene.remove(z.mesh);zones.length=0;
+}
 function endRound(winner){
-  if(state!=="fight")return;state="over";roundEnd=now;const won=winner===player;
+  if(state!=="fight")return;state="over";roundEnd=now;const won=winner.team===player.team;
   if(won)wins.w++;else wins.l++;store.set("arena-wins",JSON.stringify(wins));
   if(winner.model.acts)setTimeout(()=>{if(state==="over")playOnce(winner.model,"cheer",1,true);},900);
   setTimeout(()=>{
     $("#resTitle").textContent=won?"Победа":"Поражение";
-    $("#resSub").textContent=`${B[player.cls].name} против: ${B[enemy.cls].name.toLowerCase()} · ${DIFF[settings.diff].label} · ${(roundEnd-roundStart).toFixed(1)} с`;
     const row=(l,a,b)=>`<div>${l}</div><div>${a}</div><div>${b}</div>`;
+    if(units.length>2){const A=allies(player),E=units.filter(x=>x.team!==player.team),nm=L=>L.map(x=>B[x.cls].name).join(" и "),sum=(L,k)=>L.reduce((s,x)=>s+x.stats[k],0);
+      $("#resSub").textContent=`2 на 2 · ${nm(A)} против: ${nm(E).toLowerCase()} · ${NET.role==="client"?"по сети":DIFF[settings.diff].label} · ${(roundEnd-roundStart).toFixed(1)} с`;
+      $("#resStats").innerHTML=row("","<b>Ваша команда</b>","<b>Противники</b>")+row("Нанесено урона",sum(A,"dmg"),sum(E,"dmg"))+row("Исцелено",sum(A,"heal"),sum(E,"heal"))+row("Критических ударов",sum(A,"crits"),sum(E,"crits"))+row("Контроль наложен, с",sum(A,"cc").toFixed(1),sum(E,"cc").toFixed(1))+row("Прерываний",sum(A,"interrupts"),sum(E,"interrupts"))+row("Выжили",A.filter(x=>x.alive).length+" из 2",E.filter(x=>x.alive).length+" из 2");
+      $("#result").hidden=false;return}
+    $("#resSub").textContent=`${B[player.cls].name} против: ${B[enemy.cls].name.toLowerCase()} · ${DIFF[settings.diff].label} · ${(roundEnd-roundStart).toFixed(1)} с`;
     $("#resStats").innerHTML=row("","<b>Вы</b>","<b>Противник</b>")+row("Таланты",buildSummary(player.cls,player.talents),buildSummary(enemy.cls,enemy.talents))+row("Нанесено урона",player.stats.dmg,enemy.stats.dmg)+row("Исцелено",player.stats.heal,enemy.stats.heal)+row("Критических ударов",player.stats.crits,enemy.stats.crits)+row("Контроль наложен, с",player.stats.cc.toFixed(1),enemy.stats.cc.toFixed(1))+row("Прерываний",player.stats.interrupts,enemy.stats.interrupts)+row("Осталось здоровья",Math.ceil(player.hp),Math.ceil(enemy.hp));
     $("#result").hidden=false;},2200);
 }
@@ -2405,6 +2456,27 @@ $("#balCopy").onclick=()=>{const ta=$("#balTxt");const p=navigator.clipboard&&na
   if(p)p.then(()=>$("#balMsg").textContent="Скопировано. Можно прислать в чат, чтобы закрепить баланс в коде.",()=>{ta.select();$("#balMsg").textContent="Выделил текст, нажмите Ctrl+C.";});else{ta.select();$("#balMsg").textContent="Выделил текст, нажмите Ctrl+C.";}};
 renderMenu();
 
+
+/* ================= ЦЕЛИ И РАМКИ КОМАНД (2 на 2) ================= */
+function pickTarget(t){if(!player||!t||t.team===player.team||!t.alive||!canSee(player,t))return;setTarget(player,t);renderTeams(true);}
+function cycleTarget(){const L=foes(player).filter(f=>canSee(player,f));if(!L.length)return;L.sort((a,b)=>dist(player,a)-dist(player,b));const i=L.indexOf(enemy);pickTarget(L[(i+1)%L.length]);}
+function clickTarget(x,y){if(!player||units.length<3)return;let best=null,bd=60;
+  for(const f of foes(player)){if(!canSee(player,f))continue;tmp.set(f.pos.x,f.y+1.1,f.pos.z).project(camera);if(tmp.z>1)continue;
+    const sx=STAGE.x+(tmp.x+1)/2*STAGE.w,sy=STAGE.y+(1-tmp.y)/2*STAGE.h,d=Math.hypot(sx-x,sy-y);if(d<bd){bd=d;best=f;}}
+  if(best)pickTarget(best);}
+function buildTeams(){const pa=$("#party"),ar=$("#arenaf"),on=units.length>2;pa.hidden=ar.hidden=!on;pa.innerHTML=ar.innerHTML="";if(!on)return;
+  for(const u of units){if(u===player)continue;const el=document.createElement("div");el.className="tm";
+    el.innerHTML=`<i style="${iconBg("cls_"+u.cls,30)}"></i><b></b><div class="fb"><i style="--c:var(--hp)"></i><span class="out"></span></div><div class="fb r"><i style="--c:${RES_COLOR[u.resType]}"></i></div><em></em>`;
+    el.onclick=()=>pickTarget(u);u.tmEl=el;(u.team===player.team?pa:ar).appendChild(el);}
+  renderTeams(true);}
+let teamsT=0;
+function renderTeams(force){if(units.length<3)return;if(!force&&now-teamsT<.1)return;teamsT=now;
+  for(const u of units){const el=u.tmEl;if(!el)continue;const vis=u.team===player.team||canSee(player,u);
+    el.classList.toggle("sel",u===enemy);el.classList.toggle("dead",!u.alive);
+    el.querySelector("b").textContent=u.name;
+    const hp=el.querySelector(".fb i"),rs=el.querySelector(".fb.r i");hp.style.width=(vis||!u.alive?u.hp/u.maxHp*100:100)+"%";rs.style.width=(vis?u.res/u.maxRes*100:0)+"%";
+    el.querySelector(".fb span").textContent=!u.alive?"Мёртв":vis?Math.ceil(u.hp/u.maxHp*100)+"%":"Скрыт";
+    el.querySelector("em").textContent=u.cast&&vis?ab(u.cls,u.cast.id).name:"";}}
 
 /* ================= ЗВУК ================= */
 /* звуки из клиента WoW лежат одним пакетом: карта событий и сами файлы ogg в base64; разжимаются после первого нажатия (так требует браузер) */
@@ -2499,9 +2571,9 @@ function netWire(){const T=NET.tx;
     if(o.t==="ping"){T.onopen&&0;return}
     if(NET.role==="host"){
       if(o.t==="hello"&&CLASSES.includes(o.cls)){NET.peerInfo={cls:o.cls,tal:o.tal&&typeof o.tal==="object"?o.tal:{}};T.send({t:"info",cls:settings.pcls,tal:myTal[settings.pcls]});netStatus(`Друг подключился: ${B[o.cls].name}. Нажмите «В бой».`);renderNet();}
-      else if(o.t==="in")NET.rx=o;
-      else if(o.t==="use"&&enemy&&enemy.net&&typeof o.id==="string"&&META[o.id])netRemoteUse(o.id);
-      else if(o.t==="cancel"&&enemy&&enemy.net)cancelCast(enemy);
+      else if(o.t==="in"){NET.rx=o;const f=NET.friend,t=units[o.tg];if(f&&t&&t.team!==f.team&&t.alive)setTarget(f,t);}
+      else if(o.t==="use"&&NET.friend&&typeof o.id==="string"&&META[o.id])netRemoteUse(o.id);
+      else if(o.t==="cancel"&&NET.friend)cancelCast(NET.friend);
     }else{
       if(o.t==="info"&&CLASSES.includes(o.cls)){NET.peerInfo={cls:o.cls,tal:o.tal||{}};netStatus(`Подключено к комнате ${NET.code}: у друга ${B[o.cls].name}. Хост начинает бой.`);renderNet();}
       else if(o.t==="start")netClientStart(o);
@@ -2511,10 +2583,10 @@ function netWire(){const T=NET.tx;
 function netLeave(){if(NET.tx)NET.tx.close();Object.assign(NET,{role:null,tx:null,peerInfo:null,lastSnap:null,rx:null,evq:[]});renderNet();}
 function renderNet(){const on=!!NET.role;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
   const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{b.textContent=NET.role==="host"?"В бой (по сети)":"В бой";if(NET.role==="host")b.disabled=!NET.peerInfo;else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
-  $("#optE").closest(".group").style.opacity=on?.4:1;}
+  $("#optE").closest(".group").style.opacity=on&&settings.mode!=="2v2"?.4:1;}
 
 /* --- запись событий на хосте: обёртки над функциями эффектов --- */
-const NU=u=>u===player?0:1,ND=i=>i===0?enemy:player;let netDepth=0;
+const NU=u=>units.indexOf(u),ND=i=>units[i];let netDepth=0;
 function netEv(e){if(NET.role==="host"&&netDepth===0&&state!=="menu")NET.evq.push(e);}
 function netWrapFn(name,enc){const f=window[name];window[name]=function(...a){if(NET.role==="host"&&netDepth===0&&state!=="menu"){const e=enc(...a);if(e)NET.evq.push(e);}netDepth++;try{return f.apply(this,a)}finally{netDepth--;}};}
 netWrapFn("sfxUse",(u,id)=>["su",NU(u),id]);
@@ -2551,7 +2623,7 @@ function netPlay(e){const k=e[0];
     case "cm":combatMiss(ND(e[1]),ND(e[2]),e[3]);break;case "st":statusText(ND(e[1]),e[2],e[3]);break;case "ht":healText(ND(e[1]),e[2],!!e[3]);break;
     case "zn":{const m=new THREE.Mesh(tileGeo(FXT.rune),fxMat(0xffc040,.5));m.scale.setScalar(e[3]);m.rotation.x=-Math.PI/2;m.position.set(e[1],.06,e[2]);scene.add(m);zones.push({x:e[1],z:e[2],r:e[3],dps:0,src:null,name:"",next:Infinity,until:now+e[4],mesh:m});break;}
     case "cok":castOk(e[1]);break;case "cfl":castFail(e[1]);break;case "er":showErr(e[1]);break;
-    case "end":{const s=e[2];if(state!=="over")state="fight";for(const [u,st] of [[ND(0),s[0]],[ND(1),s[1]]])Object.assign(u.stats,st);endRound(ND(e[1]));break;}
+    case "end":{const s=e[2];if(state!=="over")state="fight";units.forEach((u,i)=>{if(s[i])Object.assign(u.stats,s[i]);});endRound(ND(e[1]));break;}
   }}catch(err){console.warn("net event",k,err);}}
 /* --- снимок состояния бойца --- */
 const NET_T=x=>x===Infinity?-1:+Math.max(0,x-now).toFixed(2);
@@ -2578,20 +2650,21 @@ function netRemoteMove(u,dt){const r=NET.rx;if(!r||aura(u,"fear"))return false;
   u.pos.x=r.x;u.pos.z=r.z;collide(u.pos);u.y=r.y;u.air=!!r.air;u.facing=r.f;u.moving=!!r.mv&&state==="fight";u.moveLocal=r.ml;u.speedNow=r.sp;if(r.jump&&r.jump!==u.netJump){u.netJump=r.jump;u.jumpAt=now;}
   if(u.moving&&u.cast&&!u.cast.channel&&!B.general.castWhileMoving)cancelCast(u,"Прервано движением");
   return true}
-function netRemoteUse(id){const u=enemy;if(id==="iceblock"&&has(u,"iceblock")){tryUse(u,id);return}
+function netRemoteUse(id){const u=NET.friend;if(id==="iceblock"&&has(u,"iceblock")){tryUse(u,id);return}
   const err=canUse(u,id);if(err){netEv(["er",err]);return}const x=u.pos.x,z=u.pos.z;tryUse(u,id);
   if(Math.hypot(u.pos.x-x,u.pos.z-z)>.5)u.netWarp=(u.netWarp||0)+1;}
-function netHostTick(){if(NET.role!=="host"||!NET.tx||!player||!enemy)return;
+function netHostTick(){if(NET.role!=="host"||!NET.tx||!player||!units.length)return;
   if(NET.evq.length){NET.tx.send({t:"ev",e:NET.evq});NET.evq=[];}
   const t=performance.now();if(t-NET.sendAt<50)return;NET.sendAt=t;
-  NET.tx.send({t:"snap",st:state,cd:+(countEnd-now).toFixed(2),rs:+(now-roundStart).toFixed(2),u:[netSnapU(player),netSnapU(enemy)]});}
+  NET.tx.send({t:"snap",st:state,cd:+(countEnd-now).toFixed(2),rs:+(now-roundStart).toFixed(2),u:units.map(netSnapU)});}
 /* --- второй игрок --- */
 function netClientStart(o){
-  for(const u of [player,enemy])if(u)u.dispose();
-  for(const p of projectiles)scene.remove(p.m);projectiles.length=0;for(const t of texts)t.el.remove();texts.length=0;$("#log").innerHTML="";for(const z of zones)scene.remove(z.mesh);zones.length=0;
-  const off=ARENA_R*.7;player=new Unit(settings.pcls,true,off,0,{...myTal[settings.pcls]});enemy=new Unit(o.cls,false,-off,0,o.tal||{});
-  enemy.name="Друг ("+B[o.cls].name.toLowerCase()+")";
-  player.facing=-Math.PI/2;enemy.facing=Math.PI/2;yaw=Math.PI/2;pitch=.476;
+  clearArena();
+  const R=Array.isArray(o.ros)?o.ros:[{cls:o.cls,tal:o.tal,team:0,host:1},{cls:settings.pcls,tal:myTal[settings.pcls],team:1}],me=o.me??1,my=R[me].team,off=ARENA_R*.7;let lay=2;
+  units=R.map((r,i)=>{const mine=i===me,cls=CLASSES.includes(r.cls)?r.cls:"warrior",duo=R.length>2;
+    const u=new Unit(mine?settings.pcls:cls,mine,(r.team===0?-1:1)*off,duo?(i<2?-2.5:2.5):0,mine?{...myTal[settings.pcls]}:(r.tal||{}),{team:r.team,friendly:r.team===my,layer:mine?1:lay++});
+    if(r.host)u.name="Друг ("+B[cls].name.toLowerCase()+")";u.facing=r.team===0?Math.PI/2:-Math.PI/2;return u;});
+  player=units[me];setTarget(player,units.find(u=>u.team!==my));yaw=my===0?-Math.PI/2:Math.PI/2;pitch=.476;buildTeams();
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
   bot=null;castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;buildBar();
   $("#menu").hidden=true;$("#result").hidden=true;$("#talents").hidden=true;$("#hud").hidden=false;
@@ -2601,22 +2674,22 @@ function netClientStep(dt){
   if(s){NET.lastSnap=null;
     if(s.st!==state&&!(s.st==="fight"&&state==="countdown")&&s.st!=="over")state=s.st;
     if(state==="countdown")countEnd=now+s.cd;roundStart=now-s.rs;
-    netApplyU(enemy,s.u[0],false);netApplyU(player,s.u[1],true);}
+    units.forEach((u,i)=>{if(s.u[i])netApplyU(u,s.u[i],u===player);});}
   if(state==="fight"||state==="countdown"){if(state==="fight")playerInput(dt);else player.moveDir.set(0,0);}
   const forced=aura(player,"fear")||player.charging||incap(player)||rooted(player);
   if(!forced)moveUnit(player,dt);
-  const tg=enemy.netTarget;if(tg){const k=Math.min(1,dt*12);enemy.pos.x+=(tg.x-enemy.pos.x)*k;enemy.pos.z+=(tg.z-enemy.pos.z)*k;enemy.y+=(tg.y-enemy.y)*k;}
+  for(const u of units){const tg=u.netTarget;if(u===player||!tg)continue;const k=Math.min(1,dt*12);u.pos.x+=(tg.x-u.pos.x)*k;u.pos.z+=(tg.z-u.pos.z)*k;u.y+=(tg.y-u.y)*k;}
   for(const z of zones)if(now>=z.until){scene.remove(z.mesh);}
   for(let i=zones.length-1;i>=0;i--)if(now>=zones[i].until)zones.splice(i,1);else{zones[i].mesh.rotation.z+=.004;}
   for(let i=projectiles.length-1;i>=0;i--){const p=projectiles[i];tmp.set(p.t.pos.x,1.4+p.t.y,p.t.pos.z);const d=p.m.position.distanceTo(tmp);
     if(d<.6||!p.t.alive){scene.remove(p.m);projectiles.splice(i,1);continue}projFx(p,dt);p.m.position.addScaledVector(tmp.sub(p.m.position).normalize(),Math.min(d,p.speed*dt));}
-  for(const u of [player,enemy])updateModel(u,dt);
+  for(const u of units)updateModel(u,dt);
   const t=performance.now();if(NET.tx&&t-NET.inAt>=40){NET.inAt=t;const u=player;
-    NET.tx.send({t:"in",x:+u.pos.x.toFixed(3),z:+u.pos.z.toFixed(3),y:+u.y.toFixed(3),f:+u.facing.toFixed(3),mv:u.moving?1:0,ml:u.moveLocal,sp:+(u.speedNow||0).toFixed(2),air:u.air?1:0,jump:u.jumpAt||0,w:u.netWarp||0});}
+    NET.tx.send({t:"in",x:+u.pos.x.toFixed(3),z:+u.pos.z.toFixed(3),y:+u.y.toFixed(3),f:+u.facing.toFixed(3),mv:u.moving?1:0,ml:u.moveLocal,sp:+(u.speedNow||0).toFixed(2),air:u.air?1:0,jump:u.jumpAt||0,w:u.netWarp||0,tg:units.indexOf(enemy)});}
 }
 $("#netHost").onclick=netHost;$("#netJoin").onclick=netJoin;$("#netLeave").onclick=()=>{netLeave();netStatus("Вы вышли из комнаты.");};
 $("#netCode").addEventListener("keydown",e=>{if(e.key==="Enter")netJoin();});
-netWrapFn("endRound",(w)=>state==="fight"?["end",NU(w),[player.stats,enemy.stats]]:null);
+netWrapFn("endRound",(w)=>state==="fight"?["end",NU(w),units.map(u=>u.stats)]:null);
 
 /* ================= ЦИКЛ ================= */
 /* игровое поле 16:9 по центру окна (или во всё окно в настройках) */
@@ -2636,7 +2709,7 @@ function updateModel(u,dt){
   m.g.rotation.y=u.facing;
   /* скрытность: свой разбойник полупрозрачный, чужой не виден, пока его не заметили */
   const st=stealthed(u);
-  if(u===player)setOpacity(m,st?.42:1);
+  if(u.team===player.team)setOpacity(m,st?.42:1);
   else{m.g.visible=canSee(player,u);setOpacity(m,st?.42:1);}
   const poly=has(u,"incap")&&auraNamed(u,B.mage.abilities.poly.name);m.body.visible=!poly;m.sheep.visible=!!poly;
   m.stars.visible=has(u,"stun")||(has(u,"incap")&&!poly);m.stars.rotation.y+=dt*4;
@@ -2700,15 +2773,16 @@ function placeCamera(){
 }
 /* один шаг симуляции: ввод игрока, боты, движение, бой, снаряды, модели */
 function step(dt,live,pbot){
-  if(state==="fight"){if(pbot)pbot.update();else playerInput(dt);bot.update();}else{player.moveDir.set(0,0);enemy.moveDir.set(0,0);if(state==="countdown"&&live)playerInput(dt),player.moveDir.set(0,0);}
-  for(const u of [player,enemy])moveUnit(u,dt);
-  separate(player,enemy);collide(player.pos);collide(enemy.pos);
-  for(const u of [player,enemy])updateUnit(u,dt);
+  if(state==="fight"){if(pbot)pbot.update();else playerInput(dt);for(const b of bots)b.update();}else{for(const u of units)u.moveDir.set(0,0);if(state==="countdown"&&live)playerInput(dt),player.moveDir.set(0,0);}
+  for(const u of units)moveUnit(u,dt);
+  for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++)if(units[i].alive&&units[j].alive)separate(units[i],units[j]);
+  for(const u of units)collide(u.pos);
+  for(const u of units)updateUnit(u,dt);
   updateZones();
   for(let i=projectiles.length-1;i>=0;i--){const p=projectiles[i];tmp.set(p.t.pos.x,1.4+p.t.y,p.t.pos.z);const d=p.m.position.distanceTo(tmp);
     if(d<.6||!p.t.alive){scene.remove(p.m);projectiles.splice(i,1);if(p.t.alive){if(p.kind==="hammer")impactFx(p.t,"holy",false,true);p.onHit();}continue}
     projFx(p,dt);p.m.position.addScaledVector(tmp.sub(p.m.position).normalize(),Math.min(d,p.speed*dt));}
-  for(const u of [player,enemy])updateModel(u,dt);
+  for(const u of units)updateModel(u,dt);
 }
 function frame(){
   requestAnimationFrame(frame);
@@ -2718,7 +2792,7 @@ function frame(){
   if(player&&(state==="fight"||state==="countdown"||state==="over")){
     if(NET.role==="client")netClientStep(dt);else step(dt,true);
     netHostTick();
-    renderFrame(player,"p");renderFrame(enemy,"t");renderBar();
+    renderFrame(player,"p");if(enemy)renderFrame(enemy,"t");renderBar();renderTeams();
     placeCamera();
   }else{const a=now*.06;camera.position.set(Math.sin(a)*30,14,Math.cos(a)*30);camera.lookAt(0,4,0);}
   for(let i=fxs.length-1;i>=0;i--){const f=fxs[i],k=(now-f.t0)/f.dur;if(k>=1){scene.remove(f.mesh);fxs.splice(i,1);continue}f.fn(k);}
