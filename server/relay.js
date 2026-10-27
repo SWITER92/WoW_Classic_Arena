@@ -11,6 +11,8 @@
 const http = require("http");
 const { WebSocketServer } = require("ws");
 const admin = require("./admin");
+const { spawn } = require("child_process");
+const path = require("path");
 
 const PORT = +process.env.PORT || 8080;
 const MAX_GUESTS = 3;
@@ -19,6 +21,9 @@ const MAX_PER_IP = 12;
 const ORIGINS = (process.env.ALLOWED_ORIGINS || "https://switer92.github.io").split(",").map(s => s.trim()).filter(Boolean);
 
 const rooms = new Map();
+const MAX_SIMS = +process.env.MAX_SIMS || 8;
+const sims = new Map();
+const createdAt = new Map();
 const perIp = new Map();
 
 const server = http.createServer((req, res) => {
@@ -30,6 +35,7 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({ online: admin.onlineCount(), rooms: list.slice(0, 50) }));
     return;
   }
+  if (req.url === "/arena/api/create" && (req.method === "POST" || req.method === "OPTIONS")) { createRoom(req, res); return; }
   if (req.url.startsWith("/arena/admin") || req.url.startsWith("/arena/api/")) {
     admin.handle(req, res).catch(() => { try { res.writeHead(500); res.end(); } catch (e) {} });
     return;
@@ -117,6 +123,36 @@ function onConnect(ws, code, role, pub) {
     if (room.guests.get(id) !== ws) return;
     room.guests.delete(id);
     send(room.host, { t: "_close", id });
+  });
+}
+
+/* комната на сервере: отдельный процесс sim.js считает бой как хост и подключается сюда же */
+function createRoom(req, res) {
+  const origin = req.headers.origin;
+  const h = { "content-type": "application/json", "cache-control": "no-store", "access-control-allow-origin": originOk(origin) && origin ? origin : ORIGINS[0], vary: "origin" };
+  if (req.method === "OPTIONS") { res.writeHead(204, h); res.end(); return; }
+  const reply = (code, o) => { res.writeHead(code, h); res.end(JSON.stringify(o)); };
+  const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+  if (Date.now() - (createdAt.get(ip) || 0) < 5000) return reply(429, { error: "Подождите несколько секунд" });
+  if (sims.size >= MAX_SIMS) return reply(503, { error: "Сервер занят" });
+  let body = "";
+  req.on("data", c => { body += c; if (body.length > 2000) req.destroy(); });
+  req.on("end", () => {
+    let b = {};
+    try { b = JSON.parse(body || "{}"); } catch (e) {}
+    createdAt.set(ip, Date.now());
+    let code;
+    do { code = Array.from({ length: 4 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.random() * 32 | 0]).join(""); } while (rooms.has(code) || sims.has(code));
+    const nick = String(b.nick || "Игрок").replace(/[<>]/g, "").slice(0, 16);
+    const child = spawn(process.execPath, ["--max-old-space-size=256", path.join(__dirname, "sim.js"), code, b.mode === "2v2" ? "2v2" : "1v1", b.pub ? "1" : "0", nick, String(PORT)], { stdio: ["ignore", "inherit", "inherit"] });
+    sims.set(code, child);
+    child.on("exit", () => sims.delete(code));
+    const t0 = Date.now();
+    const wait = setInterval(() => {
+      const r = rooms.get(code);
+      if (r && r.host.readyState === 1) { clearInterval(wait); reply(200, { code }); }
+      else if (Date.now() - t0 > 20000 || !sims.has(code)) { clearInterval(wait); try { child.kill(); } catch (e) {} reply(500, { error: "Не удалось создать комнату" }); }
+    }, 100);
   });
 }
 
