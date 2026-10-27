@@ -1204,7 +1204,7 @@ const META={
       const cp=spendCp(u),dur=a.base+a.perCp*cp;addDot(t,u,a.name,a.perSec*dur*dmgMult(u,"phys",{id:"rupture"}),dur,"phys");log(u,a.name,t);}},
   kidney:{school:"phys",target:true,finisher:true,
     desc:a=>`Завершающий приём: оглушение на ${a.base}+${a.perCp} с за каждый приём серии.`,
-    exec(u,t,a){swingFx(u,"kick");const cp=spendCp(u);if(cc(u,t,"stun",a.base+a.perCp*cp,a.name,{drc:"kidney"})&&rk(u,"impKidney")){const x=t.auras.find(z=>z.type==="stun"&&z.name===a.name&&z.until>now);if(x)x.ikPct=tv(u,"impKidney");}}},
+    exec(u,t,a){swingFx(u,"special");const cp=spendCp(u);if(cc(u,t,"stun",a.base+a.perCp*cp,a.name,{drc:"kidney"})&&rk(u,"impKidney")){const x=t.auras.find(z=>z.type==="stun"&&z.name===a.name&&z.until>now);if(x)x.ikPct=tv(u,"impKidney");}}},
   gouge:{school:"phys",target:true,
     desc:a=>`Выводит цель из строя на ${a.dur.toFixed(1)} с. Любой урон снимает эффект, ваша автоатака ждёт.`,
     exec(u,t,a){swingFx(u);damage(u,t,roll(a.dmg),a.name,"phys",{melee:true,id:"gouge",noProc:true});
@@ -1242,7 +1242,7 @@ const META={
       if(t.alive&&!u.lastHit.dodged&&!isImmune(t)){addAura(t,{type:"disarm",name:"Обезоружен",pct:B.warrior.abilities.disarm.pct,until:now+a.disarm,dt:"none"});statusText(t,"Обезоружен","#ffd100");}rogueHit(u,t);}},
   expose:{school:"phys",target:true,finisher:true,
     desc:a=>`Завершающий приём: броня цели ниже на ${a.perCp} за каждый приём серии, ${a.dur} с.`,
-    exec(u,t,a){swingFx(u);if(Math.random()*100<dodgeChance(t)){u.lastHit={dodged:true};combatMiss(u,t,"Уклонение");return}
+    exec(u,t,a){swingFx(u,"special");if(Math.random()*100<dodgeChance(t)){u.lastHit={dodged:true};combatMiss(u,t,"Уклонение");return}
       const cp=spendCp(u);addAura(t,{type:"expose",name:a.name,amount:Math.round(a.perCp*cp*(1+tv(u,"impExpose")/100)),until:now+a.dur,dt:"none"});statusText(t,a.name,"#ffd100");log(u,a.name,t);}},
   bladeflurry:{school:"phys",target:false,
     desc:a=>`${a.dur} с: скорость атаки +${a.haste}%, удары задевают ещё одного противника рядом.`,
