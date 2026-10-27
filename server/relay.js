@@ -15,7 +15,7 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 const PORT = +process.env.PORT || 8080;
-const MAX_GUESTS = 3;
+const MAX_GUESTS = 6;
 const MAX_ROOMS = 200;
 const MAX_PER_IP = 12;
 const ORIGINS = (process.env.ALLOWED_ORIGINS || "https://switer92.github.io").split(",").map(s => s.trim()).filter(Boolean);
@@ -93,7 +93,7 @@ function onConnect(ws, code, role, pub) {
       if (!m || typeof m !== "object") return;
       if (m.info && typeof m.info === "object") {
         const i = m.info, str = (v, n) => String(v || "").replace(/[<>]/g, "").slice(0, n);
-        room.info = { nick: str(i.nick, 16) || "Игрок", fmt: i.fmt === "2v2" ? "2v2" : "1v1", max: Math.min(4, Math.max(2, i.max | 0)), fight: !!i.fight };
+        room.info = { nick: str(i.nick, 16) || "Игрок", fmt: ["2v2", "3v3"].includes(i.fmt) ? i.fmt : "1v1", max: Math.min(6, Math.max(2, i.max | 0)), fight: !!i.fight };
         return;
       }
       if (m.kick) { const g = room.guests.get(m.kick); if (g) g.close(); return; }
@@ -149,7 +149,7 @@ function createRoom(req, res) {
     let code;
     do { code = Array.from({ length: 4 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.random() * 32 | 0]).join(""); } while (rooms.has(code) || sims.has(code));
     const nick = String(b.nick || "Игрок").replace(/[<>]/g, "").slice(0, 16);
-    const child = spawn(process.execPath, ["--max-old-space-size=256", path.join(__dirname, "sim.js"), code, b.mode === "2v2" ? "2v2" : "1v1", b.pub ? "1" : "0", nick, String(PORT)], { stdio: ["ignore", "inherit", "inherit"] });
+    const child = spawn(process.execPath, ["--max-old-space-size=256", path.join(__dirname, "sim.js"), code, ["2v2", "3v3"].includes(b.mode) ? b.mode : "1v1", b.pub ? "1" : "0", nick, String(PORT)], { stdio: ["ignore", "inherit", "inherit"] });
     sims.set(code, child);
     child.on("exit", () => sims.delete(code));
     const t0 = Date.now();

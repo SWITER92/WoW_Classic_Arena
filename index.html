@@ -302,6 +302,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
       <div class="group"><h2>Формат</h2><div class="opts" id="optMode"></div></div>
       <div class="group"><h2>Противник</h2><div class="opts cs-icons" id="optE"></div></div>
       <div class="group" id="duoPick" hidden><h2 id="optAh">Союзник</h2><div class="opts cs-icons" id="optA"></div><h2>Второй противник</h2><div class="opts cs-icons" id="optE2"></div></div>
+      <div class="group" id="trioPick" hidden><h2>Второй союзник</h2><div class="opts cs-icons" id="optA2"></div><h2>Третий противник</h2><div class="opts cs-icons" id="optE3"></div></div>
       <div class="group"><h2>Сложность</h2><div class="opts" id="optD"></div></div>
       <span class="note" id="modeNote"></span><span class="note" id="buildE"></span>
     </div>
@@ -831,7 +832,7 @@ const SCHOOL_NAME={phys:"Физический",frost:"Лёд",fire:"Огонь",
 const RES_NAME={rage:"ярости",mana:"маны",energy:"энергии"};
 const RES_COLOR={rage:"#e00000",mana:"#1a3cff",energy:"#ffe000"};
 const roll=r=>r[0]+Math.random()*(r[1]-r[0]);
-const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210};const GAME_VER="202610271931";
+const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210};const GAME_VER="202610271956";
 const ICON_COLS=16;
 function iconBg(key,size){const i=ICON[key]??ICON.a_q;return `background-size:${ICON_COLS*size}px auto;background-position:${-(i%ICON_COLS)*size}px ${-Math.floor(i/ICON_COLS)*size}px`}
 
@@ -1437,7 +1438,7 @@ const camera=new THREE.PerspectiveCamera(55,1,0.1,600);
 const hemi=new THREE.HemisphereLight(0xdfeeff,0x5a4a2c,0.85);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffe6c0,1.15);sun.position.set(40,70,25);sun.castShadow=true;
 sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-50,right:50,top:50,bottom:-50,near:1,far:200});sun.shadow.bias=-0.0006;scene.add(sun);
-for(const l of [hemi,sun])for(let i=1;i<=5;i++)l.layers.enable(i);
+for(const l of [hemi,sun])for(let i=1;i<=7;i++)l.layers.enable(i);
 /* портреты в рамках рисуются живыми: отдельный маленький рендерер смотрит на голову модели (слои 1 и 2) */
 let porR=null;try{porR=new THREE.WebGLRenderer({alpha:true,antialias:true});porR.setPixelRatio(1);porR.setSize(128,128,false);porR.outputEncoding=THREE.sRGBEncoding;}catch(e){porR=null}
 const porCam=new THREE.PerspectiveCamera(30,1,.05,30);
@@ -1666,10 +1667,16 @@ let now=0,state="menu",player=null,enemy=null,bot=null,units=[],bots=[],countEnd
 const projectiles=[],fxs=[],texts=[],zones=[];
 /* SRV: страница запущена на нашем сервере без графики и сама ведёт бой как хост; людей в ней нет, все игроки — гости */
 const SRVQ=new URLSearchParams(location.search),SRV=SRVQ.has("srv");
-const settings={nick:"",mode:"1v1",acls:"priest",ecls2:"rogue",pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
+/* форматы боя: размер команды и сдвиг бойцов поперёк туннеля */
+const MODES=[["1v1","1 на 1"],["2v2","2 на 2"],["3v3","3 на 3"]];
+const normMode=m=>MODES.some(x=>x[0]===m)?m:"1v1";
+const TSIZE=m=>m==="3v3"?3:m==="2v2"?2:1;
+const modeName=m=>(MODES.find(x=>x[0]===m)||MODES[0])[1];
+const latOf=(slot,S)=>S===1?0:S===2?(slot?2.5:-2.5):[-3.5,0,3.5][slot]||0;
+const settings={nick:"",mode:"1v1",acls:"priest",acls2:"mage",ecls2:"rogue",ecls3:"paladin",pcls:"warrior",ecls:"mage",diff:"normal",poisonMH:"deadly",poisonOH:"crip"};
 try{if(!SRV)Object.assign(settings,JSON.parse(store.get("arena-settings")||"{}"));}catch(e){}
-if(SRV){settings.mode=SRVQ.get("mode")==="2v2"?"2v2":"1v1";settings.nick=SRVQ.get("nick")||"Сервер";}
-if(!CLASSES.includes(settings.pcls))settings.pcls="warrior";if(!CLASSES.includes(settings.ecls))settings.ecls="mage";if(!CLASSES.includes(settings.acls))settings.acls="priest";if(!CLASSES.includes(settings.ecls2))settings.ecls2="rogue";
+if(SRV){settings.mode=normMode(SRVQ.get("mode"));settings.nick=SRVQ.get("nick")||"Сервер";}
+if(!CLASSES.includes(settings.pcls))settings.pcls="warrior";if(!CLASSES.includes(settings.ecls))settings.ecls="mage";if(!CLASSES.includes(settings.acls))settings.acls="priest";if(!CLASSES.includes(settings.ecls2))settings.ecls2="rogue";if(!CLASSES.includes(settings.acls2))settings.acls2="mage";if(!CLASSES.includes(settings.ecls3))settings.ecls3="paladin";settings.mode=normMode(settings.mode);
 const DIFF={easy:{label:"Новичок",react:.85,think:.35,talents:false},normal:{label:"Гладиатор",react:.45,think:.2,talents:true},hard:{label:"Чемпион",react:.2,think:.1,talents:true}};
 let wins={w:0,l:0};try{Object.assign(wins,JSON.parse(store.get("arena-wins")||"{}"));}catch(e){}
 function botTalents(cls){return DIFF[settings.diff].talents?autoBuild(cls,PRESETS[cls][BOT_PRESET[cls]]):{}}
@@ -3152,13 +3159,13 @@ function previewTick(dt){if(!PREV)return;const on=state==="menu"&&!$("#menu").hi
   if(!PREV.m.g.parent)scene.add(PREV.m.g);const y=GY(PREV.x,PREV.z);PREV.m.g.position.y=y;if(PREV.m.mixer)PREV.m.mixer.update(dt);
   const w=innerWidth>1100?0:0;camera.position.set(PREV.x+w,y+1.5,PREV.z+7.5);camera.lookAt(PREV.x+w,y+.45,PREV.z);}
 function renderMenu(){
-  const om=$("#optMode");om.innerHTML="";for(const [k,l] of [["1v1","1 на 1"],["2v2","2 на 2"]]){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
+  const om=$("#optMode");om.innerHTML="";for(const [k,l] of MODES){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
   let netR=null;try{netR=NET.role;}catch(e){}const coopNet=false;
-  $("#modeNote").textContent=settings.mode==="2v2"?(netR?"По сети: состав команд в лобби ниже, пустые места занимают боты. F2 или щелчок по союзнику: лечить его, F1: себя.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель. Лечение и защита идут на союзника после F2 или щелчка по нему, F1 возвращает на себя."):(netR?"По сети: дуэль, состав в лобби ниже.":"Дуэль против бота.");
-  $("#duoPick").hidden=settings.mode!=="2v2";$("#optAh").hidden=$("#optA").hidden=!!coopNet;
+  $("#modeNote").textContent=settings.mode!=="1v1"?(netR?"По сети: состав команд в лобби ниже, пустые места занимают боты. F2 или щелчок по союзнику: лечить его, F1: себя.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель. Лечение и защита идут на союзника после F2 или щелчка по нему, F1 возвращает на себя."):(netR?"По сети: дуэль, состав в лобби ниже.":"Дуэль против бота.");
+  $("#duoPick").hidden=settings.mode==="1v1";$("#trioPick").hidden=settings.mode!=="3v3";$("#optAh").hidden=$("#optA").hidden=!!coopNet;
   renderChars();
   $("#csBots").hidden=!!netR;
-  for(const [el,key] of [[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
+  for(const [el,key] of [[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"],[$("#optA2"),"acls2"],[$("#optE3"),"ecls3"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
   const od=$("#optD");od.innerHTML="";for(const [k,v] of Object.entries(DIFF)){const b=document.createElement("button");b.className="opt txt";b.textContent=v.label;b.setAttribute("aria-pressed",settings.diff===k);b.onclick=()=>setSetting("diff",k);od.appendChild(b);}
   $("#score").textContent=`Побед ${wins.w} · поражений ${wins.l}`;
   const pt=myTal[settings.pcls],free=B.general.maxTalentPoints-totalPts(pt);$("#buildP").textContent=`Таланты: ${buildSummary(settings.pcls,pt)}${free>0?` (свободно ${free})`:""}`;
@@ -3175,13 +3182,14 @@ function startRound(){if(SRV_PENDING)applyServerBalance();
   if(NET.role==="client"){if(NET.srvRoom&&NET.tx){NET.tx.send({t:"ready",v:true});showErr("Готов. Бой начнётся, когда будут готовы все");}else showErr("Новый бой начинает хост");return}
   if(NET.role==="host"&&netGuests().length){startNetRound();return}
   clearArena();
-  const off=ARENA_R*.7,duo=settings.mode==="2v2";
-  player=new Unit(settings.pcls,true,...spawnXZ(0,duo?-2.5:0),{...myTal[settings.pcls]});
-  enemy=new Unit(settings.ecls,false,...spawnXZ(1,duo?-2.5:0),botTalents(settings.ecls));
+  const S=TSIZE(settings.mode),duo=S>1;
+  player=new Unit(settings.pcls,true,...spawnXZ(0,latOf(0,S)),{...myTal[settings.pcls]});
+  enemy=new Unit(settings.ecls,false,...spawnXZ(1,latOf(0,S)),botTalents(settings.ecls));
   units=[player,enemy];NET.friend=null;
-  if(duo){
-    const al=new Unit(settings.acls,false,...spawnXZ(0,2.5),botTalents(settings.acls),{team:0,friendly:true,layer:3});al.name=B[al.cls].name+" (союзник)";
-    const e2=new Unit(settings.ecls2,false,...spawnXZ(1,2.5),botTalents(settings.ecls2),{team:1,layer:4});
+  const AC=[settings.acls,settings.acls2],EC=[settings.ecls2,settings.ecls3];let lay=3;
+  for(let k=1;k<S;k++){
+    const al=new Unit(AC[k-1],false,...spawnXZ(0,latOf(k,S)),botTalents(AC[k-1]),{team:0,friendly:true,layer:lay++});al.name=B[al.cls].name+" (союзник)";
+    const e2=new Unit(EC[k-1],false,...spawnXZ(1,latOf(k,S)),botTalents(EC[k-1]),{team:1,layer:lay++});
     units.push(al,e2);}
   for(const u of units)u.facing=spawnFacing(u.team);yaw=spawnYaw(0);pitch=.3;
   setTarget(player,enemy);
@@ -3199,12 +3207,12 @@ function roundBegin(){
 function startNetRound(){
   const L=netLobby();if(L.over){showErr("Слишком много игроков для 1 на 1");return}
   clearArena();
-  const off=ARENA_R*.7,duo=L.mode==="2v2",my=NET.myTeam||0,order=[];
-  for(let k=0;k<(duo?2:1);k++)for(const t of [0,1])order.push({...L.teams[t][k],team:t,slot:k});
+  const S=TSIZE(L.mode),my=NET.myTeam||0,order=[];
+  for(let k=0;k<S;k++)for(const t of [0,1])order.push({...L.teams[t][k],team:t,slot:k});
   let lay=2;NET.friend=null;
   units=order.map(p=>{const mine=p.id==="host",g=!p.bot&&!mine?NET.peers[p.id]:null;
     const cls=mine?settings.pcls:g?g.cls:p.cls,tal=cleanTal(cls,mine?myTal[settings.pcls]:g?g.tal:botTalents(cls));
-    const u=new Unit(cls,mine,...spawnXZ(p.team,duo?(p.slot?2.5:-2.5):0),tal,{team:p.team,friendly:p.team===my,layer:mine?1:lay++});
+    const u=new Unit(cls,mine,...spawnXZ(p.team,latOf(p.slot,S)),tal,{team:p.team,friendly:p.team===my,layer:mine?1:lay++});
     if(g){u.name=g.nick;u.netId=p.id;g.unit=u;if(u.cls==="rogue"){const P=B.rogue.poisons;u.poisonMH=P[g.pmh]?g.pmh:"deadly";u.poisonOH=P[g.poh]?g.poh:"crip";}if(!NET.friend)NET.friend=u;}else if(p.bot&&p.team===my)u.name=B[cls].name+" (союзник)";
     u.facing=spawnFacing(p.team);return u;});
   player=units.find(u=>u.isPlayer);
@@ -3360,7 +3368,7 @@ const NET={role:null,tx:null,code:"",peers:{},lobby:null,myId:"",myTeam:0,rtt:0,
 const NET_PREFIX="wowarena-";
 function netLoadPeer(){return new Promise((res,rej)=>{if(window.Peer)return res();const s=document.createElement("script");s.src="assets/peerjs.min.js";s.onload=()=>res();s.onerror=()=>rej(new Error("PeerJS не загрузился"));document.head.appendChild(s);});}
 /* транспорт: у хоста несколько гостей (send всем, sendTo одному, onmsg(o,id), onopen(id), onclose(id)), у гостя один хост */
-const NET_MAX_GUESTS=3;
+const NET_MAX_GUESTS=5;
 function bcTransport(code,role){const ch=new BroadcastChannel("arena-"+code),me=Math.random().toString(36).slice(2),T={id:me,peers:new Set(),
     send(o){ch.postMessage({from:me,role,o});},sendTo(id,o){ch.postMessage({from:me,role,to:id,o});},close(){try{ch.postMessage({from:me,role,o:{t:"bye"}});}catch(e){}ch.close();}};
   T.sendFast=T.send;T.sendFastTo=T.sendTo;T.drop=id=>T.peers.delete(id);
@@ -3420,7 +3428,7 @@ function wsTransport(url,code,role){return new Promise((res,rej)=>{
       if(m.t==="_close"){if(T.peers.delete(m.id))T.onclose&&T.onclose(m.id);return}
       if(m.t==="_m"&&T.peers.has(m.from)){T.onmsg&&T.onmsg(m.o,m.from);}return}
     if(m.t==="_open"){T.open=true;fin(true,T);setTimeout(()=>T.onopen&&T.onopen(),0);return}
-    if(m.t==="full"&&!done){netStatus(`Комната ${code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игрока.`);fin(false,{type:"full",final:true});return}
+    if(m.t==="full"&&!done){netStatus(`Комната ${code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игроков.`);fin(false,{type:"full",final:true});return}
     if(m.t==="_close")return;
     T.onmsg&&T.onmsg(m);};
   ws.onerror=()=>fin(false,{type:"network"});
@@ -3440,23 +3448,23 @@ async function netJoin(){netLeave();const code=($("#netCode").value||"").trim().
   netWire();renderNet();
   clearTimeout(NET.joinT);NET.joinT=setTimeout(()=>{if(NET.role==="client"&&!NET.lobby)netStatus("Хост не отвечает. Проверьте код комнаты и что хост не закрыл вкладку.");},12000);}
 /* --- состав комнаты: у хоста NET.peers[id]={nick,cls,tal,team,rtt}, сам хост в NET.myTeam --- */
-const netSize=()=>settings.mode==="2v2"?2:1;
+const netSize=()=>TSIZE(settings.mode);
 const netGuests=()=>Object.entries(NET.peers||{}).filter(([,g])=>g.cls);
 function netHumans(){const L=SRV?[]:[{id:"host",nick:myNick(),cls:settings.pcls,team:NET.myTeam||0,host:1}];for(const [id,g] of netGuests())L.push({id,nick:g.nick,cls:g.cls,team:g.team,ready:!!g.ready,rtt:g.rtt||0});return L;}
 /* свободное место: в 1 на 1 первый гость идёт против хоста, в 2 на 2 сначала к хосту */
-function netAutoTeam(skip){const n=[0,0];for(const h of netHumans())if(h.id!==skip)n[h.team]++;const pref=settings.mode==="2v2"?[NET.myTeam||0,1-(NET.myTeam||0)]:[1-(NET.myTeam||0),NET.myTeam||0];
+function netAutoTeam(skip){const n=[0,0];for(const h of netHumans())if(h.id!==skip)n[h.team]++;const pref=settings.mode!=="1v1"?[NET.myTeam||0,1-(NET.myTeam||0)]:[1-(NET.myTeam||0),NET.myTeam||0];
   for(const t of pref)if(n[t]<netSize())return t;return n[0]<=n[1]?0:1;}
 function netFixTeams(){const S=netSize();for(let pass=0;pass<2;pass++){const n=[0,0];for(const h of netHumans())n[h.team]++;
   for(const t of [0,1])if(n[t]>S&&n[1-t]<S){const g=netGuests().reverse().find(([,g])=>g.team===t);if(g){g[1].team=1-t;}}}}
 /* боты занимают пустые места: у команды хоста класс союзника, у другой — классы противников */
-function netBotCls(team){return team===(NET.myTeam||0)?[settings.acls,settings.ecls2]:[settings.ecls,settings.ecls2];}
+function netBotCls(team){return team===(NET.myTeam||0)?[settings.acls,settings.acls2]:[settings.ecls,settings.ecls2,settings.ecls3];}
 function netLobby(){netFixTeams();const H=netHumans(),S=netSize(),teams=[[],[]];
   for(const h of H)teams[h.team].push(h);
   for(const t of [0,1]){const bc=netBotCls(t);let k=0;while(teams[t].length<S)teams[t].push({bot:1,cls:bc[k++]||settings.ecls,team:t});}
   return{mode:settings.mode,diff:settings.diff,over:H.length>2*S,teams:teams.map(L=>L.map(p=>({id:p.id,nick:p.nick,cls:p.cls,host:p.host?1:0,bot:p.bot?1:0,ready:p.ready?1:0,rtt:p.rtt||0})))};}
 function netLobbyIn(L){if(!L||typeof L!=="object"||!Array.isArray(L.teams))return null;
-  const team=a=>(Array.isArray(a)?a:[]).slice(0,2).map(p=>({id:String(p&&p.id||""),nick:cleanNick(p&&p.nick)||"Игрок",cls:CLASSES.includes(p&&p.cls)?p.cls:"warrior",host:p&&p.host?1:0,bot:p&&p.bot?1:0,ready:p&&p.ready?1:0,rtt:+(p&&p.rtt)||0}));
-  return{mode:L.mode==="2v2"?"2v2":"1v1",diff:DIFF[L.diff]?L.diff:"normal",over:!!L.over,teams:[team(L.teams[0]),team(L.teams[1])]};}
+  const team=a=>(Array.isArray(a)?a:[]).slice(0,3).map(p=>({id:String(p&&p.id||""),nick:cleanNick(p&&p.nick)||"Игрок",cls:CLASSES.includes(p&&p.cls)?p.cls:"warrior",host:p&&p.host?1:0,bot:p&&p.bot?1:0,ready:p&&p.ready?1:0,rtt:+(p&&p.rtt)||0}));
+  return{mode:normMode(L.mode),diff:DIFF[L.diff]?L.diff:"normal",over:!!L.over,teams:[team(L.teams[0]),team(L.teams[1])]};}
 function netSendLobby(){if(NET.role!=="host"||!NET.tx)return;const L=netLobby();for(const id of Object.keys(NET.peers))NET.tx.sendTo(id,{t:"lobby",you:id,lobby:L});}
 function netWire(){const T=NET.tx;
   if(NET.role==="host"){
@@ -3482,7 +3490,7 @@ function netWire(){const T=NET.tx;
       else if(o.t==="cancel"&&g.unit&&units.includes(g.unit))cancelCast(g.unit);
     }else{
       if(o.t==="oldver"){netStatus("У хоста другая версия игры. Обновите страницу (Ctrl+F5), и пусть хост тоже обновит.");const c=NET.code;netLeave();NET.code=c;return}
-      if(o.t==="full"){netStatus(`Комната ${NET.code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игрока.`);const c=NET.code;netLeave();NET.code=c;return}
+      if(o.t==="full"){netStatus(`Комната ${NET.code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игроков.`);const c=NET.code;netLeave();NET.code=c;return}
       if(o.t==="lobby"){const first=!NET.lobby;NET.lobby=netLobbyIn(o.lobby);NET.myId=String(o.you||"");if(NET.lobby){const h=NET.lobby.teams.flat().find(p=>p.host);NET.srvRoom=!h;if(first)netStatus(h?`Вы в комнате ${NET.code} у игрока ${h.nick}. Бой начинает он.`:`Вы в комнате ${NET.code} на сервере. Бой начнётся, когда все нажмут «Готов».`);}renderNet();}
       else if(o.t==="start")netClientStart(o);
       else if(o.t==="snap"){if(o.n&&NET.snapN&&o.n<NET.snapN)return;NET.snapN=o.n||0;NET.lastSnap=o;}
@@ -3505,7 +3513,7 @@ function renderLobby(){const el=$("#lobby");if(!el)return;if(!NET.role){el.hidde
   if(!L){const n=document.createElement("div");n.className="note";n.textContent=`Комната ${NET.code}: ждём ответа хоста…`;el.appendChild(n);return}
   L.teams.forEach((list,ti)=>{const col=document.createElement("div");col.className="lteam";
     const h=document.createElement("h3");h.textContent="Команда "+(ti+1);col.appendChild(h);
-    const inTeam=list.some(p=>p.id===myId),free=list.filter(p=>!p.bot).length<(L.mode==="2v2"?2:1);
+    const inTeam=list.some(p=>p.id===myId),free=list.filter(p=>!p.bot).length<TSIZE(L.mode);
     for(const p of list){const me=p.id===myId,row=document.createElement("div");row.className="lp"+(me?" me":"")+(p.bot?" bot":"");
       const i=document.createElement("i");i.style.cssText=iconBg("cls_"+p.cls,20);row.appendChild(i);
       const b=document.createElement("b");b.textContent=p.bot?"Бот":p.nick;row.appendChild(b);
@@ -3515,7 +3523,7 @@ function renderLobby(){const el=$("#lobby");if(!el)return;if(!NET.role){el.hidde
   if(!host&&state!=="fight"&&state!=="countdown"){const me=L.teams.flat().find(p=>p.id===myId),rd=!!(me&&me.ready);const bt=document.createElement("button");bt.className="btn";bt.textContent=rd?"Не готов":"Готов";
     bt.onclick=()=>{if(NET.tx)NET.tx.send({t:"ready",v:!rd});};el.appendChild(bt);}
   const n=document.createElement("div");n.className="note";const cnt=L.teams.flat().filter(p=>!p.bot).length;
-  n.textContent=`Комната ${NET.code} · ${L.mode==="2v2"?"2 на 2":"1 на 1"} · людей ${cnt}${L.over?` из ${netGuestsCount(L)}: в 1 на 1 играют двое, переключите на 2 на 2`:""}${!host&&NET.rtt?` · пинг до хоста ${NET.rtt} мс`:""}${NET.via==="server"?" · через сервер":NET.via==="p2p"?" · напрямую":""}`;el.appendChild(n);}
+  n.textContent=`Комната ${NET.code} · ${modeName(L.mode)} · людей ${cnt}${L.over?` из ${netGuestsCount(L)}: игроков больше, чем мест, выберите формат побольше`:""}${!host&&NET.rtt?` · пинг до хоста ${NET.rtt} мс`:""}${NET.via==="server"?" · через сервер":NET.via==="p2p"?" · напрямую":""}`;el.appendChild(n);}
 const netGuestsCount=L=>NET.role==="host"?netHumans().length:L.teams.flat().filter(p=>!p.bot).length;
 function renderNet(){renderLobby();{const ls=$("#lobbyStart");if(ls){ls.hidden=!NET.role;}const bl=$("#btnLobby");if(bl)bl.textContent=NET.role?"Лобби · в комнате":"Лобби";}const on=!!NET.role;$("#netPubRow").hidden=on;$("#pubBox").hidden=on;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
   const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{const gs=netGuests(),rd=gs.filter(([,g])=>g.ready).length;b.textContent=NET.role==="host"?(gs.length?`В бой (готовы ${rd} из ${gs.length})`:"В бой (по сети)"):"На арену";if(NET.role==="host")b.disabled=!netGuests().length||netHumans().length>2*netSize();else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
@@ -3599,9 +3607,9 @@ function netHostTick(){if(NET.role!=="host"||!NET.tx||!player||!units.length)ret
 /* --- второй игрок --- */
 function netClientStart(o){
   clearArena();
-  const R=Array.isArray(o.ros)?o.ros:[{cls:o.cls,tal:o.tal,team:0,host:1},{cls:settings.pcls,tal:myTal[settings.pcls],team:1}],me=o.me??1,my=R[me].team,off=ARENA_R*.7;let lay=2;
-  units=R.map((r,i)=>{const mine=i===me,cls=CLASSES.includes(r.cls)?r.cls:"warrior",duo=R.length>2;
-    const u=new Unit(mine?settings.pcls:cls,mine,...spawnXZ(r.team,duo?(i<2?-2.5:2.5):0),cleanTal(mine?settings.pcls:cls,mine?myTal[settings.pcls]:r.tal),{team:r.team,friendly:r.team===my,layer:mine?1:lay++});
+  const R0=Array.isArray(o.ros)?o.ros:[{cls:o.cls,tal:o.tal,team:0,host:1},{cls:settings.pcls,tal:myTal[settings.pcls],team:1}],R=R0.slice(0,6),me=o.me??1,my=R[me].team,S=Math.max(1,R.length>>1);let lay=2;
+  units=R.map((r,i)=>{const mine=i===me,cls=CLASSES.includes(r.cls)?r.cls:"warrior";
+    const u=new Unit(mine?settings.pcls:cls,mine,...spawnXZ(r.team,latOf(i>>1,S)),cleanTal(mine?settings.pcls:cls,mine?myTal[settings.pcls]:r.tal),{team:r.team,friendly:r.team===my,layer:mine?1:lay++});
     if(!mine&&r.nick)u.name=cleanNick(r.nick)||"Игрок";else if(!mine&&r.team===my)u.name=B[cls].name+" (союзник)";u.facing=spawnFacing(r.team);return u;});
   player=units[me];setTarget(player,units.find(u=>u.team!==my));yaw=spawnYaw(my);pitch=.3;buildTeams();
   if(player.cls==="rogue"){player.poisonMH=settings.poisonMH;player.poisonOH=settings.poisonOH;}
@@ -3638,14 +3646,14 @@ $("#netHost").onclick=netCreate;$("#netJoin").onclick=netJoin;$("#netLeave").onc
 $("#netCode").addEventListener("keydown",e=>{if(e.key==="Enter")netJoin();});
 /* общий список: сколько людей в игре и открытые комнаты с сервера; хост сообщает серверу состояние своей комнаты */
 const PUB_URL=netWsUrl().replace(/^ws/,"http").replace(/\/arena$/,"/arena/api/lobby");
-function netPubInfo(){if(NET.role==="host"&&NET.pub&&NET.tx&&NET.tx.info)NET.tx.info({nick:myNick(),fmt:settings.mode==="2v2"?"2v2":"1v1",max:settings.mode==="2v2"?4:2,fight:state==="fight"||state==="countdown"});}
+function netPubInfo(){if(NET.role==="host"&&NET.pub&&NET.tx&&NET.tx.info)NET.tx.info({nick:myNick(),fmt:settings.mode,max:2*netSize(),fight:state==="fight"||state==="countdown"});}
 setInterval(netPubInfo,3000);
 function pubRefresh(){if(location.protocol==="file:"||NET.role||$("#menu").hidden)return;
   fetch(PUB_URL,{cache:"no-store"}).then(r=>r.json()).then(j=>{
     $("#pubOnline").textContent=`Сейчас в игре: ${j.online}`;const el=$("#pubList");el.textContent="";
     if(!j.rooms.length){const d=document.createElement("div");d.className="note";d.textContent="Открытых комнат нет. Создайте свою.";el.appendChild(d);return}
     for(const r of j.rooms){const d=document.createElement("div");d.style.cssText="display:flex;gap:8px;align-items:center;margin:3px 0";
-      const t=document.createElement("span");t.textContent=`${r.nick} · ${r.fmt==="2v2"?"2 на 2":"1 на 1"} · ${r.n}/${r.max}${r.fight?" · идёт бой":""}`;d.appendChild(t);
+      const t=document.createElement("span");t.textContent=`${r.nick} · ${modeName(r.fmt)} · ${r.n}/${r.max}${r.fight?" · идёт бой":""}`;d.appendChild(t);
       const b=document.createElement("button");b.className="btn";b.textContent="Войти";b.disabled=r.n>=r.max;b.onclick=()=>{$("#netCode").value=r.code;netJoin();};d.appendChild(b);el.appendChild(d);}
   }).catch(()=>{$("#pubOnline").textContent="Сервер комнат недоступен";});}
 setTimeout(pubRefresh,1500);setInterval(pubRefresh,5000);
