@@ -45,13 +45,11 @@ mkdir -p "$DIR/data/history"
 chown -R arena:arena "$DIR"
 chmod 700 "$DIR/data"
 
-# пароль админки: sudo arena-admin-password (спросит пароль дважды, хранится только хеш)
+# пароль админки: sudo arena-admin-password (пароль виден при вводе, хранится только хеш)
 cat > /usr/local/bin/arena-admin-password <<'EOF'
 #!/bin/bash
 set -e
-read -r -s -p "Новый пароль админки: " P1; echo
-read -r -s -p "Ещё раз: " P2; echo
-[ "$P1" = "$P2" ] || { echo "Пароли не совпали"; exit 1; }
+read -r -p "Новый пароль админки (виден при вводе): " P1
 [ ${#P1} -ge 8 ] || { echo "Нужно хотя бы 8 символов"; exit 1; }
 P="$P1" node -e 'const c=require("crypto"),s=c.randomBytes(16);process.stdout.write(JSON.stringify({salt:s.toString("hex"),hash:c.scryptSync(process.env.P,s,64).toString("hex")}))' > /opt/arena/data/admin.json
 chown arena:arena /opt/arena/data/admin.json; chmod 600 /opt/arena/data/admin.json
