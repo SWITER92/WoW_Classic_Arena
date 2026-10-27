@@ -16,6 +16,8 @@ const TOKEN_TTL = 12 * 3600 * 1000;
 const BAD = new Set(["__proto__", "constructor", "prototype"]);
 
 const tokens = new Map();
+const online = new Map();
+let relayStats = () => ({ rooms: 0, players: 0 });
 const fails = new Map();
 
 try { fs.mkdirSync(HIST, { recursive: true }); } catch (e) {}
@@ -68,8 +70,23 @@ function json(req, res, code, o) {
   res.end(JSON.stringify(o));
 }
 
+const flat = (o, pre, out) => { for (const k in o || {}) { const v = o[k], p = pre.concat(k); if (v && typeof v === "object" && !Array.isArray(v)) flat(v, p, out); else out.push(p); } return out; };
+const getp = (o, p) => p.reduce((a, k) => a == null ? a : a[k], o);
+/* что изменилось относительно прошлой версии: путь, было, стало */
+function diff(prev, next) {
+  const keys = new Map();
+  for (const p of flat(prev, [], []).concat(flat(next, [], []))) keys.set(p.join("\u0001"), p);
+  const out = [];
+  for (const p of keys.values()) {
+    const d = getp(DEFAULTS.def, p), a = getp(prev, p), b = getp(next, p);
+    const from = a !== undefined ? a : d, to = b !== undefined ? b : d;
+    if (JSON.stringify(from) !== JSON.stringify(to)) out.push({ p, from, to });
+  }
+  return out;
+}
+
 function publish(data, note) {
-  const v = { version: current.version + 1, at: new Date().toISOString(), note: String(note || "").slice(0, 300), data };
+  const v = { version: current.version + 1, at: new Date().toISOString(), note: String(note || "").slice(0, 300), data, changes: diff(current.data, data) };
   writeJson(path.join(HIST, v.version + ".json"), v);
   writeJson(path.join(DATA, "balance.json"), v);
   current = v;
@@ -91,6 +108,13 @@ async function handle(req, res) {
     if (req.method === "OPTIONS") { json(req, res, 204, {}); return true; }
     if (r === "balance" && req.method === "GET") { json(req, res, 200, { version: current.version, at: current.at, data: current.data }); return true; }
     if (r === "defaults" && req.method === "GET") { json(req, res, 200, DEFAULTS); return true; }
+    if (r === "ping" && req.method === "POST") {
+      const b = await body(req);
+      if (typeof b.sid === "string" && /^[a-z0-9]{8,32}$/.test(b.sid) && (online.has(b.sid) || online.size < 5000))
+        online.set(b.sid, { t: Date.now(), fight: !!b.fight, net: !!b.net });
+      json(req, res, 200, { ok: true });
+      return true;
+    }
     if (r === "login" && req.method === "POST") {
       const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
       const f = fails.get(ip) || { n: 0, until: 0 };
@@ -113,9 +137,16 @@ async function handle(req, res) {
       json(req, res, 200, { version: v.version, at: v.at });
       return true;
     }
+    if (r === "overview" && req.method === "GET") {
+      const t = Date.now(), list = [...online.values()].filter(o => t - o.t < 75000);
+      const last = current.version ? readJson(path.join(HIST, current.version + ".json"), {}) : null;
+      json(req, res, 200, { online: list.length, fight: list.filter(o => o.fight).length, net: list.filter(o => o.net).length, relay: relayStats(),
+        version: current.version, overrides: count(current.data), last: last && { version: last.version, at: last.at, note: last.note, changes: last.changes || [] } });
+      return true;
+    }
     if (r === "history" && req.method === "GET") {
       const list = fs.readdirSync(HIST).map(f => parseInt(f)).filter(n => n > 0).sort((a, b) => b - a).slice(0, 100)
-        .map(n => { const v = readJson(path.join(HIST, n + ".json"), {}); return { version: n, at: v.at, note: v.note, changes: count(v.data) }; });
+        .map(n => { const v = readJson(path.join(HIST, n + ".json"), {}); return { version: n, at: v.at, note: v.note, total: count(v.data), changes: v.changes || [] }; });
       json(req, res, 200, { current: current.version, list });
       return true;
     }
@@ -136,6 +167,6 @@ async function handle(req, res) {
 
 function count(o) { let n = 0; for (const k in o || {}) n += o[k] && typeof o[k] === "object" && !Array.isArray(o[k]) ? count(o[k]) : 1; return n; }
 
-setInterval(() => { const t = Date.now(); for (const [k, v] of tokens) if (v < t) tokens.delete(k); }, 600000);
+setInterval(() => { const t = Date.now(); for (const [k, v] of tokens) if (v < t) tokens.delete(k); for (const [k, v] of online) if (t - v.t > 120000) online.delete(k); }, 60000);
 
-module.exports = { handle };
+module.exports = { handle, setRelayStats: f => { relayStats = f; } };

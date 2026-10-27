@@ -116,4 +116,5 @@ setInterval(() => {
   }
 }, 15000);
 
+admin.setRelayStats(() => ({ rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + 1 + r.guests.size, 0) }));
 server.listen(PORT, "127.0.0.1", () => console.log(`arena relay on 127.0.0.1:${PORT}`));

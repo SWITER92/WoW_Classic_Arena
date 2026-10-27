@@ -49,6 +49,17 @@ main h2{margin:0 0 4px;color:var(--gold);font-weight:normal}
 .diff{width:100%;border-collapse:collapse;font-size:13px}.diff td{padding:4px 6px;border-bottom:1px solid var(--line)}.diff .o{color:var(--dim);text-decoration:line-through}.diff .nw{color:var(--chgl)}
 .hist{width:100%;border-collapse:collapse}.hist td,.hist th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}.hist th{color:var(--dim);font-weight:normal}
 .cur{color:var(--gold)}
+.ds{color:#c9bfa8;font-size:13px;margin:2px 0 6px}
+.rs{margin-left:6px;background:none;border:0;color:var(--gold2);cursor:pointer;padding:0;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:18px}.st{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;color:var(--dim)}.st b{display:block;font-size:28px;color:var(--gold);font-weight:normal}
+.h3{color:var(--gold2);font-weight:normal}
+.trees{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.ttree{background:#000 center/cover no-repeat;border:1px solid var(--line);border-radius:6px;padding:10px}.ttree h3{margin:0 0 8px;color:var(--gold);font-weight:normal;text-shadow:0 1px 2px #000}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:52px;gap:6px;justify-items:center}
+.tal{position:relative;z-index:1;width:42px;height:42px;padding:0;border:1px solid #000;border-radius:3px;background-image:url(https://switer92.github.io/WoW_Classic_Arena/assets/ui/icons.webp);box-shadow:0 0 0 2px #3b3b3b;cursor:pointer}
+.tal i{position:absolute;right:-6px;bottom:-6px;font-style:normal;font-size:11px;background:#000;color:var(--chgl);border-radius:3px;padding:0 3px}
+.tal.sel{box-shadow:0 0 0 2px var(--gold)}.tal.chg{box-shadow:0 0 0 2px var(--chgl)}.tal.pub{box-shadow:0 0 0 2px var(--gold2)}
+.tar{justify-self:center;width:6px;margin:26px 0;background:#e8c440;opacity:.7}.tar.h{width:auto;height:6px;justify-self:stretch;align-self:center;margin:0 25%}
 .search{padding:6px 8px;background:#000;border:1px solid var(--line);border-radius:4px;width:260px;margin-bottom:12px}
 @media (max-width:760px){#app{grid-template-columns:1fr}nav{grid-row:auto;display:flex;flex-wrap:wrap}nav h3{display:none}.foot{left:0}}
 </style>
@@ -67,7 +78,7 @@ main h2{margin:0 0 4px;color:var(--gold);font-weight:normal}
 const API="/arena/api/";
 const CLS={warrior:"Воин",mage:"Маг",rogue:"Разбойник",paladin:"Паладин",priest:"Жрец"};
 const LBL={cd:"Восстановление, с",dur:"Длительность, с",range:"Дальность, м",minRange:"Мин. дальность, м",cost:"Стоимость",cast:"Чтение, с",channel:"Канал, с",ticks:"Тиков",dmg:"Урон",heal:"Исцеление",radius:"Радиус, м",slow:"Замедление, %",slowDur:"Замедление, с",root:"Обездвиживание, с",stun:"Оглушение, с",absorb:"Поглощение",lockout:"Блок школы, с",speed:"Скорость, %",dodge:"Уклонение, %",crit:"Крит, %",dot:"Урон доты",dotDur:"Дота, с",total:"Урон всего",chance:"Шанс, %",pct:"Процент",hp:"Здоровье",maxRes:"Макс. ресурс",startRes:"Ресурс на старте",armor:"Броня",interval:"Скорость атаки, с",cp:"Приёмы серии",perCp:"За приём серии",base:"База",charges:"Заряды",window:"Окно, с",haste:"Скорость атаки, %",disarm:"Обезоруживание, с",bonus:"Бонус",reduce:"Снижение, %",ratio:"Мана за урон",rageGain:"Ярость",healReduce:"Снижение лечения, %",healDur:"Снижение лечения, с",manaRegen:"Мана/с",energyRegen:"Энергия/с",dist:"Расстояние, м",stacks:"Стаки",costUp:"Рост стоимости, %",perSec:"Урон/с",step:"Шаг",v:"Значение за ранг"};
-let D,ICONS,over={},edits={},token=sessionStorage.getItem("arenaToken")||"",view="general",curVer=0;
+let D,ICONS,over={},edits={},token=sessionStorage.getItem("arenaToken")||"",view="overview",curVer=0,ovTimer=0,talSel=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
 const get=(o,p)=>p.reduce((a,k)=>a==null?a:a[k],o);
@@ -80,17 +91,19 @@ function logout(){token="";sessionStorage.removeItem("arenaToken");$("#app").sty
 async function login(){$("#lerr").textContent="";try{const j=await api("login",{password:$("#pw").value});token=j.token;sessionStorage.setItem("arenaToken",token);$("#pw").value="";await start();}catch(e){$("#lerr").textContent=e.message}}
 $("#lbtn").onclick=login;$("#pw").onkeydown=e=>{if(e.key==="Enter")login()};$("#out").onclick=logout;
 async function load(){const b=await api("balance");over=b.data||{};curVer=b.version;$("#ver").textContent=b.version?`версия ${b.version} · ${new Date(b.at).toLocaleString("ru")}`:"правок ещё нет, всё по умолчанию";}
-async function start(){if(!D){const d=await api("defaults");D=d.def;ICONS=d.icons;}await api("history");await load();edits={};$("#login").style.display="none";$("#app").style.display="grid";render();}
+async function start(){if(!D){const d=await api("defaults");D=d.def;ICONS=d.icons;D.orig=d.orig||{};D.desc=d.desc||{};D.treeBg=d.treeBg||{};D.metaIcon=d.metaIcon||{};}await api("history");await load();edits={};$("#login").style.display="none";$("#app").style.display="grid";render();}
 /* значение: черновик → опубликовано → по умолчанию */
 const val=p=>{const e=get(edits,p);if(e!==undefined)return e;const o=get(over,p);return o!==undefined?o:get(D,p)};
 const nEdits=pre=>flat(edits,[],[]).filter(([p])=>!pre||p.join(".").startsWith(pre)).length;
 function field(p,label){const d=get(D,p),v=val(p),o=get(over,p),changed=get(edits,p)!==undefined;const cls="f"+(Array.isArray(d)?" arr":"")+(changed?" chg":"");
-  const pub=o!==undefined?o:d,hint=changed?`было ${Array.isArray(pub)?pub.join("–"):pub}`:o!==undefined?`по умолч. ${Array.isArray(d)?d.join("–"):d}`:"";
+  const pub=o!==undefined?o:d,og=p[1]==="abilities"&&D.orig[p[0]]&&D.orig[p[0]][p[2]]?D.orig[p[0]][p[2]][p[3]]:undefined;
+  const hint=(changed?`было ${fmt(pub)}`:o!==undefined?`по умолч. ${fmt(d)}`:"")+(og!==undefined?`${changed||o!==undefined?" · ":""}1.12: ${og}`:"");
+  const reset=JSON.stringify(v)!==JSON.stringify(d)?`<button class="rs" title="Вернуть значение по умолчанию (${esc(fmt(d))})" data-rs='${esc(JSON.stringify(p))}'>↺</button>`:"";
   const key=esc(JSON.stringify(p));
   const inputs=Array.isArray(d)?`<div class="row">${v.map((x,i)=>`<input data-p='${key}' data-i="${i}" value="${x}" inputmode="decimal">`).join("")}</div>`:`<input data-p='${key}' value="${v}" inputmode="decimal">`;
-  return `<label class="${cls}">${esc(label||LBL[p[p.length-1]]||p[p.length-1])}${inputs}<span class="def">${esc(hint)}</span></label>`}
+  return `<label class="${cls}">${esc(label||LBL[p[p.length-1]]||p[p.length-1])}${inputs}<span class="def">${esc(hint)}${reset}</span></label>`}
 function numFields(base,obj,skip){return Object.keys(obj).filter(k=>!skip||!skip.includes(k)).filter(k=>typeof obj[k]==="number"||Array.isArray(obj[k])&&obj[k].every(x=>typeof x==="number")).map(k=>field(base.concat(k))).join("")}
-function navRender(){const n=$("#nav");let h=`<h3>Общее</h3><a data-v="general">Общие правила${badge("general")}</a><h3>Классы</h3>`;
+function navRender(){const n=$("#nav");let h=`<h3>Общее</h3><a data-v="overview">Обзор</a><a data-v="general">Общие правила${badge("general")}</a><h3>Классы</h3>`;
   for(const c in CLS)h+=`<a data-v="cls:${c}"><i class="ic" style="width:20px;height:20px;${smallIcon("cls_"+c,20)}"></i>${CLS[c]}${badge(c)}</a>`;
   h+=`<h3>Таланты</h3>`;for(const c in CLS)h+=`<a data-v="tal:${c}">${CLS[c]}${badge("talents."+c)}</a>`;
   h+=`<h3>Сервер</h3><a data-v="history">История изменений</a>`;n.innerHTML=h;
@@ -98,29 +111,47 @@ function navRender(){const n=$("#nav");let h=`<h3>Общее</h3><a data-v="gene
 const badge=pre=>{const k=nEdits(pre);return k?`<span class="n">${k}</span>`:""};
 function smallIcon(k,s){const i=ICONS[k]??0;return `background-size:${16*s}px auto;background-position:${-(i%16)*s}px ${-Math.floor(i/16)*s}px`}
 async function render(){navRender();const m=$("#main");
-  if(view==="general"){const g=D.general;m.innerHTML=`<h2>Общие правила</h2><p class="sub">Глобальные числа боя: промахи, броня, убывание контроля, усталость и прочее.</p><div class="card"><div></div><div class="fields">${numFields(["general"],g)}</div></div>`+
+  if(view==="overview"){m.innerHTML=`<h2>Обзор</h2><p class="sub">Обновляется каждые 15 секунд.</p><div id="ov">Загружаю…</div>`;
+    const draw=async()=>{if(view!=="overview")return;try{const o=await api("overview"),el=$("#ov");if(!el)return;
+      el.innerHTML=`<div class="stats"><div class="st"><b>${o.online}</b>онлайн сейчас</div><div class="st"><b>${o.fight}</b>в бою</div><div class="st"><b>${o.net}</b>в коопе</div><div class="st"><b>${o.relay.rooms}</b>комнат на сервере</div><div class="st"><b>${o.version||"—"}</b>версия баланса</div><div class="st"><b>${o.overrides}</b>значений изменено</div></div>
+      <h3 class="h3">Последняя правка</h3>${o.last?`<div class="card" style="display:block"><div class="t">Версия ${o.last.version} · ${new Date(o.last.at).toLocaleString("ru")}</div><div class="ds">${o.last.note?"Комментарий: "+esc(o.last.note):"Без комментария"}</div>${chTable(o.last.changes)}</div>`:'<p class="sub">Публикаций пока не было, игра работает на значениях по умолчанию.</p>'}`;}catch(e){}};
+    draw();clearInterval(ovTimer);ovTimer=setInterval(draw,15000);}
+  else if(view==="general"){const g=D.general;m.innerHTML=`<h2>Общие правила</h2><p class="sub">Глобальные числа боя: промахи, броня, убывание контроля, усталость и прочее.</p><div class="card"><div></div><div class="fields">${numFields(["general"],g)}</div></div>`+
     Object.keys(g).filter(k=>g[k]&&typeof g[k]==="object"&&!Array.isArray(g[k])).map(k=>`<div class="card"><div></div><div><div class="t">${esc(k)}</div><div class="fields">${numFields(["general",k],g[k])}</div></div></div>`).join("");}
   else if(view.startsWith("cls:")){const c=view.slice(4),C=D[c],q=(m.querySelector(".search")||{}).value||"";
     m.innerHTML=`<h2>${CLS[c]}</h2><p class="sub">Характеристики класса и все его способности. Зелёным подсвечены несохранённые правки.</p>
     <input class="search" placeholder="Поиск способности" value="${esc(q)}">
     <div class="card"><i class="ic" style="${iconCss("cls_"+c)}"></i><div><div class="t">Класс</div><div class="fields">${numFields([c],C)}${C.swing?numFields([c,"swing"],C.swing):""}</div></div></div>
-    ${Object.keys(C.abilities).filter(id=>!q||C.abilities[id].name.toLowerCase().includes(q.toLowerCase())).map(id=>{const a=C.abilities[id];return `<div class="card"><i class="ic" style="${iconCss(id)}"></i><div><div class="t">${esc(a.name)} <small>${id}</small></div><div class="fields">${numFields([c,"abilities",id],a)||'<span class="f">нет числовых параметров</span>'}</div></div></div>`}).join("")}
+    ${Object.keys(C.abilities).filter(id=>!q||C.abilities[id].name.toLowerCase().includes(q.toLowerCase())).map(id=>{const a=C.abilities[id];return `<div class="card"><i class="ic" style="${iconCss(D.metaIcon[id]||id)}"></i><div><div class="t">${esc(a.name)} <small>${id}</small></div>${D.desc[c]&&D.desc[c][id]?`<div class="ds">${esc(D.desc[c][id])}</div>`:""}<div class="fields">${numFields([c,"abilities",id],a)||'<span class="f">нет числовых параметров</span>'}</div></div></div>`}).join("")}
     ${C.poisons?`<h3 style="color:var(--gold2);font-weight:normal">Яды</h3>`+Object.keys(C.poisons).map(k=>`<div class="card"><i class="ic" style="${iconCss(k)}"></i><div><div class="t">${esc(C.poisons[k].name)}</div><div class="fields">${numFields([c,"poisons",k],C.poisons[k])}</div></div></div>`).join(""):""}`;
     const s=m.querySelector(".search");s.oninput=()=>{const pos=s.selectionStart;render().then(()=>{const n=m.querySelector(".search");n.focus();n.setSelectionRange(pos,pos)})};}
   else if(view.startsWith("tal:")){const c=view.slice(4),T=D.talents[c];
-    m.innerHTML=`<h2>Таланты: ${CLS[c]}</h2><p class="sub">«Значение за ранг» подставляется в описание вместо {x}. Если ранги разные, у таланта несколько полей.</p>`+
-    Object.keys(T).map(tr=>`<div class="tree"><h3>${esc(T[tr].name)}</h3>${Object.keys(T[tr].list).map(id=>{const t=T[tr].list[id];return `<div class="card"><i class="ic" style="${iconCss(id)}"></i><div><div class="t">${esc(t.n)} <small>ряд ${t.t} · рангов ${t.max}</small></div><div class="sub" style="margin:2px 0 6px">${esc(t.d)}</div><div class="fields">${field(["talents",c,tr,"list",id,"v"])}</div></div></div>`}).join("")}</div>`).join("");}
+    m.innerHTML=`<h2>Таланты: ${CLS[c]}</h2><p class="sub">Нажмите на талант, чтобы изменить его. «Значение за ранг» подставляется в описание вместо {x}.</p><div class="trees">`+
+    Object.keys(T).map(tr=>{const bg=D.treeBg[c]&&D.treeBg[c][tr];const L=T[tr].list;
+      const arrows=Object.keys(L).filter(id=>L[id].req&&L[L[id].req]).map(id=>{const d=L[id],q=L[d.req];return q.t===d.t?`<div class="tar h" style="grid-row:${d.t};grid-column:${Math.min(q.c,d.c)}/${Math.max(q.c,d.c)+1}"></div>`:`<div class="tar" style="grid-row:${q.t}/${d.t+1};grid-column:${d.c}"></div>`}).join("");
+      return `<div class="ttree" style="${bg?`background-image:url(${ASSET}tree_${bg}.webp)`:""}"><h3>${esc(T[tr].name)}</h3><div class="tgrid">${arrows}${Object.keys(L).map(id=>{const t=L[id],chg=nEdits("talents."+c+"."+tr+".list."+id),pubd=get(over,["talents",c,tr,"list",id])!==undefined;
+        return `<button class="tal${talSel===id?" sel":""}${chg?" chg":pubd?" pub":""}" data-tal="${tr}|${id}" title="${esc(t.n)}" style="grid-row:${t.t};grid-column:${t.c};${smallIcon(id,40)}"><i>${t.max}</i></button>`}).join("")}</div></div>`}).join("")+`</div><div id="tedit"></div>`;
+    m.querySelectorAll("[data-tal]").forEach(b=>b.onclick=()=>{talSel=b.dataset.tal.split("|")[1];render()});
+    const tr=talSel&&Object.keys(T).find(k=>T[k].list[talSel]);
+    if(tr){const t=T[tr].list[talSel],v=val(["talents",c,tr,"list",talSel,"v"]),x=r=>Array.isArray(v)?v[r-1]:+(v*r).toFixed(2);
+      $("#tedit").innerHTML=`<div class="card"><i class="ic" style="${iconCss(talSel)}"></i><div><div class="t">${esc(t.n)} <small>${esc(T[tr].name)} · ряд ${t.t} · рангов ${t.max}${t.req?` · требует «${esc(T[tr].list[t.req].n)}» ${t.reqr}`:""}</small></div>
+        <div class="ds">${[...Array(t.max)].map((_,i)=>`<b>Ранг ${i+1}:</b> ${esc(t.d.replace("{x}",x(i+1)))}`).join("<br>")}</div><div class="fields">${field(["talents",c,tr,"list",talSel,"v"])}</div></div></div>`;}}
   else if(view==="history"){m.innerHTML=`<h2>История изменений</h2><p class="sub">Каждая публикация сохраняется. Откат публикует выбранную версию заново.</p><div id="hl">Загружаю…</div>`;
-    try{const h=await api("history");$("#hl").innerHTML=h.list.length?`<table class="hist"><tr><th>Версия</th><th>Когда</th><th>Правок</th><th>Комментарий</th><th></th></tr>${h.list.map(v=>`<tr><td class="${v.version===h.current?"cur":""}">${v.version}${v.version===h.current?" · сейчас":""}</td><td>${new Date(v.at).toLocaleString("ru")}</td><td>${v.changes}</td><td>${esc(v.note||"")}</td><td>${v.version===h.current?"":`<button class="btn ghost" data-rb="${v.version}">Откатить</button>`}</td></tr>`).join("")}</table>`:"Публикаций пока не было.";
+    try{const h=await api("history");$("#hl").innerHTML=h.list.length?`<table class="hist"><tr><th>Версия</th><th>Когда</th><th>Что изменилось</th><th>Комментарий</th><th></th></tr>${h.list.map(v=>`<tr><td class="${v.version===h.current?"cur":""}">${v.version}${v.version===h.current?" · сейчас":""}</td><td>${new Date(v.at).toLocaleString("ru")}</td><td>${chList(v.changes)}</td><td>${esc(v.note||"")}</td><td>${v.version===h.current?"":`<button class="btn ghost" data-rb="${v.version}">Откатить</button>`}</td></tr>`).join("")}</table>`:"Публикаций пока не было.";
       $("#hl").querySelectorAll("[data-rb]").forEach(b=>b.onclick=async()=>{if(!confirm("Откатить баланс к версии "+b.dataset.rb+"?"))return;await api("rollback",{version:+b.dataset.rb});await load();render();});}catch(e){$("#hl").textContent=e.message}}
   m.querySelectorAll("input[data-p]").forEach(inp=>inp.onchange=()=>{const p=JSON.parse(inp.dataset.p),d=get(D,p),cur=get(over,p)!==undefined?get(over,p):d;
     let v=parseFloat(inp.value.replace(",","."));if(!isFinite(v)){inp.value=Array.isArray(d)?val(p)[+inp.dataset.i]:val(p);return}
     if(Array.isArray(d)){const arr=val(p).slice();arr[+inp.dataset.i]=v;v=arr;}
     if(JSON.stringify(v)===JSON.stringify(cur))delp(edits,p);else setp(edits,p,v);
-    const k=m.scrollTop;render().then(()=>{m.scrollTop=k});});
+    const k=scrollY;render().then(()=>scrollTo(0,k));});
+  m.querySelectorAll("[data-rs]").forEach(b=>b.onclick=e=>{e.preventDefault();const p=JSON.parse(b.dataset.rs),d=get(D,p),cur=get(over,p)!==undefined?get(over,p):d;
+    if(JSON.stringify(d)===JSON.stringify(cur))delp(edits,p);else setp(edits,p,Array.isArray(d)?d.slice():d);const k=scrollY;render().then(()=>scrollTo(0,k));});
   const n=nEdits();$("#foot").hidden=false;$("#cnt").textContent=n?`Несохранённых правок: ${n}`:"Правок нет";$("#pub").disabled=!n;$("#undo").disabled=!n;}
 const nameOf=p=>{if(p[0]==="talents"){const t=get(D,p.slice(0,5));return `Талант «${t.n}»`}const a=p[1]==="abilities"||p[1]==="poisons"?get(D,p.slice(0,3)):null;return (CLS[p[0]]||"Общее")+(a?` · ${a.name}`:"")+" · "+(LBL[p[p.length-1]]||p.slice(1).join("."))};
 const fmt=v=>Array.isArray(v)?v.join("–"):v;
+const chTable=l=>l&&l.length?`<table class="diff">${l.map(c=>`<tr><td>${esc(nameOf(c.p))}</td><td class="o">${esc(fmt(c.from))}</td><td class="nw">${esc(fmt(c.to))}</td></tr>`).join("")}</table>`:'<p class="sub">Изменений нет.</p>';
+const chList=l=>l&&l.length?l.slice(0,6).map(c=>`${esc(nameOf(c.p))}: ${esc(fmt(c.from))} → <span style="color:var(--chgl)">${esc(fmt(c.to))}</span>`).join("<br>")+(l.length>6?`<br>и ещё ${l.length-6}`:""):"—";
+const ASSET="https://switer92.github.io/WoW_Classic_Arena/assets/ui/";
 $("#undo").onclick=()=>{edits={};render()};
 $("#pub").onclick=()=>{const list=flat(edits,[],[]);$("#mbox").innerHTML=`<h2>Опубликовать ${list.length} правок?</h2><p class="sub">Игра возьмёт новые значения со следующего боя у всех игроков.</p><table class="diff">${list.map(([p,v])=>{const o=get(over,p)!==undefined?get(over,p):get(D,p);return `<tr><td>${esc(nameOf(p))}</td><td class="o">${esc(fmt(o))}</td><td class="nw">${esc(fmt(v))}</td></tr>`}).join("")}</table><p style="display:flex;gap:10px;justify-content:flex-end;margin:16px 0 0"><button class="btn ghost" id="mno">Отмена</button><button class="btn" id="myes">Опубликовать</button></p>`;
   $("#modal").style.display="flex";$("#mno").onclick=()=>$("#modal").style.display="none";
