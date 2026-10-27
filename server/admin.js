@@ -169,4 +169,6 @@ function count(o) { let n = 0; for (const k in o || {}) n += o[k] && typeof o[k]
 
 setInterval(() => { const t = Date.now(); for (const [k, v] of tokens) if (v < t) tokens.delete(k); for (const [k, v] of online) if (t - v.t > 120000) online.delete(k); }, 60000);
 
-module.exports = { handle, setRelayStats: f => { relayStats = f; } };
+function onlineCount() { const t = Date.now(); let n = 0; for (const o of online.values()) if (t - o.t < 75000) n++; return n; }
+
+module.exports = { handle, onlineCount, setRelayStats: f => { relayStats = f; } };

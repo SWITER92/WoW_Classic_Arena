@@ -22,6 +22,14 @@ const rooms = new Map();
 const perIp = new Map();
 
 const server = http.createServer((req, res) => {
+  if (req.url === "/arena/api/lobby" && req.method === "GET") {
+    /* открытые комнаты и сколько людей сейчас в игре: видно всем в меню игры */
+    const list = [];
+    for (const [code, r] of rooms) if (r.pub && r.info && r.host.readyState === 1) list.push({ code, ...r.info, n: 1 + r.guests.size });
+    res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store", "access-control-allow-origin": "*" });
+    res.end(JSON.stringify({ online: admin.onlineCount(), rooms: list.slice(0, 50) }));
+    return;
+  }
   if (req.url.startsWith("/arena/admin") || req.url.startsWith("/arena/api/")) {
     admin.handle(req, res).catch(() => { try { res.writeHead(500); res.end(); } catch (e) {} });
     return;
@@ -48,14 +56,14 @@ server.on("upgrade", (req, sock, head) => {
   wss.handleUpgrade(req, sock, head, ws => {
     perIp.set(ip, (perIp.get(ip) || 0) + 1);
     ws.on("close", () => { const n = (perIp.get(ip) || 1) - 1; if (n > 0) perIp.set(ip, n); else perIp.delete(ip); });
-    onConnect(ws, url.searchParams.get("room") || "", url.searchParams.get("role"));
+    onConnect(ws, url.searchParams.get("room") || "", url.searchParams.get("role"), url.searchParams.get("pub") === "1");
   });
 });
 
 const send = (ws, o) => { if (ws.readyState === 1) ws.send(typeof o === "string" ? o : JSON.stringify(o)); };
 const fail = (ws, e) => { send(ws, { t: "_err", e }); ws.close(); };
 
-function onConnect(ws, code, role) {
+function onConnect(ws, code, role, pub) {
   code = code.toUpperCase();
   if (!/^[A-Z0-9]{4}$/.test(code) || (role !== "host" && role !== "client")) return fail(ws, "bad-request");
   ws.alive = true;
@@ -65,13 +73,18 @@ function onConnect(ws, code, role) {
     const old = rooms.get(code);
     if (old && old.host.readyState === 1) return fail(ws, "unavailable-id");
     if (!old && rooms.size >= MAX_ROOMS) return fail(ws, "server-full");
-    const room = { host: ws, guests: new Map(), next: 1 };
+    const room = { host: ws, guests: new Map(), next: 1, pub, info: null };
     rooms.set(code, room);
     send(ws, { t: "_hosted" });
     ws.on("message", data => {
       let m;
       try { m = JSON.parse(data); } catch (e) { return; }
       if (!m || typeof m !== "object") return;
+      if (m.info && typeof m.info === "object") {
+        const i = m.info, str = (v, n) => String(v || "").replace(/[<>]/g, "").slice(0, n);
+        room.info = { nick: str(i.nick, 16) || "Игрок", fmt: i.fmt === "2v2" ? "2v2" : "1v1", max: Math.min(4, Math.max(2, i.max | 0)), fight: !!i.fight };
+        return;
+      }
       if (m.kick) { const g = room.guests.get(m.kick); if (g) g.close(); return; }
       if (m.o === undefined) return;
       const s = JSON.stringify(m.o);
