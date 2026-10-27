@@ -181,6 +181,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
 .tree header b{font-size:17px;font-weight:400;color:var(--gold)}
 .tree header span{color:#fff;font-variant-numeric:tabular-nums}
 .tgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:50px;gap:6px;justify-items:center}
+.tgrid .tal{position:relative;z-index:1}.tarrow{justify-self:center;width:6px;margin:25px 0;background:#3a3a3a;border:1px solid #111;pointer-events:none;z-index:0}.tarrow.h{width:auto;height:6px;justify-self:stretch;align-self:center;margin:0 25%}.tarrow.ok{background:#e8c440}
 .tal{position:relative;width:40px;height:40px;border:1px solid #000;padding:0;background-image:url(assets/ui/icons.webp);box-shadow:0 0 0 2px #3b3b3b}
 .tal i{position:absolute;right:-9px;bottom:-8px;font:11px var(--wow);font-style:normal;background:#000;border:1px solid #6d6d6d;border-radius:3px;padding:0 3px;font-variant-numeric:tabular-nums;color:#20ff20}
 .tal.lock{filter:grayscale(1) brightness(.5)}
@@ -355,7 +356,7 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
 const $=s=>document.querySelector(s);
 /* ================= БАЛАНС ================= */
 const DEF={
-  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, blockReduce:40, backpedal:0.643, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.96, gravity:19.29,
+  general:{gcd:1.5, drWindow:18, drSteps:[1,0.5,0.25,0], meleeRange:5, castWhileMoving:false, meleeCritMult:2, spellCritMult:1.5, spellMiss:4, pushback:[1,0.8,0.6,0.4,0.2], channelPushback:25, blockReduce:40, backpedal:0.643, maxTalentPoints:51, fearBreak:0.12, dampenStart:60, dampenPerSec:1, dampenMax:90, jumpSpeed:7.96, gravity:19.29,
     combatDrop:5, oocHpRegen:1.5, oocManaMult:3, rageDecay:2, forbearance:60,
     stealth:{speed:30, front:3, back:1.5}},
   common:{abilities:{
@@ -403,9 +404,18 @@ const DEF={
       frostarmor:{name:"Морозный доспех", cost:150, reduce:8, slow:30, slowDur:5},
       explosion:{name:"Чародейский взрыв", radius:10, cost:350, dmg:[220,250]},
       evocation:{name:"Прилив сил", channel:8, ticks:8, cd:480, pct:40},
-      apower:{name:"Мощь тайной магии", cd:90, dur:15, dmg:30, costUp:30},
-      combust:{name:"Возгорание", cd:90, charges:3, crit:40},
-      barrier:{name:"Ледяная преграда", cd:30, cost:300, absorb:900, dur:30}
+      apower:{name:"Мощь тайной магии", cd:180, dur:15, dmg:30, costUp:30},
+      combust:{name:"Возгорание", cd:180, charges:3, crit:10},
+      barrier:{name:"Ледяная преграда", cd:30, cost:300, absorb:900, dur:60},
+      pyroblast:{name:"Огненная глыба", range:35, cast:6, cost:440, dmg:[680,820], dot:260, dotDur:12, speed:24},
+      blastwave:{name:"Взрывная волна", radius:10, cd:45, cost:400, dmg:[400,480], slow:50, dur:6},
+      pom:{name:"Присутствие разума", cd:180},
+      coldsnap:{name:"Холодная хватка", cd:600},
+      scorch:{name:"Ожог", range:30, cast:1.5, cost:150, dmg:[220,260]},
+      flamestrike:{name:"Огненный столб", range:30, cast:3, cost:600, radius:8, dmg:[340,420], dot:300, dotDur:8},
+      blizzard:{name:"Снежная буря", range:30, radius:8, channel:8, ticks:8, cost:700, dmg:[120,140]},
+      fireward:{name:"Защита от огня", cd:30, cost:350, absorb:920, dur:30},
+      frostward:{name:"Защита от льда", cd:30, cost:350, absorb:920, dur:30}
     }},
   rogue:{name:"Разбойник", res:"energy", hp:3800, speed:7.4, maxRes:100, startRes:100, crit:8, dodge:6, energyRegen:10,
     swing:{interval:1.8, dmg:[120,160]},
@@ -517,43 +527,59 @@ const DEF={
     },
     mage:{
       arcane:{name:"Тайная магия", list:{
-        clearcast:{n:"Тайное сосредоточение",t:1,c:2,max:5,v:2,d:"После заклинания с шансом {x}% следующее ничего не стоит."},
-        arcaneFort:{n:"Тайная устойчивость",t:1,c:3,max:5,v:2,d:"Запас здоровья выше на {x}%."},
-        impBlink:{n:"Улучшенный скачок",t:2,c:1,max:2,v:2,d:"Восстановление Скачка короче на {x} с."},
-        impCounter:{n:"Улучшенная антимагия",t:2,c:3,max:2,v:1,d:"Антимагия накладывает безмолвие на {x} с."},
-        arcaneMind:{n:"Тайный разум",t:3,c:1,max:5,v:3,d:"Запас маны выше на {x}%."},
-        meditation:{n:"Тайная медитация",t:3,c:3,max:3,v:15,d:"Восстановление маны быстрее на {x}%."},
-        pom:{n:"Присутствие разума",t:4,c:2,max:1,v:30,d:"Раз в {x} с следующее заклинание с кастом читается мгновенно."},
-        instability:{n:"Тайная нестабильность",t:5,c:2,max:3,v:1,d:"Урон заклинаний и шанс крита выше на {x}%."},
-        impPoly:{n:"Улучшенное превращение",t:6,c:1,max:2,v:0.25,d:"Превращение читается на {x} с быстрее."},
-        potency:{n:"Тайная мощь",t:6,c:3,max:3,v:10,d:"Критический урон заклинаний выше на {x}%."},
-        tArcanePower:{n:"Мощь тайной магии",t:7,c:2,max:1,v:1,d:"Новая способность: +30% урона заклинаний на 15 с, заклинания дороже на 30%."}
+        arcaneSubtlety:{n: "Тайная тонкость", t: 1, c: 1, max: 2, v: 5, d: "Сопротивление цели вашим заклинаниям ниже на {x}. (Сопротивлений в нашей арене нет, эффекта нет.)"},
+        arcaneFocus:{n: "Средоточие тайной магии", t: 1, c: 2, max: 5, v: 2, d: "Шанс, что противник сопротивится вашим заклинаниям тайной магии, ниже на {x}%."},
+        impMissiles:{n: "Улучшенные чародейские стрелы", t: 1, c: 3, max: 5, v: 20, d: "Шанс {x}% не потерять время канала Чародейских стрел, когда вас бьют."},
+        wandSpecM:{n: "Специализация на жезлах", t: 2, c: 1, max: 2, v: [13, 25], d: "Урон жезлами выше на {x}%. (Жезлов в нашей арене нет, эффекта нет.)"},
+        magicAbsorption:{n: "Поглощение магии", t: 2, c: 2, max: 5, v: 1, d: "Когда вы сопротивляетесь заклинанию противника, вы восстанавливаете {x}% маны."},
+        clearcast:{n: "Тайное сосредоточение", t: 2, c: 3, max: 5, v: 2, d: "После попадания заклинанием с шансом {x}% наступает Ясность мысли: следующее заклинание ничего не стоит."},
+        magicAttunement:{n: "Магическая настройка", t: 3, c: 1, max: 2, v: 25, d: "Усиление и ослабление магии сильнее на {x}%. (Этих заклинаний в арене нет, эффекта нет.)"},
+        impExplosion:{n: "Улучшенный чародейский взрыв", t: 3, c: 2, max: 3, v: 2, d: "Шанс крита Чародейского взрыва выше на {x}%."},
+        arcaneResilience:{n: "Тайная стойкость", t: 3, c: 3, max: 1, v: 3, k: "phys", d: "Броня растёт от интеллекта. В арене это физический урон по вам ниже на {x}%."},
+        impManaShield:{n: "Улучшенный мана-щит", t: 4, c: 1, max: 2, v: 10, d: "Мана-щит тратит на {x}% меньше маны за единицу поглощённого урона."},
+        impCounter:{n: "Улучшенная антимагия", t: 4, c: 2, max: 2, v: 50, d: "Антимагия с шансом {x}% накладывает безмолвие на 4 с."},
+        meditation:{n: "Тайная медитация", t: 4, c: 4, max: 3, v: 5, d: "Мана восстанавливается на {x}% быстрее. (В оригинале часть восстановления идёт и во время чтения; у нас мана и так восстанавливается всегда.)"},
+        tPom:{n: "Присутствие разума", t: 5, c: 2, max: 1, v: 1, d: "Новая способность: следующее заклинание мага с временем чтения меньше 10 с читается мгновенно. Восстановление 3 мин."},
+        arcaneMind:{n: "Тайный разум", t: 5, c: 3, max: 5, v: 2, req: "arcaneResilience", reqr: 1, d: "Запас маны выше на {x}%."},
+        instability:{n: "Тайная нестабильность", t: 6, c: 2, max: 3, v: 1, req: "tPom", reqr: 1, d: "Урон заклинаний и шанс крита выше на {x}%."},
+        tArcanePower:{n: "Мощь тайной магии", t: 7, c: 2, max: 1, v: 1, req: "instability", reqr: 3, d: "Новая способность: заклинания наносят на 30% больше урона и стоят на 30% больше маны 15 с. Восстановление 3 мин."}
       }},
       fire:{name:"Огонь", list:{
-        impFireBlast:{n:"Улучшенный огненный взрыв",t:1,c:2,max:3,v:0.5,d:"Восстановление Огненного взрыва короче на {x} с."},
-        impact:{n:"Сотрясение",t:1,c:3,max:5,v:2,d:"Огненные заклинания с шансом {x}% оглушают на 2 с."},
-        ignite:{n:"Воспламенение",t:2,c:1,max:5,v:8,d:"Крит огнём поджигает цель: {x}% урона за 4 с."},
-        flameThrowing:{n:"Метание пламени",t:2,c:3,max:2,v:3,d:"Дальность Огненного взрыва больше на {x} м."},
-        incinerate:{n:"Испепеление",t:3,c:1,max:2,v:4,d:"Шанс крита Огненного взрыва выше на {x}%."},
-        burningSoul:{n:"Пылающая душа",t:3,c:3,max:2,v:1,d:"Урон всех заклинаний выше на {x}%."},
-        moe:{n:"Повелитель стихий",t:4,c:1,max:3,v:10,d:"Крит заклинанием возвращает {x}% его стоимости."},
-        blastWave:{n:"Взрывная волна",t:4,c:3,max:1,v:50,d:"Огненный взрыв замедляет цель на {x}% на 3 с."},
-        criticalMass:{n:"Критическая масса",t:5,c:2,max:3,v:2,d:"Шанс крита огнём выше на {x}%."},
-        firePower:{n:"Сила огня",t:6,c:2,max:5,v:2,d:"Урон огнём выше на {x}%."},
-        tCombustion:{n:"Возгорание",t:7,c:2,max:1,v:1,d:"Новая способность: +40% к шансу крита для следующих 3 заклинаний."}
+        impFireball:{n: "Улучшенный огненный шар", t: 1, c: 2, max: 5, v: 0.1, d: "Огненный шар читается на {x} с быстрее."},
+        impact:{n: "Сотрясение", t: 1, c: 3, max: 5, v: 2, d: "Огненные заклинания с шансом {x}% оглушают цель на 2 с."},
+        ignite:{n: "Воспламенение", t: 2, c: 1, max: 5, v: 8, d: "Крит огненным заклинанием поджигает цель: ещё {x}% урона за 4 с."},
+        flameThrowing:{n: "Метание пламени", t: 2, c: 2, max: 2, v: 3, d: "Дальность огненных заклинаний больше на {x} м."},
+        impFireBlast:{n: "Улучшенный огненный взрыв", t: 2, c: 3, max: 3, v: 0.5, d: "Восстановление Огненного взрыва короче на {x} с."},
+        incinerate:{n: "Испепеление", t: 3, c: 1, max: 2, v: 2, d: "Шанс крита Огненного взрыва и Ожога выше на {x}%."},
+        impFlamestrike:{n: "Улучшенный огненный столб", t: 3, c: 2, max: 3, v: 5, d: "Шанс крита Огненного столба выше на {x}%."},
+        tPyroblast:{n: "Огненная глыба", t: 3, c: 3, max: 1, v: 1, d: "Новая способность: каст 6 с, огромный урон огнём и горение 12 с."},
+        burningSoul:{n: "Пылающая душа", t: 3, c: 4, max: 2, v: 35, d: "Огненные заклинания с шансом {x}% не теряют время чтения от урона."},
+        impScorch:{n: "Улучшенный ожог", t: 4, c: 1, max: 3, v: [33, 66, 100], d: "Ожог с шансом {x}% делает цель уязвимой к огню: +3% урона огнём, до 5 раз, 30 с."},
+        impFireWard:{n: "Улучшенная защита от огня", t: 4, c: 2, max: 2, v: 10, d: "Пока действует Защита от огня, с шансом {x}% огненное заклинание отражается в нападающего."},
+        moe:{n: "Повелитель стихий", t: 4, c: 4, max: 3, v: 10, d: "Крит огнём или льдом возвращает {x}% стоимости заклинания."},
+        criticalMass:{n: "Критическая масса", t: 5, c: 2, max: 3, v: 2, d: "Шанс крита огненных заклинаний выше на {x}%."},
+        tBlastWave:{n: "Взрывная волна", t: 5, c: 3, max: 1, v: 1, req: "tPyroblast", reqr: 1, d: "Новая способность: огненная волна вокруг мага, урон и замедление на 50% на 6 с."},
+        firePower:{n: "Сила огня", t: 6, c: 3, max: 5, v: 2, d: "Урон огненных заклинаний выше на {x}%."},
+        tCombustion:{n: "Возгорание", t: 7, c: 2, max: 1, v: 1, req: "criticalMass", reqr: 3, d: "Новая способность: каждое попадание огнём повышает шанс крита огнём на 10%, после 3 критов эффект проходит. Восстановление 3 мин."}
       }},
       frost:{name:"Лёд", list:{
-        impFrostbolt:{n:"Улучшенная ледяная стрела",t:1,c:2,max:5,v:0.1,d:"Ледяная стрела читается на {x} с быстрее."},
-        frostbite:{n:"Обморожение",t:1,c:3,max:3,v:5,d:"Замедление льдом с шансом {x}% обездвиживает на 4 с."},
-        iceShards:{n:"Ледяные осколки",t:2,c:1,max:5,v:20,d:"Критический урон льдом выше на {x}%."},
-        impNova:{n:"Улучшенное кольцо льда",t:2,c:3,max:2,v:2,d:"Восстановление Кольца льда короче на {x} с."},
-        permafrost:{n:"Вечная мерзлота",t:3,c:1,max:3,v:4,d:"Замедление льдом сильнее на {x}% и длится дольше на 1 с за очко."},
-        piercingIce:{n:"Пронзающий лёд",t:3,c:3,max:3,v:2,d:"Урон льдом выше на {x}%."},
-        coldSnap:{n:"Холодная хватка",t:4,c:2,max:1,v:40,d:"Один раз за бой при здоровье ниже {x}% Кольцо льда сразу восстанавливается."},
-        shatter:{n:"Раскол",t:5,c:2,max:5,v:10,d:"Шанс крита по обездвиженным и оглушённым целям выше на {x}%."},
-        arcticReach:{n:"Арктические просторы",t:5,c:4,max:2,v:10,d:"Дальность Ледяной стрелы и радиус Кольца льда больше на {x}%."},
-        frozenCore:{n:"Ледяное сердце",t:6,c:2,max:3,v:4,d:"Весь получаемый урон ниже на {x}%."},
-        tIceBarrier:{n:"Ледяная преграда",t:7,c:2,max:1,v:1,d:"Новая способность: щит, поглощающий 900 урона."}
+        frostWarding:{n: "Защита от холода", t: 1, c: 1, max: 2, v: 15, d: "Морозный доспех сильнее на {x}%. Защита от льда с шансом 10% за очко отражает ледяное заклинание."},
+        impFrostbolt:{n: "Улучшенная ледяная стрела", t: 1, c: 2, max: 5, v: 0.1, d: "Ледяная стрела читается на {x} с быстрее."},
+        elemPrecision:{n: "Точность стихий", t: 1, c: 3, max: 3, v: 2, d: "Шанс, что противник сопротивится вашим заклинаниям огня и льда, ниже на {x}%."},
+        iceShards:{n: "Ледяные осколки", t: 2, c: 1, max: 5, v: 20, d: "Бонус крита ледяных заклинаний выше на {x}%."},
+        frostbite:{n: "Обморожение", t: 2, c: 2, max: 3, v: 5, d: "Эффекты охлаждения с шансом {x}% замораживают цель на 5 с."},
+        impNova:{n: "Улучшенное кольцо льда", t: 2, c: 3, max: 2, v: 2, d: "Восстановление Кольца льда короче на {x} с."},
+        permafrost:{n: "Вечная мерзлота", t: 2, c: 4, max: 3, v: 1, d: "Эффекты охлаждения длятся на {x} с дольше и замедляют сильнее (до 10%)."},
+        piercingIce:{n: "Пронзающий лёд", t: 3, c: 1, max: 3, v: 2, d: "Урон ледяных заклинаний выше на {x}%."},
+        tColdSnap:{n: "Холодная хватка", t: 3, c: 2, max: 1, v: 1, d: "Новая способность: сразу восстанавливает все ледяные заклинания. Восстановление 10 мин."},
+        impBlizzard:{n: "Улучшенная снежная буря", t: 3, c: 4, max: 3, v: [30, 50, 65], d: "Снежная буря замедляет цели на {x}% на 1,5 с."},
+        arcticReach:{n: "Арктические просторы", t: 4, c: 1, max: 2, v: 10, d: "Дальность Ледяной стрелы и Снежной бури, радиус Кольца льда и Конуса холода больше на {x}%."},
+        frostChanneling:{n: "Ледяная концентрация", t: 4, c: 2, max: 3, v: 5, d: "Ледяные заклинания стоят на {x}% меньше."},
+        shatter:{n: "Раскол", t: 4, c: 3, max: 5, v: 10, req: "impNova", reqr: 2, d: "Шанс крита всех заклинаний по замороженным целям выше на {x}%."},
+        tIceBlock:{n: "Ледяная глыба", t: 5, c: 2, max: 1, v: 1, d: "Новая способность: 10 с неуязвимости, но вы не можете действовать. Восстановление 5 мин."},
+        impCone:{n: "Улучшенный конус холода", t: 5, c: 3, max: 3, v: [15, 25, 35], d: "Урон Конуса холода выше на {x}%."},
+        wintersChill:{n: "Зимняя стужа", t: 6, c: 3, max: 5, v: 20, d: "Ледяные заклинания с шансом {x}% накладывают Зимнюю стужу: +2% к шансу крита льдом по цели, до 5 раз, 15 с."},
+        tIceBarrier:{n: "Ледяная преграда", t: 7, c: 2, max: 1, v: 1, req: "tIceBlock", reqr: 1, d: "Новая способность: щит на 900 урона на 1 мин. Пока щит держится, урон не сбивает каст. Восстановление 30 с."}
       }}
     }
     ,rogue:{
@@ -697,28 +723,36 @@ const SCHOOL_NAME={phys:"Физический",frost:"Лёд",fire:"Огонь",
 const RES_NAME={rage:"ярости",mana:"маны",energy:"энергии"};
 const RES_COLOR={rage:"#e00000",mana:"#1a3cff",energy:"#ffe000"};
 const roll=r=>r[0]+Math.random()*(r[1]-r[0]);
-const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88};
+const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188};const GAME_VER="202610271310";
 const ICON_COLS=16;
 function iconBg(key,size){const i=ICON[key]??ICON.a_q;return `background-size:${ICON_COLS*size}px auto;background-position:${-(i%ICON_COLS)*size}px ${-Math.floor(i/ICON_COLS)*size}px`}
 
 /* ================= ТАЛАНТЫ ================= */
 function talDef(cls,id){for(const k in B.talents[cls]){const d=B.talents[cls][k].list[id];if(d)return d}return null}
 const rk=(u,id)=>(u.talents&&u.talents[id])||0;
-function tv(u,id){const r=rk(u,id);if(!r)return 0;const d=talDef(u.cls,id);return d?r*d.v:0}
+const talVal=(d,r)=>!r?0:Array.isArray(d.v)?d.v[Math.min(r,d.v.length)-1]:r*d.v;
+function tv(u,id){const r=rk(u,id);if(!r)return 0;const d=talDef(u.cls,id);return d?talVal(d,r):0}
 function treePts(cls,tal,tree){let s=0;for(const id in B.talents[cls][tree].list)s+=tal[id]||0;return s}
 function totalPts(tal){let s=0;for(const k in tal)s+=tal[k];return s}
 function treeOf(cls,id){for(const k in B.talents[cls])if(B.talents[cls][k].list[id])return k}
 function validTree(cls,tal,tree){const L=B.talents[cls][tree].list;
   for(const id in L){if(!(tal[id]>0))continue;const t=L[id].t;let below=0;for(const j in L)if(L[j].t<t)below+=tal[j]||0;if(below<(t-1)*5)return false}return true}
 function canAdd(cls,tal,id){const d=talDef(cls,id),tree=treeOf(cls,id);if(!d)return false;
-  return totalPts(tal)<B.general.maxTalentPoints&&(tal[id]||0)<d.max&&treePts(cls,tal,tree)>=(d.t-1)*5}
-function canRemove(cls,tal,id){if(!(tal[id]>0))return false;const c={...tal};c[id]--;return validTree(cls,c,treeOf(cls,id))}
+  return totalPts(tal)<B.general.maxTalentPoints&&(tal[id]||0)<d.max&&treePts(cls,tal,tree)>=(d.t-1)*5&&(!d.req||(tal[d.req]||0)>=d.reqr)}
+function canRemove(cls,tal,id){if(!(tal[id]>0))return false;const c={...tal};c[id]--;const L=B.talents[cls][treeOf(cls,id)].list;
+  for(const j in L)if(L[j].req===id&&(c[j]||0)>0&&c[id]<L[j].reqr)return false;
+  return validTree(cls,c,treeOf(cls,id))}
+/* сохранённые раскладки старых версий: убираем исчезнувшие таланты, неверную ветку сбрасываем */
+function cleanTal(cls,tal){const out={};for(const id in tal)if(talDef(cls,id)&&tal[id]>0)out[id]=Math.min(tal[id],talDef(cls,id).max);
+  let n=0;for(const k in out)n+=out[k];if(n>B.general.maxTalentPoints)return {};
+  for(const tk in B.talents[cls]){if(!validTree(cls,out,tk))return {};const L=B.talents[cls][tk].list;for(const id in L)if(out[id]&&L[id].req&&(out[L[id].req]||0)<L[id].reqr)return {};}
+  return out}
 function autoBuild(cls,order){const tal={};for(const [id,n] of order)for(let i=0;i<n;i++)if(canAdd(cls,tal,id))tal[id]=(tal[id]||0)+1;return tal}
 /* общие эффекты талантов (поле k): шанс крита, урон, здоровье и т.д. — считаются один раз на раунд */
 function buildK(u){
-  const K={crit:0,dmg:0,school:{},ap:{},critMult:0,hp:0,res:0,resPct:0,regen:0,heal:0,taken:0,dodge:0,block:0,speed:0,ccDur:0,costPct:0,add:[]};
+  const K={crit:0,dmg:0,school:{},ap:{},critMult:0,hp:0,res:0,resPct:0,regen:0,heal:0,taken:0,phys:0,dodge:0,block:0,speed:0,ccDur:0,costPct:0,add:[]};
   const T=B.talents[u.cls];
-  for(const tk in T)for(const id in T[tk].list){const d=T[tk].list[id],r=u.talents[id]||0;if(!r||!d.k)continue;const x=r*d.v;
+  for(const tk in T)for(const id in T[tk].list){const d=T[tk].list[id],r=u.talents[id]||0;if(!r||!d.k)continue;const x=talVal(d,r);
     if(d.k==="school")K.school[d.s]=(K.school[d.s]||0)+x;else if(d.k==="ap")K.ap[d.a]=(K.ap[d.a]||0)+x;
     else if(d.k==="add")K.add.push([d.a,d.f,(d.sg||1)*x]);else if(d.k in K)K[d.k]+=x;}
   return K;
@@ -730,9 +764,9 @@ const PRESETS={
     "Защита":[["shieldSpec",5],["toughness",5],["impShieldWall",2],["hardened",2],["lastStand",1],["ironWill",5],["revenge",3],["concussion",1],["oneHand",5],["unbreak",1],["tShieldSlam",1],["deflection",5],["impCharge",2],["tactical",3],["twoHand",5],["deepWounds",3]]
   },
   mage:{
-    "Лёд":[["impFrostbolt",5],["frostbite",3],["iceShards",5],["impNova",2],["permafrost",3],["piercingIce",3],["coldSnap",1],["shatter",5],["arcticReach",2],["frozenCore",3],["tIceBarrier",1],["clearcast",5],["arcaneFort",5],["impBlink",2],["impCounter",2],["meditation",3]],
-    "Огонь":[["impFireBlast",3],["impact",5],["ignite",5],["flameThrowing",2],["incinerate",2],["burningSoul",2],["moe",3],["blastWave",1],["criticalMass",3],["firePower",5],["tCombustion",1],["clearcast",5],["arcaneFort",5],["impBlink",2],["impCounter",2],["arcaneMind",4]],
-    "Тайная магия":[["clearcast",5],["arcaneFort",5],["impBlink",2],["impCounter",2],["arcaneMind",5],["meditation",3],["pom",1],["instability",3],["impPoly",2],["potency",3],["tArcanePower",1],["impFrostbolt",5],["frostbite",3],["iceShards",5],["impNova",2],["permafrost",3]]
+    "Лёд":[["arcaneFocus", 5], ["clearcast", 5], ["arcaneResilience", 1], ["impExplosion", 3], ["impMissiles", 1], ["impCounter", 2], ["impFrostbolt", 5], ["elemPrecision", 3], ["iceShards", 5], ["frostbite", 3], ["impNova", 2], ["permafrost", 2], ["piercingIce", 3], ["tColdSnap", 1], ["arcticReach", 2], ["shatter", 5], ["tIceBlock", 1], ["wintersChill", 1], ["tIceBarrier", 1]],
+    "Огонь":[["arcaneFocus", 5], ["clearcast", 5], ["arcaneResilience", 1], ["impExplosion", 3], ["impMissiles", 1], ["impCounter", 2], ["impFireball", 1], ["impact", 5], ["ignite", 5], ["flameThrowing", 2], ["impFireBlast", 3], ["incinerate", 2], ["tPyroblast", 1], ["burningSoul", 2], ["moe", 3], ["criticalMass", 3], ["tBlastWave", 1], ["firePower", 5], ["tCombustion", 1]],
+    "Тайная магия":[["arcaneFocus", 5], ["clearcast", 5], ["arcaneResilience", 1], ["impExplosion", 3], ["impMissiles", 1], ["impCounter", 2], ["meditation", 3], ["tPom", 1], ["arcaneMind", 5], ["instability", 3], ["magicAbsorption", 1], ["tArcanePower", 1], ["impFrostbolt", 5], ["elemPrecision", 3], ["iceShards", 2], ["frostbite", 3], ["impNova", 2], ["tColdSnap", 1], ["piercingIce", 3], ["arcticReach", 1]]
   },
   rogue:{
     "Ликвидация":[["malice",5],["impEvisc",3],["ruthless",3],["murder",2],["impSinister",2],["lethality",5],["poison",5],["sealFate",5],["vigor",1],["impKidney",3],["tColdBlood",1],["impGouge",3],["precision",5],["impKick",2],["rdeflect",5],["rdual",1]],
@@ -752,21 +786,21 @@ const PRESETS={
 };
 const BOT_PRESET={warrior:"Оружие",mage:"Лёд",rogue:"Бой",paladin:"Воздаяние",priest:"Тьма"};
 let myTal={};for(const c of CLASSES)myTal[c]={};
-try{const s=JSON.parse(store.get("arena-talents-v1")||"null");if(s)for(const c of CLASSES)if(s[c])myTal[c]=s[c];}catch(e){}
+try{const s=JSON.parse(store.get("arena-talents-v1")||"null");if(s)for(const c of CLASSES)if(s[c])myTal[c]=cleanTal(c,s[c]);}catch(e){}
 function saveTal(){store.set("arena-talents-v1",JSON.stringify(myTal));}
 function buildSummary(cls,tal){return Object.keys(B.talents[cls]).map(k=>treePts(cls,tal,k)).join(" / ")}
 
 /* ================= СПОСОБНОСТИ ================= */
 const ab=(cls,id)=>B[cls].abilities[id]||B.common.abilities[id];
 function strikeId(u){return rk(u,"tMortal")?"mortal":rk(u,"tBloodthirst")?"bloodthirst":rk(u,"tShieldSlam")?"shieldslam":null}
-const CAPS={mage:[["tArcanePower","apower"],["tCombustion","combust"],["tIceBarrier","barrier"]],rogue:[["tColdBlood","coldblood"],["tAdrenaline","adrenaline"],["tPrep","prep"]],
+const CAPS={mage:[["tPom", "pom"], ["tArcanePower", "apower"], ["tPyroblast", "pyroblast"], ["tBlastWave", "blastwave"], ["tCombustion", "combust"], ["tColdSnap", "coldsnap"], ["tIceBlock", "iceblock"], ["tIceBarrier", "barrier"]],rogue:[["tColdBlood","coldblood"],["tAdrenaline","adrenaline"],["tPrep","prep"]],
   paladin:[["tHolyShock","holyshock"],["tHolyShield","holyshield"],["tRepentance","repentance"]],priest:[["tPI","pi"],["tDesperate","desperate"],["tShadowform","shadowform"]]};
 /* раскладка панелей по умолчанию: 12 ячеек нижней панели и 12 верхней; "cap" — способность вершины ветки */
 const BAR_ORDER={
   warrior:["charge","intercept","cap","heroic","overpower","execute","rend","hamstring","pummel","shieldbash","disarm","shout",
            "battle","defensive","berserker","zerkrage","reckless","shieldwall","bloodrage","trinket","food"],
-  mage:["frostbolt","fireball","fireblast","missiles","cone","nova","poly","counter","blink","explosion","cap","iceblock",
-        "manashield","frostarmor","evocation","trinket","food"],
+  mage:["frostbolt","fireball","fireblast","scorch","missiles","cone","nova","poly","counter","blink","explosion","cap",
+        "flamestrike","blizzard","manashield","frostarmor","evocation","trinket","fireward","frostward","food"],
   rogue:["sinister","eviscerate","kidney","gouge","kick","backstab","slice","rupture","cheapshot","garrote","ambush","sap",
          "stealth","blind","vanish","evasion","sprint","cap","trinket","food"],
   paladin:["judgement","sealR","sealJ","hammer","flashlight","holylight","consecration","cap","cleanse","freedom","bubble","bop",
@@ -791,13 +825,16 @@ function eff(u,id){
     case "charge":a.rageGain+=tv(u,"impCharge");break;
     case "pummel":a.cd-=tv(u,"impPummel");break;
     case "shieldwall":a.dur+=tv(u,"impShieldWall");a.cd-=tv(u,"unbreak");break;
-    case "frostbolt":a.cast=Math.max(.5,a.cast-tv(u,"impFrostbolt"));a.range*=1+tv(u,"arcticReach")/100;a.slow+=tv(u,"permafrost");a.slowDur+=rk(u,"permafrost");break;
-    case "cone":a.slow+=tv(u,"permafrost");break;
+    case "frostbolt":a.cast=Math.max(.5,a.cast-tv(u,"impFrostbolt"));a.range*=1+tv(u,"arcticReach")/100;break;
+    case "blizzard":a.range*=1+tv(u,"arcticReach")/100;break;
+    case "cone":a.range*=1+tv(u,"arcticReach")/100;break;
     case "nova":a.cd-=tv(u,"impNova");a.radius*=1+tv(u,"arcticReach")/100;break;
-    case "fireblast":a.cd-=tv(u,"impFireBlast");a.range+=tv(u,"flameThrowing");break;
-    case "poly":a.cast=Math.max(.5,a.cast-tv(u,"impPoly"));break;
-    case "blink":a.cd-=tv(u,"impBlink");break;
+    case "fireball":a.cast=Math.max(.5,a.cast-tv(u,"impFireball"));break;
+    case "fireblast":a.cd-=tv(u,"impFireBlast");break;
   }
+  if(u.cls==="mage"){const sc=META[id]&&META[id].school;
+    if(sc==="fire"&&a.range)a.range+=tv(u,"flameThrowing");
+    if(sc==="frost"&&a.cost)a.cost*=1-tv(u,"frostChanneling")/100;}
   if(u.K)for(const [aid,f,x] of u.K.add)if(aid===id&&typeof a[f]==="number")a[f]+=x;
   if(a.cd!==undefined)a.cd=Math.max(0,a.cd);if(a.cast!==undefined)a.cast=Math.max(.3,a.cast);
   if(a.cost){if(u.K&&u.K.costPct)a.cost*=1-u.K.costPct/100;a.cost=Math.max(0,Math.round(a.cost));}
@@ -825,6 +862,17 @@ function poisonProc(u,t,slot){
     addAura(t,{type:"dot",name:p.name,src:u,school:"nature",per:p.total/p.dur*st,stacks:st,next:ex?ex.next:now+1,until:now+p.dur+.05,dt:"poison"});}
 }
 function rogueHit(u,t,slot){if(u.cls==="rogue"&&u.lastHit.amt!==undefined&&!u.lastHit.dodged)poisonProc(u,t,slot||"mh");}
+/* эффект охлаждения мага: Вечная мерзлота удлиняет и усиливает, Обморожение может заморозить */
+function chill(src,t,name,pct,dur){if(!t.alive||isImmune(t))return;const pf=rk(src,"permafrost");if(pf){dur+=pf;pct+=[4,7,10][pf-1];}
+  slowAura(src,t,name,pct,dur,"magic");if(Math.random()*100<tv(src,"frostbite"))cc(src,t,"root",5,"Обморожение");}
+/* сопротивление заклинанию: базово 4% против игрока своего уровня, таланты на меткость снижают */
+function spellHitBonus(s,school){if(s.cls==="mage")return school==="arcane"?tv(s,"arcaneFocus"):(school==="fire"||school==="frost")?tv(s,"elemPrecision"):0;return 0}
+function spellResisted(src,t,school){
+  if(school==="phys"||src===t||src.team===t.team)return false;
+  if(Math.random()*100>=Math.max(0,B.general.spellMiss-spellHitBonus(src,school)))return false;
+  src.lastHit={resisted:true};combatMiss(src,t,"Сопротивление");logRaw(`<b>${src.name}</b>: ${t.name} сопротивляется`);
+  if(rk(t,"magicAbsorption")&&t.resType==="mana")t.res=Math.min(t.maxRes,t.res+t.maxRes*tv(t,"magicAbsorption")/100);
+  return true}
 function slowAura(src,t,name,pct,dur,dt){if(!t.alive||isImmune(t))return;addAura(t,{type:"slow",name,pct,until:now+dur,dt:dt||"magic",phys:dt==="none"});enterCombat(src,t);}
 /* выбор стойки воина: смена сжигает ярость сверх порога */
 function setStance(u,s){
@@ -915,28 +963,27 @@ const META={
   frostbolt:{school:"frost",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона и замедление на ${a.slow}% на ${a.slowDur} с.`,
     exec(u,t,a){castFx(u);projectile(u,t,a.speed,"frost",()=>{damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});
-      if(t.alive&&!isImmune(t)){slowAura(u,t,a.name,a.slow,a.slowDur,"magic");if(Math.random()*100<tv(u,"frostbite"))cc(u,t,"root",4,"Обморожение");}});}},
+      if(t.alive&&!u.lastHit.resisted&&!isImmune(t))chill(u,t,a.name,a.slow,a.slowDur);});}},
   fireball:{school:"fire",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона огнём и горение: ${a.dot} за ${a.dotDur} с.`,
     exec(u,t,a){castFx(u);projectile(u,t,a.speed,"fire",()=>{damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"fireball",cost:a.cost});
-      if(t.alive)addDot(t,u,a.name,a.dot*dmgMult(u,"fire",{id:"fireball"}),a.dotDur,"fire");});}},
+      if(t.alive&&!u.lastHit.resisted)addDot(t,u,a.name,a.dot*dmgMult(u,"fire",{id:"fireball"}),a.dotDur,"fire");});}},
   fireblast:{school:"fire",target:true,
     desc:a=>`Мгновенно: ${a.dmg[0]}–${a.dmg[1]} урона огнём. Можно на бегу.`,
-    exec(u,t,a){castFx(u);burstFx(t.pos,0xff8c3f);damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"fireblast",cost:a.cost});
-      if(t.alive&&rk(u,"blastWave")&&!isImmune(t))slowAura(u,t,"Взрывная волна",tv(u,"blastWave"),3,"magic");}},
+    exec(u,t,a){castFx(u);burstFx(t.pos,0xff8c3f);damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"fireblast",cost:a.cost});}},
   missiles:{school:"arcane",target:true,
     desc:a=>`Канал ${a.channel} с: ${a.ticks} стрел по ${a.dmg[0]}–${a.dmg[1]} урона тайной магией. Движение обрывает канал.`,
     tick(u,t,a){projectile(u,t,40,"arcane",()=>damage(u,t,roll(a.dmg),a.name,"arcane",{spell:true,id:"missiles"}));}},
   cone:{school:"frost",target:false,hostile:true,
     desc:a=>`Конус перед магом на ${a.range} м: ${a.dmg[0]}–${a.dmg[1]} урона льдом и замедление на ${a.slow}% на ${a.dur} с.`,
     exec(u,t,a){castFx(u,"castomni");coneFx(u,a.range,0xaee6ff);log(u,a.name);
-      for(const t of foes(u))if(dist(u,t)<=a.range&&inCone(u,t,Math.PI/3)){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)slowAura(u,t,a.name,a.slow,a.dur,"magic");}}},
+      for(const t of foes(u))if(dist(u,t)<=a.range&&inCone(u,t,Math.PI/3)){damage(u,t,roll(a.dmg)*(1+tv(u,"impCone")/100),a.name,"frost",{spell:true,cost:a.cost});if(t.alive&&!u.lastHit.resisted)chill(u,t,a.name,a.slow,a.dur);}}},
   nova:{school:"frost",target:false,hostile:true,
     desc:a=>`Вокруг мага в радиусе ${a.radius.toFixed(0)} м: ${a.dmg[0]}–${a.dmg[1]} урона и обездвиживание на ${a.root} с.`,
-    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xaee6ff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive)cc(u,t,"root",a.root,a.name);}}},
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xaee6ff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius){damage(u,t,roll(a.dmg),a.name,"frost",{spell:true,cost:a.cost});if(t.alive&&!u.lastHit.resisted)cc(u,t,"root",a.root,a.name);}}},
   poly:{school:"arcane",target:true,
     desc:a=>`Каст ${a.cast.toFixed(2)} с. Превращает цель в овцу на ${a.dur} с. Любой урон снимает эффект.`,
-    exec(u,t,a){castFx(u);burstFx(t.pos,0xc792ff);cc(u,t,"incap",a.dur,a.name);}},
+    exec(u,t,a){castFx(u);burstFx(t.pos,0xc792ff);if(!isImmune(t)&&spellResisted(u,t,"arcane"))return;cc(u,t,"incap",a.dur,a.name);}},
   counter:{school:"arcane",target:true,gcd:false,
     desc:a=>`Прерывает заклинание и блокирует его школу на ${a.lockout} с.`,
     exec(u,t,a){castFx(u);interrupt(u,t,a);}},
@@ -948,10 +995,10 @@ const META={
     exec(u,t,a){u.cast=null;addAura(u,{type:"iceblock",name:a.name,until:now+a.dur,good:true});log(u,a.name);}},
   manashield:{school:"arcane",target:false,noCombat:true,
     desc:a=>`Поглощает до ${a.absorb} урона, тратя ${a.ratio} маны за каждую единицу. ${a.dur} с.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"manashield",name:a.name,amount:a.absorb,ratio:a.ratio,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
+    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"manashield",name:a.name,amount:a.absorb,ratio:a.ratio*(1-tv(u,"impManaShield")/100),until:now+a.dur,good:true,mb:true});log(u,a.name);}},
   frostarmor:{school:"frost",target:false,noCombat:true,
     desc:a=>`Бафф на весь бой: физический урон по вам −${a.reduce}%, ударивший в ближнем бою замедлен на ${a.slow}% на ${a.slowDur} с.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"frostarmor",name:a.name,pct:a.reduce,slow:a.slow,slowDur:a.slowDur,until:Infinity,good:true,mb:true});}},
+    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"frostarmor",name:a.name,pct:a.reduce*(1+tv(u,"frostWarding")/100),slow:a.slow,slowDur:a.slowDur,until:Infinity,good:true,mb:true});}},
   explosion:{school:"arcane",target:false,hostile:true,
     desc:a=>`Урон тайной магией ${a.dmg[0]}–${a.dmg[1]} вокруг мага в радиусе ${a.radius} м. Выбивает из скрытности.`,
     exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xc792ff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)damage(u,t,roll(a.dmg),a.name,"arcane",{spell:true,cost:a.cost});}},
@@ -962,11 +1009,46 @@ const META={
     desc:a=>`+${a.dmg}% урона заклинаний на ${a.dur} с, стоимость заклинаний выше на ${a.costUp}%.`,
     exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"apower",name:a.name,pct:a.dmg,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
   combust:{school:"fire",target:false,gcd:false,cap:true,noCombat:true,
-    desc:a=>`+${a.crit}% к шансу крита для следующих ${a.charges} огненных заклинаний.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"combust",name:a.name,charges:a.charges,pct:a.crit,until:now+60,good:true,mb:true});log(u,a.name);}},
+    desc:a=>`Каждое попадание огненным заклинанием повышает шанс крита огнём на ${a.crit}% (начиная с ${a.crit}%). После ${a.charges} критов эффект проходит.`,
+    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"combust",name:a.name,charges:a.charges,pct:a.crit,step:a.crit,until:Infinity,good:true,mb:true});log(u,a.name);}},
   barrier:{school:"frost",target:false,cap:true,noCombat:true,
     desc:a=>`Щит, поглощающий ${a.absorb} урона, на ${a.dur} с.`,
     exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"absorb",name:a.name,amount:a.absorb,max:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
+  pyroblast:{school:"fire",target:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона огнём и горение: ${a.dot} за ${a.dotDur} с.`,
+    exec(u,t,a){castFx(u);projectile(u,t,a.speed,"fire",()=>{damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"pyroblast",cost:a.cost});
+      if(t.alive&&!u.lastHit.resisted)addDot(t,u,a.name,a.dot*dmgMult(u,"fire",{id:"pyroblast"}),a.dotDur,"fire");});}},
+  blastwave:{school:"fire",target:false,hostile:true,
+    desc:a=>`Волна огня вокруг мага в радиусе ${a.radius} м: ${a.dmg[0]}–${a.dmg[1]} урона и замедление на ${a.slow}% на ${a.dur} с.`,
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xff6a3a);log(u,a.name);
+      for(const t of foes(u))if(dist(u,t)<=a.radius){damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"blastwave",cost:a.cost});if(t.alive&&!u.lastHit.resisted)slowAura(u,t,a.name,a.slow,a.dur,"magic");}}},
+  pom:{school:"arcane",target:false,gcd:false,cap:true,noCombat:true,
+    desc:a=>`Следующее заклинание мага с временем чтения меньше 10 с читается мгновенно.`,
+    exec(u,t,a){addAura(u,{type:"pom",name:a.name,until:Infinity,good:true});statusText(u,a.name,"#d7b0ff");log(u,a.name);}},
+  coldsnap:{school:"frost",target:false,gcd:false,cap:true,noCombat:true,
+    desc:a=>`Сразу восстанавливает Кольцо льда, Конус холода, Ледяную глыбу, Ледяную преграду и Защиту от льда.`,
+    exec(u,t,a){for(const k of ["nova","cone","iceblock","barrier","frostward"])u.cds[k]=0;castFx(u,"castomni");statusText(u,a.name,"#9fdcff");log(u,a.name);}},
+  scorch:{school:"fire",target:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона огнём.`,
+    exec(u,t,a){castFx(u);burstFx(t.pos,0xff8c3f);damage(u,t,roll(a.dmg),a.name,"fire",{spell:true,id:"scorch",cost:a.cost});
+      if(t.alive&&!u.lastHit.resisted&&Math.random()*100<tv(u,"impScorch")){const ex=aura(t,"firevuln"),st=ex?Math.min(5,ex.stacks+1):1;
+        addAura(t,{type:"firevuln",name:"Уязвимость к огню",stacks:st,pct:3*st,until:now+30,dt:"magic"});}}},
+  flamestrike:{school:"fire",target:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Столб огня под целью: ${a.dmg[0]}–${a.dmg[1]} урона всем врагам в радиусе ${a.radius} м, потом пламя горит ${a.dotDur} с (${a.dot} урона).`,
+    exec(u,t,a){castFx(u);const p={x:t.pos.x,z:t.pos.z};novaFx(p,a.radius,0xff6a3a);log(u,a.name);
+      for(const f of foes(u))if(Math.hypot(f.pos.x-p.x,f.pos.z-p.z)<=a.radius)damage(u,f,roll(a.dmg),a.name,"fire",{spell:true,id:"flamestrike",cost:a.cost});
+      addZone(u,{radius:a.radius,dps:a.dot/a.dotDur*dmgMult(u,"fire",{id:"flamestrike"}),dur:a.dotDur,name:a.name,school:"fire",id:"flamestrike",x:p.x,z:p.z,color:0xff7a30});}},
+  blizzard:{school:"frost",target:true,
+    desc:a=>`Канал ${a.channel} с: ледяной дождь в радиусе ${a.radius} м там, где стоит цель. Каждую секунду ${a.dmg[0]}–${a.dmg[1]} урона всем врагам в зоне.`,
+    tick(u,t,a){const c=u.cast;if(!c.pt){c.pt={x:t.pos.x,z:t.pos.z};}const p=c.pt;novaFx(p,a.radius,0xaee6ff);
+      for(const f of foes(u))if(Math.hypot(f.pos.x-p.x,f.pos.z-p.z)<=a.radius){damage(u,f,roll(a.dmg),a.name,"frost",{spell:true,id:"blizzard",noResist:true});
+        if(f.alive&&rk(u,"impBlizzard"))chill(u,f,"Улучшенная снежная буря",tv(u,"impBlizzard"),1.5);}}},
+  fireward:{school:"fire",target:false,noCombat:true,
+    desc:a=>`Поглощает ${a.absorb} урона огнём, ${a.dur} с. Общее восстановление с Защитой от льда.`,
+    exec(u,t,a){castFx(u,"castomni");u.cds.frostward=now+a.cd;addAura(u,{type:"ward",school:"fire",name:a.name,amount:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
+  frostward:{school:"frost",target:false,noCombat:true,
+    desc:a=>`Поглощает ${a.absorb} урона льдом, ${a.dur} с. Общее восстановление с Защитой от огня.`,
+    exec(u,t,a){castFx(u,"castomni");u.cds.fireward=now+a.cd;addAura(u,{type:"ward",school:"frost",name:a.name,amount:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name);}},
   /* разбойник */
   stealth:{school:"phys",target:false,ooc:true,noCombat:true,keepStealth:true,cdOnBreak:true,
     desc:a=>`Только вне боя. Невидимость, скорость −${B.general.stealth.speed}%. Противник замечает вас ближе ${B.general.stealth.front} м спереди и ${B.general.stealth.back} м сзади. Восстановление ${a.cd} с после выхода.`,
@@ -1151,7 +1233,7 @@ function forbear(u){addAura(u,{type:"forbear",name:"Воздержанность
 const ICON_BY_NAME={"Глубокие раны":"deepWounds","Шквал":"flurry","Исступление":"enrage","Кровавое безумие":"bloodCraze","Воспламенение":"ignite","Ясность мысли":"clearcast",
   "Смертельная рана":"mortal","Безмолвие":"a_silence","Обморожение":"frostbite","Сотрясение":"impact","Оглушение (Рывок)":"charge","Оглушающий удар":"concussion",
   "Улучшенное подрезание":"impHamstring","Взрывная волна":"blastWave","Затмение":"blackout","Вдохновение":"inspiration","Отмщение":"vengeance","Возмездие":"vindication",
-  "Воздержанность":"a_forbear","Правосудие справедливости":"a_justice","Калечащий яд":"crip","Дурманящий яд":"numb","Смертельный яд":"deadly"};
+  "Воздержанность":"a_forbear","Правосудие справедливости":"a_justice","Калечащий яд":"crip","Дурманящий яд":"numb","Смертельный яд":"deadly","Уязвимость к огню":"a_firevuln","Зимняя стужа":"a_wchill","Улучшенная снежная буря":"impBlizzard"};
 for(const c of [...CLASSES,"common"])for(const id in DEF[c].abilities)ICON_BY_NAME[DEF[c].abilities[id].name]=META[id].icon||id;
 const auraIcon=a=>a.icon||ICON_BY_NAME[a.name]||("a_"+a.type in ICON?"a_"+a.type:"a_q");
 
@@ -1514,7 +1596,7 @@ function canUse(u,id){
   if((id==="charge"||id==="intercept")&&rooted(u))return "Вы обездвижены";
   return null;
 }
-const pomReady=u=>rk(u,"pom")&&now>=(u.pomAt||0);
+const pomReady=u=>has(u,"pom");
 function tryUse(u,id){
   if(NET.role==="client"&&u===player){if(!(id==="iceblock"&&has(u,"iceblock"))){const err=canUse(u,id);if(err){showErr(err);return false}}if(NET.tx)NET.tx.send({t:"use",id});return true}
   if(id==="iceblock"&&has(u,"iceblock")){u.auras=u.auras.filter(a=>a.type!=="iceblock");log(u,"Выход из ледяной глыбы");return true}
@@ -1527,7 +1609,7 @@ function tryUse(u,id){
   if(u.eating&&id!=="food"){u.eating=null;u.auras=u.auras.filter(x=>x.type!=="eat");}
   if(a.channel){pay(u,id,a,m,t);u.cast={id,start:now,end:now+a.channel,target:t,channel:true,tick:0,nextTick:now+a.channel/a.ticks};sfxUse(u,id);castFx(u,m.target?"channel":"channelomni");return true}
   if(a.cast){
-    if(pomReady(u)){u.pomAt=now+tv(u,"pom");statusText(u,"Присутствие разума","#d7b0ff");finish(u,id,t);return true}
+    if(pomReady(u)&&a.cast<10){u.auras=u.auras.filter(x=>x.type!=="pom");statusText(u,"Присутствие разума","#d7b0ff");finish(u,id,t);return true}
     const nb=aura(u,"numb");const ct=a.cast*(nb?1+nb.pct/100:1);
     u.cast={id,start:now,end:now+ct,target:t,ally:m.ally?healTarget(u):null};return true}
   finish(u,id,t);return true;
@@ -1550,6 +1632,12 @@ function finish(u,id,t,ally){
   u.allyNow=null;
   if(u.isPlayer)flashBtn(id);
 }
+/* урон сбивает время чтения: каст откладывается (1 с, потом меньше), канал теряет четверть длительности */
+function pushback(u){const c=u.cast,m=META[c.id],sc=m.school;if(sc==="phys")return;
+  if(u.cls==="mage"&&((sc==="fire"&&Math.random()*100<tv(u,"burningSoul"))||(c.id==="missiles"&&Math.random()*100<tv(u,"impMissiles"))))return;
+  const G=B.general;c.pb=(c.pb||0)+1;
+  if(c.channel){const a=eff(u,c.id);c.end-=a.channel*G.channelPushback/100;if(c.end<=now)u.cast=null;}
+  else{const d=G.pushback[Math.min(c.pb,G.pushback.length)-1]||0;c.end=Math.min(c.end+d,now+(c.end-c.start));}}
 function cancelCast(u,why){if(!u.cast)return;const nm=ab(u.cls,u.cast.id).name;u.cast=null;castFailU(u,why||"Прервано");if(why){log(u,`${nm}: ${why}`);if(u.isPlayer)showErr(why);}}
 function interrupt(u,t,a){
   if(t.cast&&META[t.cast.id].school!=="phys"){
@@ -1587,7 +1675,7 @@ function dmgMult(s,school,o){
   if(s.cls==="warrior"){if(o.melee)m*=1+(tv(s,"twoHand")+tv(s,"oneHand"))/100;if(o.auto)m*=1+tv(s,"dualWield")/100;
     const en=aura(s,"enrage");if(en)m*=1+en.pct/100;if(rk(s,"deathWish")&&s.hp<s.maxHp*.35)m*=1+tv(s,"deathWish")/100;
     if(s.stance==="defensive")m*=1-B.warrior.abilities.defensive.dealt/100;}
-  else if(s.cls==="mage"){m*=1+(tv(s,"instability")+tv(s,"burningSoul"))/100;if(school==="fire")m*=1+tv(s,"firePower")/100;if(school==="frost")m*=1+tv(s,"piercingIce")/100;
+  else if(s.cls==="mage"){m*=1+tv(s,"instability")/100;if(school==="fire")m*=1+tv(s,"firePower")/100;if(school==="frost")m*=1+tv(s,"piercingIce")/100;
     const ap=aura(s,"apower");if(ap)m*=1+ap.pct/100;}
   m*=(1+K.dmg/100)*(1+(K.school[school]||0)/100)*(1+(K.ap[o.auto?"auto":o.id]||0)/100);
   const pi=aura(s,"pi");if(pi&&school!=="phys")m*=1+pi.pct/100;
@@ -1601,23 +1689,25 @@ function dmgMult(s,school,o){
 function critChance(s,school,t,o){
   let c=B[s.cls].crit+s.K.crit;
   if(s.cls==="warrior"){c+=tv(s,"axeSpec")+tv(s,"cruelty");if(s.stance==="berserker")c+=B.warrior.abilities.berserker.crit;const rc=aura(s,"reckless");if(rc)c+=rc.crit;}
-  else if(s.cls==="mage"){c+=tv(s,"instability");if(school==="fire")c+=tv(s,"criticalMass");if(o.id==="fireblast")c+=tv(s,"incinerate");const cb=aura(s,"combust");if(cb&&school==="fire")c+=cb.pct;}
+  else if(s.cls==="mage"){c+=tv(s,"instability");if(school==="fire")c+=tv(s,"criticalMass");if(o.id==="fireblast"||o.id==="scorch")c+=tv(s,"incinerate");
+    if(o.id==="explosion")c+=tv(s,"impExplosion");if(o.id==="flamestrike")c+=tv(s,"impFlamestrike");
+    const cb=aura(s,"combust");if(cb&&school==="fire"&&o.spell)c+=cb.pct;const wc=aura(t,"wchill");if(wc&&school==="frost")c+=2*wc.stacks;}
   if(o.ability&&has(s,"coldblood"))c=100;
   if(rooted(t)||has(t,"stun"))c+=tv(s,"shatter");
   return c;
 }
 function critMult(s,school,o){
   if(o.melee||o.auto)return B.general.meleeCritMult+(tv(s,"impale")+s.K.critMult)/100;
-  return B.general.spellCritMult+(tv(s,"potency")+s.K.critMult)/100+(school==="frost"?tv(s,"iceShards")/100:0);
+  return B.general.spellCritMult+s.K.critMult/100+(school==="frost"?tv(s,"iceShards")/100*(B.general.spellCritMult-1):0);
 }
 function dampenPct(){const G=B.general,t=now-roundStart-G.dampenStart;return state==="fight"&&t>0?Math.min(G.dampenMax,Math.floor(t*G.dampenPerSec)):0}
 function heal(u,amt,name,crit,src){if(!u.alive)return;const hr=aura(u,"healred");if(hr)amt*=1-hr.pct/100;amt*=1-dampenPct()/100;amt=Math.round(amt);if(amt<=0)return;u.hp=Math.min(u.maxHp,u.hp+amt);(src||u).stats.heal+=amt;healText(u,amt,crit);}
 function addDot(t,src,name,total,dur,school){if(total<1||!t.alive||isImmune(t))return;if(school==="phys"&&has(t,"bop"))return;
   addAura(t,{type:"dot",name,src,school,per:total/dur,next:now+1,until:now+dur+.05,phys:school==="phys",dt:school==="phys"?"none":"magic"});enterCombat(src,t);}
-function addZone(u,a){
-  const m=new THREE.Mesh(tileGeo(FXT.rune),fxMat(0xffc040,.5));m.scale.setScalar(a.radius);
-  m.rotation.x=-Math.PI/2;m.position.set(u.pos.x,GY(u.pos.x,u.pos.z)+.06,u.pos.z);scene.add(m);
-  zones.push({x:u.pos.x,z:u.pos.z,r:a.radius,dps:a.dps,src:u,name:a.name,next:now+1,until:now+a.dur,mesh:m});
+function addZone(u,a){const x=a.x??u.pos.x,z=a.z??u.pos.z;
+  const m=new THREE.Mesh(tileGeo(FXT.rune),fxMat(a.color||0xffc040,.5));m.scale.setScalar(a.radius);
+  m.rotation.x=-Math.PI/2;m.position.set(x,GY(x,z)+.06,z);scene.add(m);
+  zones.push({x,z,r:a.radius,dps:a.dps,src:u,name:a.name,school:a.school||"holy",id:a.id||"consecration",next:now+1,until:now+a.dur,mesh:m});
 }
 function damage(src,t,base,name,school,o){
   o=o||{};src.lastHit={};
@@ -1628,16 +1718,18 @@ function damage(src,t,base,name,school,o){
     if(src.cls==="warrior")src.opUntil=now+B.warrior.abilities.overpower.window;
     if(t.model.acts&&!t.moving&&!t.cast)playOnce(t.model,"dodge",1.4);sfx("parry",t,{vol:.7});
     if(rk(t,"setup")&&Math.random()*100<tv(t,"setup"))addCp(t,1);return 0}
+  if(o.spell&&!o.dot&&!o.noResist&&spellResisted(src,t,school))return 0;
   let amt=o.dot?base:base*dmgMult(src,school,o),crit=false,blocked=false;
   if(!o.noCrit&&!o.dot&&Math.random()*100<critChance(src,school,t,o)){crit=true;amt*=critMult(src,school,o);src.stats.crits++;}
   if(!o.dot){if(o.auto&&HIT_SND[src.cls])sfx(src.cls==="rogue"&&src.ohNext?"hit_dagger":HIT_SND[src.cls],t,{vol:crit?1:.75});else if(o.id&&SND.map[o.id+"_i"])sfx(o.id+"_i",t);}
   if(!o.dot)impactFx(t,school,crit,false);else if(Math.random()<.7)schoolBurst(t.pos.x,t.y+1.1,t.pos.z,school,4,2,.4);
   if(o.ability){const cb=aura(src,"coldblood");if(cb)cb.until=0;}
-  if(o.spell&&!o.dot&&school==="fire"){const cb=aura(src,"combust");if(cb&&--cb.charges<=0)cb.until=0;}
+  if(o.spell&&!o.dot&&school==="fire"){const cb=aura(src,"combust");if(cb){if(crit){if(--cb.charges<=0)cb.until=0;}else cb.pct+=cb.step;}}
   const hs=aura(t,"holyshield");
   if((o.melee||o.auto)&&!o.noBlock&&Math.random()*100<tv(t,"shieldSpec")+t.K.block+(hs?hs.pct:0)){blocked=true;amt*=1-B.general.blockReduce/100;}
   if(school==="phys"){amt*=1-tv(t,"deflection")/100;for(const ty of ["frostarmor","innerfire","shadowform"]){const x=aura(t,ty);if(x)amt*=1-x.pct/100;}}
-  amt*=1-tv(t,"frozenCore")/100;
+  if(school==="phys")amt*=1-(t.K.phys||0)/100;
+  if(school==="fire"){const fv=aura(t,"firevuln");if(fv)amt*=1+fv.pct/100;}
   amt*=1-t.K.taken/100;
   if(t.stance==="defensive")amt*=1-B.warrior.abilities.defensive.taken/100;
   if(t.stance==="berserker")amt*=1+B.warrior.abilities.berserker.taken/100;
@@ -1648,6 +1740,10 @@ function damage(src,t,base,name,school,o){
   let absorbed=0;
   const ms=aura(t,"manashield");
   if(ms&&amt>0){const x=Math.min(ms.amount,amt,Math.floor(t.res/ms.ratio));ms.amount-=x;t.res-=x*ms.ratio;amt-=x;absorbed+=x;if(ms.amount<=0||t.res<ms.ratio)ms.until=0;}
+  const wd=t.auras.find(a=>a.type==="ward"&&a.school===school&&a.until>now);
+  if(wd&&amt>0&&o.spell&&!o.dot&&src!==t){const rf=school==="fire"?tv(t,"impFireWard"):school==="frost"?10*rk(t,"frostWarding"):0;
+    if(rf&&Math.random()*100<rf){statusText(t,"Отражено","#ffd100");logRaw(`<b>${t.name}</b>: ${wd.name} отражает «${name}»`);damage(t,src,amt,name,school,{spell:true,noProc:true,noResist:true,noCrit:true});return 0}}
+  if(wd&&amt>0){const x=Math.min(wd.amount,amt);wd.amount-=x;amt-=x;absorbed+=x;if(wd.amount<=0)wd.until=0;}
   const abs=aura(t,"absorb");
   if(abs&&amt>0){const x=Math.min(abs.amount,amt);abs.amount-=x;amt-=x;absorbed+=x;if(abs.amount<=0)abs.until=0;}
   t.hp=Math.max(0,t.hp-amt);src.stats.dmg+=amt;src.lastHit={crit,amt};
@@ -1655,24 +1751,26 @@ function damage(src,t,base,name,school,o){
   breakStealth(t);
   if(t.eating){t.eating=null;t.auras=t.auras.filter(a=>a.type!=="eat");}
   if(t.cast&&META[t.cast.id].breakOnDmg&&amt>0)cancelCast(t,"Прервано уроном");
+  else if(t.cast&&amt>0)pushback(t);
   if(t.auras.some(a=>a.breakOnDmg&&a.until>now)){const br=t.auras.find(a=>a.breakOnDmg&&a.until>now);t.auras=t.auras.filter(a=>!a.breakOnDmg);logRaw(`Урон снимает «${br.name}» с ${t.name}`);}
   const fe=aura(t,"fear");if(fe&&amt>0){fe.left-=amt;if(fe.left<=0){fe.until=0;logRaw(`Урон снимает «${fe.name}» с ${t.name}`);}}
   combatText(src,t,amt,crit,o,school,blocked,absorbed);
   logRaw(`<b>${src.name}</b>: ${name} → ${amt}${crit?" (крит)":""}${blocked?" (блок)":""}${absorbed?`, поглощено ${absorbed}`:""}`);
   if(school==="shadow"&&rk(src,"vampiric")&&amt>0)heal(src,amt*tv(src,"vampiric")/100,"Вампирские объятия");
-  if((o.melee||o.auto)&&!o.dot){const fa=aura(t,"frostarmor");if(fa&&src.alive)slowAura(t,src,fa.name,fa.slow,fa.slowDur,"magic");}
+  if((o.melee||o.auto)&&!o.dot){const fa=aura(t,"frostarmor");if(fa&&src.alive)chill(t,src,fa.name,fa.slow,fa.slowDur);}
   if(!o.dot&&!o.noProc){
     if(crit){
       if(src.cls==="warrior"&&(o.melee||o.auto)){if(rk(src,"deepWounds"))addDot(t,src,"Глубокие раны",(amt+absorbed)*tv(src,"deepWounds")/100,6,"phys");
         if(rk(src,"flurry"))addAura(src,{type:"flurry",name:"Шквал",charges:3,until:now+15,good:true});}
       if(src.cls==="mage"){if(school==="fire"&&rk(src,"ignite"))addDot(t,src,"Воспламенение",(amt+absorbed)*tv(src,"ignite")/100,4,"fire");
-        if(rk(src,"moe")&&o.cost)src.res=Math.min(src.maxRes,src.res+o.cost*tv(src,"moe")/100);}
+        if(rk(src,"moe")&&o.cost&&(school==="fire"||school==="frost"))src.res=Math.min(src.maxRes,src.res+o.cost*tv(src,"moe")/100);}
       if(rk(src,"vengeance"))addAura(src,{type:"veng",name:"Отмщение",pct:tv(src,"vengeance"),until:now+8,good:true});
       if(rk(t,"enrage"))addAura(t,{type:"enrage",name:"Исступление",pct:tv(t,"enrage"),until:now+8,good:true});
       if(rk(t,"bloodCraze"))addAura(t,{type:"hot",name:"Кровавое безумие",per:t.maxHp*tv(t,"bloodCraze")/100/6,next:now+1,until:now+6.05,good:true});
       if(rk(t,"reckoning")&&t.alive&&src.alive&&dist(src,t)<=B.general.meleeRange+1&&Math.random()*100<tv(t,"reckoning")){const tt=t;setTimeout(()=>{if(tt.alive&&src.alive)damage(tt,src,roll(B[tt.cls].swing.dmg),"Расплата","phys",{auto:true,noProc:true});},150);}
     }
-    if(school==="fire"&&t.hp>0&&Math.random()*100<tv(src,"impact"))cc(src,t,"stun",2,"Сотрясение");
+    if(school==="fire"&&o.spell&&t.hp>0&&Math.random()*100<tv(src,"impact"))cc(src,t,"stun",2,"Сотрясение");
+    if(school==="frost"&&o.spell&&t.hp>0&&Math.random()*100<tv(src,"wintersChill")){const ex=aura(t,"wchill"),st=ex?Math.min(5,ex.stacks+1):1;addAura(t,{type:"wchill",name:"Зимняя стужа",stacks:st,until:now+15,dt:"magic"});}
     /* Затмение срабатывает от прямых заклинаний Тьмы, не от тиков дотов и Истощения разума */
     if(school==="shadow"&&o.spell&&!o.dot&&o.id!=="flay"&&t.hp>0&&Math.random()*100<tv(src,"blackout"))cc(src,t,"stun",3,"Затмение");
     if(rk(src,"vindication")&&(o.melee||o.auto||o.id==="judgement")&&Math.random()<.2)addAura(t,{type:"weak",name:"Возмездие",pct:tv(src,"vindication"),until:now+10,dt:"magic"});
@@ -1680,7 +1778,6 @@ function damage(src,t,base,name,school,o){
   if(t.hp<=0){t.alive=false;t.cast=null;t.auras=t.auras.filter(a=>a.type==="dampen");log(t,"погибает");if(teamDead(t.team))endRound(src);return amt}
   if(rk(t,"lastStand")&&!t.lastStandUsed&&t.hp<t.maxHp*.2){t.lastStandUsed=true;heal(t,t.maxHp*tv(t,"lastStand")/100,"Последний рубеж");logRaw(`<b>${t.name}</b>: Последний рубеж`);}
   if(rk(t,"spiritRedemption")&&!t.srUsed&&t.hp<t.maxHp*.2){t.srUsed=true;heal(t,t.maxHp*tv(t,"spiritRedemption")/100,"Дух воздаяния");logRaw(`<b>${t.name}</b>: Дух воздаяния`);}
-  if(rk(t,"coldSnap")&&!t.coldSnapUsed&&t.hp<t.maxHp*tv(t,"coldSnap")/100){t.coldSnapUsed=true;t.cds.nova=0;statusText(t,"Холодная хватка","#9fdcff");}
   if(blocked&&rk(t,"revenge")&&src.alive)damage(t,src,tv(t,"revenge"),"Ответный удар","phys",{noCrit:true,noProc:true});
   if(blocked&&hs&&src.alive){if(--hs.charges<=0)hs.until=0;damage(t,src,hs.dmg,"Щит небес","holy",{noCrit:true,noProc:true});}
   return amt;
@@ -1726,7 +1823,7 @@ function updateUnit(u,dt){
         else if(m.target&&dist(u,tt)>a.range+2){cancelCast(u,"Цель слишком далеко");}
         else if(m.target&&!los(u.pos,tt.pos)){cancelCast(u,"Цель вне поля зрения");}
         else m.tick(u,tt,a,c.tick);}
-      if(u.cast===c&&c.tick>=a.ticks){u.cast=null;}
+      if(u.cast===c&&(c.tick>=a.ticks||now>c.end+.05)){u.cast=null;}
     }
     else if(now>=c.end){
       u.cast=null;
@@ -1804,7 +1901,7 @@ function moveUnit(u,dt){
   u.pos.x+=mx*sp*dt;u.pos.z+=mz*sp*dt;collide(u.pos);
 }
 /* стоим на полу; если пол ушёл вниз больше чем на ступеньку, падаем */
-function floorSnap(u){if(!MAP){u.pos.y=u.y;return}if(u.air||(u.net&&NET.role==="host")){u.pos.y=u.y;return}
+function floorSnap(u){if(!MAP){u.pos.y=u.y;return}if(u.air){u.pos.y=u.y;return}
   const g=GY(u.pos.x,u.pos.z);if(u.y>g+.9){u.air=true;u.vy=0;u.airVel.set(u.vel?u.vel.x:0,u.vel?u.vel.y:0);}else u.y=g;u.pos.y=u.y;}
 function separate(a,b){if(stealthed(a)||stealthed(b))return;const dx=b.pos.x-a.pos.x,dz=b.pos.z-a.pos.z,d=Math.hypot(dx,dz),m=1.4;if(d<m&&d>1e-4){const p=(m-d)/2;a.pos.x-=dx/d*p;a.pos.z-=dz/d*p;b.pos.x+=dx/d*p;b.pos.z+=dz/d*p;}}
 function updateZones(){
@@ -1812,7 +1909,7 @@ function updateZones(){
     if(now>=z.until||state!=="fight"){scene.remove(z.mesh);zones.splice(i,1);continue}
     z.mesh.material.opacity=.3+.1*Math.sin(now*5);z.mesh.rotation.z+=.004;
     if(Math.random()<.6){const a=Math.random()*6.283,r=Math.sqrt(Math.random())*z.r,zx=z.x+Math.cos(a)*r,zz=z.z+Math.sin(a)*r;pfx(zx,GY(zx,zz)+.15,zz,{t:Math.random()<.5?FXT.flame:FXT.star,v:[0,rnd(1,2.2),0],life:rnd(.5,.9),s0:.45,s1:.15,c0:0xfff0a0,c1:0xff8a10,spin:2});}
-    if(now>=z.next){z.next+=1;for(const t of foes(z.src))if(Math.hypot(t.pos.x-z.x,t.pos.z-z.z)<=z.r)damage(z.src,t,z.dps,z.name,"holy",{spell:true,id:"consecration",noProc:true});}}
+    if(now>=z.next){z.next+=1;for(const t of foes(z.src))if(Math.hypot(t.pos.x-z.x,t.pos.z-z.z)<=z.r)damage(z.src,t,z.dps,z.name,z.school||"holy",{spell:true,id:z.id||"consecration",noProc:true,noResist:true});}}
 }
 
 /* ================= БОТ ================= */
@@ -1922,6 +2019,8 @@ class Bot{
     if(!this.u.abilities.includes("barrier")&&u.hp<u.maxHp*.55&&!has(u,"manashield")&&u.res>1500&&this.ready("manashield")){tryUse(u,"manashield");return}
     const eLocked=this.locked(),melee=MELEE[e.cls];
     if(melee&&d<N.radius-1.5&&!eLocked&&!isImmune(e)&&this.ready("nova")){tryUse(u,"nova");return}
+    if(melee&&d<9&&!eLocked&&!isImmune(e)&&this.ready("blastwave")){tryUse(u,"blastwave");return}
+    if(u.cds.nova>now&&u.cds.iceblock>now&&this.ready("coldsnap"))tryUse(u,"coldsnap");
     if(melee&&d<8&&!eLocked&&!isImmune(e)&&this.ready("cone")){this.face();tryUse(u,"cone");return}
     if(melee&&d<6&&!eLocked&&this.ready("blink")){u.facing=this.awayDir();tryUse(u,"blink");return}
     if(melee&&d<(eLocked?17:10)&&!has(e,"incap")){this.kite();if(this.ready("fireblast"))tryUse(u,"fireblast");return}
@@ -1933,6 +2032,7 @@ class Bot{
     if(this.ready("apower"))tryUse(u,"apower");
     if(this.ready("combust"))tryUse(u,"combust");
     if(this.ready("fireblast")&&Math.random()<.5){tryUse(u,"fireblast");return}
+    if(eLocked&&d>15&&this.ready("pyroblast")){tryUse(u,"pyroblast");return}
     if(eLocked&&d>12&&this.ready("fireball")){tryUse(u,"fireball");return}
     if(!melee&&Math.random()<.25&&this.ready("missiles")){tryUse(u,"missiles");return}
     if(this.ready("frostbolt"))tryUse(u,"frostbolt");
@@ -2737,7 +2837,7 @@ function renderTalents(){
     sec.innerHTML=`<header><b>${tree.name}</b><span>${tp} очк.</span></header>`;
     const grid=document.createElement("div");grid.className="tgrid";
     for(const id in tree.list){const d=tree.list[id],r=tal[id]||0;const b=document.createElement("button");
-      const open=tp>=(d.t-1)*5;b.className="tal"+(open?" open":" lock")+(r>=d.max?" max":"")+(talSel===id?" sel":"");
+      const open=tp>=(d.t-1)*5&&(!d.req||(tal[d.req]||0)>=d.reqr);b.className="tal"+(open?" open":" lock")+(r>=d.max?" max":"")+(talSel===id?" sel":"");
       b.style.gridRow=d.t;b.style.gridColumn=d.c;b.style.cssText+=";"+iconBg(id,40);
       b.innerHTML=`<i>${r}/${d.max}</i>`;
       b.setAttribute("aria-label",`${d.n}, ${r} из ${d.max}`);
@@ -2745,6 +2845,11 @@ function renderTalents(){
       b.onclick=()=>{talSel=id;if(canAdd(cls,tal,id)){tal[id]=r+1;saveTal();}renderTalents();renderTalInfo(id);};
       b.oncontextmenu=e=>{e.preventDefault();talSel=id;removePoint(id);};
       grid.appendChild(b);}
+    for(const id in tree.list){const d=tree.list[id];if(!d.req)continue;const q=tree.list[d.req];if(!q)continue;const ok=(tal[d.req]||0)>=d.reqr;
+      const ar=document.createElement("div");ar.className="tarrow"+(ok?" ok":"");
+      if(q.t===d.t){ar.classList.add("h");ar.style.gridRow=d.t;ar.style.gridColumn=`${Math.min(q.c,d.c)} / ${Math.max(q.c,d.c)+1}`;}
+      else{ar.style.gridRow=`${q.t} / ${d.t+1}`;ar.style.gridColumn=d.c;}
+      grid.insertBefore(ar,grid.firstChild);}
     sec.appendChild(grid);wrap.appendChild(sec);}
 }
 function removePoint(id){const cls=talCls,tal=myTal[cls];if(canRemove(cls,tal,id)){tal[id]--;if(!tal[id])delete tal[id];saveTal();}renderTalents();renderTalInfo(id);}
@@ -2752,9 +2857,10 @@ function renderTalInfo(id){
   id=id||talSel;const el=$("#tinfo");if(!id)return;
   const d=talDef(talCls,id);if(!d)return;const r=myTal[talCls][id]||0;const tree=B.talents[talCls][treeOf(talCls,id)];
   const fmt=x=>+(+x).toFixed(2);
-  const cur=r?`<p>${d.d.replace("{x}",fmt(d.v*r))}</p>`:"";
-  const nxt=r<d.max?`<p class="next">${r?"Следующий ранг: ":""}${d.d.replace("{x}",fmt(d.v*(r+1)))}</p>`:"";
-  el.innerHTML=`<h4>${d.n}</h4><div class="meta">${tree.name} · ряд ${d.t} (нужно ${(d.t-1)*5} очк. в ветке) · ранг ${r}/${d.max}</div>${cur}${nxt}`;
+  const cur=r?`<p>${d.d.replace("{x}",fmt(talVal(d,r)))}</p>`:"";
+  const nxt=r<d.max?`<p class="next">${r?"Следующий ранг: ":""}${d.d.replace("{x}",fmt(talVal(d,r+1)))}</p>`:"";
+  const rq=d.req?talDef(talCls,d.req):null,rqOk=!rq||(myTal[talCls][d.req]||0)>=d.reqr;
+  el.innerHTML=`<h4>${d.n}</h4><div class="meta">${tree.name} · ряд ${d.t} (нужно ${(d.t-1)*5} очк. в ветке) · ранг ${r}/${d.max}</div>${rq?`<div class="meta" style="color:${rqOk?"#9f9":"#ff6a5a"}">Требуется: ${rq.n}${rq.max>1?` (${d.reqr} из ${rq.max})`:""}</div>`:""}${cur}${nxt}`;
 }
 $("#talMinus").onclick=()=>{if(talSel)removePoint(talSel);};
 $("#talReset").onclick=()=>{myTal[talCls]={};saveTal();renderTalents();$("#tinfo").innerHTML=`<p class="note">Очки сброшены.</p>`;};
@@ -3075,6 +3181,7 @@ function netWire(){const T=NET.tx;
     if(o.t==="pg"){(id?T.sendTo(id,{t:"po",ts:o.ts}):T.send({t:"po",ts:o.ts}));return}
     if(o.t==="po"){const r=performance.now()-o.ts;if(!(r>=0&&r<10000))return;if(id){const g=NET.peers[id];if(g)g.rtt=Math.round(r);}else NET.rtt=Math.round(r);return}
     if(NET.role==="host"){const g=NET.peers[id];if(!g)return;g.seen=performance.now();
+      if(o.t==="hello"&&o.ver!==GAME_VER){T.sendTo(id,{t:"oldver"});netStatus("Игрок с устаревшей версией игры не пущен: ему нужно обновить страницу (Ctrl+F5).");return}
       if(o.t==="hello"&&CLASSES.includes(o.cls)){const first=!g.cls;Object.assign(g,{cls:o.cls,tal:o.tal&&typeof o.tal==="object"?o.tal:{},nick:cleanNick(o.nick)||"Игрок"});
         if(first){g.team=netAutoTeam(id);netStatus(`${g.nick} зашёл в комнату. Нажмите «В бой», когда все готовы.`);}netSendLobby();renderNet();}
       else if(o.t==="team"&&(o.team===0||o.team===1)&&state!=="fight"&&state!=="countdown"){const n=netHumans().filter(h=>h.team===o.team&&h.id!==id).length;if(n<netSize()){g.team=o.team;netSendLobby();renderNet();}}
@@ -3082,6 +3189,7 @@ function netWire(){const T=NET.tx;
       else if(o.t==="use"&&g.unit&&units.includes(g.unit)&&typeof o.id==="string"&&META[o.id])netRemoteUse(g.unit,o.id);
       else if(o.t==="cancel"&&g.unit&&units.includes(g.unit))cancelCast(g.unit);
     }else{
+      if(o.t==="oldver"){netStatus("У хоста другая версия игры. Обновите страницу (Ctrl+F5), и пусть хост тоже обновит.");const c=NET.code;netLeave();NET.code=c;return}
       if(o.t==="full"){netStatus(`Комната ${NET.code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игрока.`);const c=NET.code;netLeave();NET.code=c;return}
       if(o.t==="lobby"){const first=!NET.lobby;NET.lobby=netLobbyIn(o.lobby);NET.myId=String(o.you||"");if(first&&NET.lobby){const h=NET.lobby.teams.flat().find(p=>p.host);netStatus(`Вы в комнате ${NET.code} у игрока ${h?h.nick:"хоста"}. Бой начинает он.`);}renderNet();}
       else if(o.t==="start")netClientStart(o);
@@ -3095,7 +3203,7 @@ function netLeave(){if(NET.tx)NET.tx.close();clearTimeout(NET.joinT);
   Object.assign(NET,{role:null,tx:null,peers:{},lobby:null,myId:"",lastSnap:null,evq:[],rtt:0,snapN:0});renderNet();}
 /* о себе: гость шлёт ник, класс и таланты; хост в ответ рассылает всем состав лобби */
 function netSendMe(force){const T=NET.tx;if(!T||!NET.role)return;
-  if(NET.role==="client"){if(!force&&!T.open)return;T.send({t:"hello",nick:myNick(),cls:settings.pcls,tal:myTal[settings.pcls]});}else netSendLobby();}
+  if(NET.role==="client"){if(!force&&!T.open)return;T.send({t:"hello",ver:GAME_VER,nick:myNick(),cls:settings.pcls,tal:myTal[settings.pcls]});}else netSendLobby();}
 function netPickTeam(t){if(NET.role==="host"){const n=netHumans().filter(h=>h.team===t&&h.id!=="host").length;if(n<netSize()){NET.myTeam=t;netSendLobby();renderNet();}}
   else if(NET.tx)NET.tx.send({t:"team",team:t});}
 /* лобби: кто в комнате и за какую команду; у всех один и тот же состав, его считает хост */
