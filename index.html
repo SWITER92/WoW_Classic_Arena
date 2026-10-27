@@ -2922,7 +2922,7 @@ function netMakeCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(l
 function netUseBC(){const q=new URLSearchParams(location.search);if(q.has("peerhost")||q.has("ws"))return false;return location.protocol==="file:"||/^(localhost|127\.)/.test(location.hostname)||q.has("local")}
 /* свой сервер комнат (server/relay.js): все игроки подключаются к нему по WebSocket, это проходит через любой роутер.
    Если сервер недоступен, игра сама переходит на прямое соединение через PeerJS, как раньше */
-const NET_WS_URL="";
+const NET_WS_URL="wss://wowarena92.duckdns.org/arena";
 function netWsUrl(){const q=new URLSearchParams(location.search);return q.get("ws")||NET_WS_URL;}
 function wsTransport(url,code,role){return new Promise((res,rej)=>{
   let done=false,ws;const fin=(ok,v)=>{if(done)return;done=true;clearTimeout(to);ok?res(v):rej(v);};
