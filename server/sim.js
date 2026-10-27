@@ -47,6 +47,7 @@ w.fetch = async u => {
   return { ok: true, json: async () => JSON.parse(b), arrayBuffer: async () => b.buffer.slice(b.byteOffset, b.byteOffset + b.length), text: async () => b.toString() };
 };
 w.WebSocket = WebSocket;
+w.TextDecoder = TextDecoder; w.TextEncoder = TextEncoder;
 w.AudioContext = undefined; w.webkitAudioContext = undefined;
 w.Worker = class { postMessage() {} terminate() {} };
 w.URL.createObjectURL = () => "blob:none";
@@ -55,7 +56,7 @@ for (const s of w.document.querySelectorAll("script")) run(s.textContent, "index
 
 const started = Date.now();
 let emptySince = Date.now();
-w.srvHost(code).then(() => console.log(`room ${code} (${mode}) is up`)).catch(e => { console.error("host failed", e && e.type); process.exit(1); });
+w.srvHost(code).then(() => console.log(`room ${code} (${mode}) is up, map ${run("MAP?\"nagrand\":\"fallback\"","m")}`)).catch(e => { console.error("host failed", e && e.type); process.exit(1); });
 /* пустая комната живёт минуту, потом процесс завершается */
 setInterval(() => {
   const n = run("netGuests().length", "check");
