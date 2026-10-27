@@ -146,6 +146,30 @@ body.binding #slots2{display:block}
 #jumpBtn{position:absolute;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(110px*var(--s) + 70px);width:64px;height:64px;border-radius:50%;border:1px solid var(--line);background:rgba(20,25,31,.5);color:var(--gold);display:none}
 @media (pointer:coarse){#joy,#jumpBtn{display:block}#log{display:none}}
 /* окна в стиле диалогов WoW */
+#menu.csel{display:block;background:radial-gradient(ellipse at 50% 55%,transparent 35%,rgba(0,0,0,.55));padding:0}
+.cs-panel{background:rgba(0,0,0,.72) url(assets/ui/dlgbg.png);border:2px solid #8f7a52;outline:1px solid #000;border-radius:6px;padding:12px;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start}
+.cs-panel h1{margin:0;font-size:26px;font-weight:400;color:var(--gold);text-shadow:2px 2px 0 #000}
+.cs-panel h2{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.cs-logo{position:absolute;left:16px;top:12px;display:grid;color:var(--gold);text-shadow:2px 2px 0 #000;line-height:1}
+.cs-logo b{font-size:30px;font-weight:400}.cs-logo span{font-size:14px;color:#e8e2d0;margin-top:4px}
+.cs-left{position:absolute;left:16px;top:80px;width:290px;max-height:calc(100% - 140px);overflow:auto}
+.cs-desc{margin:0;font-size:13px;line-height:1.4;color:#e8e2d0}
+.cs-right{position:absolute;right:16px;top:12px;width:260px;max-height:calc(100% - 80px);overflow:auto}
+.cs-realm{text-align:center;color:var(--gold);font-size:18px;text-shadow:1px 1px 0 #000}
+.cs-list{display:grid;gap:4px}
+.cs-char{display:grid;grid-template-columns:40px 1fr;gap:2px 8px;align-items:center;text-align:left;background:rgba(20,16,10,.6);border:1px solid transparent;border-radius:4px;padding:5px;color:#fff;font:inherit;cursor:pointer}
+.cs-char i{background-image:url(assets/ui/icons.webp);grid-row:span 2;width:40px;height:40px;border:1px solid #000;border-radius:3px}
+.cs-char b{font-weight:400;font-size:15px;color:var(--gold)}.cs-char span{font-size:12px;color:#cfc6b0}
+.cs-char[aria-selected="true"]{background:rgba(120,95,30,.45);border-color:var(--gold)}
+.cs-char:hover{border-color:#8f7a52}
+.cs-bottom{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;width:min(720px,calc(100% - 640px))}
+.cs-name{font-size:24px;margin-bottom:-4px;color:var(--gold);text-shadow:2px 2px 0 #000}
+.cs-bots{width:100%;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.cs-bots .note{grid-column:1/-1}
+.cs-icons .opt{padding:2px;font-size:0;gap:0}
+.cs-go{font-size:18px!important;min-width:200px;padding:9px 28px 10px!important}
+.cs-bl{position:absolute;left:16px;bottom:14px;display:grid;gap:6px}
+@media (max-width:1100px){#menu.csel{overflow:auto;display:grid;place-items:stretch;gap:10px;padding:12px 16px;align-content:start}.cs-logo,.cs-left,.cs-right,.cs-bottom,.cs-bl{position:static;transform:none;width:auto;max-height:none}.cs-bl{display:flex;flex-wrap:wrap}.cs-bottom{order:3}.cs-left{order:4}.cs-bl{order:5}}
 .overlay{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center,rgba(0,0,0,.35),rgba(0,0,0,.85));padding:16px;overflow:auto}
 .card{width:min(760px,100%);background:#000 url(assets/ui/dlgbg.png) repeat;background-color:rgba(0,0,0,.9);border:3px solid #8f7a52;outline:1px solid #000;box-shadow:inset 0 0 0 1px #2b2418,0 10px 40px #000;border-radius:8px;padding:22px;display:grid;gap:16px;box-sizing:border-box}
 .card h1{margin:0;font-size:clamp(28px,5vw,42px);font-weight:400;color:var(--gold);text-shadow:2px 2px 0 #000;text-wrap:balance}
@@ -258,25 +282,39 @@ textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;backgro
   <button id="jumpBtn" aria-label="Прыжок">Прыжок</button>
 </div>
 
-<div id="menu" class="overlay">
-  <div class="card">
-    <div class="group">
-      <h2>Арена · прототип</h2>
-      <h1>Кольцо Клинков</h1>
-      <p class="lead">Бой на арене Гурубаши: дуэль или 2 на 2. Колонны закрывают обзор, заклинания читаются только стоя, повторный контроль одного типа слабеет. Пять классов, таланты и все цифры настраиваются.</p>
+<div id="menu" class="overlay csel">
+  <div class="cs-logo"><b>World of Warcraft</b><span>Арена · классика</span></div>
+  <aside class="cs-left cs-panel">
+    <h1 id="csCls">Класс</h1><p class="note" id="csRole"></p><p class="cs-desc" id="csDesc"></p>
+    <span class="note" id="buildP"></span>
+    <div class="opts"><button class="btn" id="btnTal">Таланты</button><button class="btn" id="btnLoadout">Способности</button></div>
+    <h2>Панель способностей</h2><button class="mbar" id="menuBar" aria-label="Открыть раскладку панели и клавиши"></button>
+    <div class="group" id="optPoison" hidden><h2>Яды разбойника</h2><span class="note">Правая рука</span><div class="opts" id="poisonMH"></div><span class="note">Левая рука</span><div class="opts" id="poisonOH"></div></div>
+  </aside>
+  <aside class="cs-right cs-panel">
+    <div class="cs-realm">Награнд</div>
+    <div id="optP" class="cs-list" role="listbox" aria-label="Персонаж"></div>
+    <span class="score" id="score"></span>
+  </aside>
+  <div class="cs-bottom">
+    <div class="cs-name" id="csName"></div>
+    <div class="cs-bots cs-panel" id="csBots">
+      <div class="group"><h2>Формат</h2><div class="opts" id="optMode"></div></div>
+      <div class="group"><h2>Противник</h2><div class="opts cs-icons" id="optE"></div></div>
+      <div class="group" id="duoPick" hidden><h2 id="optAh">Союзник</h2><div class="opts cs-icons" id="optA"></div><h2>Второй противник</h2><div class="opts cs-icons" id="optE2"></div></div>
+      <div class="group"><h2>Сложность</h2><div class="opts" id="optD"></div></div>
+      <span class="note" id="modeNote"></span><span class="note" id="buildE"></span>
     </div>
-    <div class="pick">
-      <div class="group"><h2>Формат боя</h2><div class="opts" id="optMode"></div><span class="note" id="modeNote"></span></div>
-      <div class="group"><h2>Ваш класс</h2><div class="opts" id="optP"></div><span class="note" id="buildP"></span>
-        <h2 style="margin-top:6px">Панель способностей</h2><button class="mbar" id="menuBar" aria-label="Открыть раскладку панели и клавиши"></button><button class="btn" id="btnLoadout">Способности и клавиши</button></div>
-      <div class="group"><h2>Класс противника</h2><div class="opts" id="optE"></div><span class="note" id="buildE"></span></div>
-      <div class="group" id="duoPick" hidden><h2 id="optAh">Союзник</h2><div class="opts" id="optA"></div><h2 style="margin-top:6px">Второй противник</h2><div class="opts" id="optE2"></div></div>
-      <div class="group"><h2>Игра по сети</h2><div class="opts"><input id="netNick" maxlength="16" placeholder="Ваш ник" aria-label="Ваш ник" style="width:150px;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"></div><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><label class="note" id="netPubRow" style="display:block;margin:2px 0"><input type="checkbox" id="netPub" checked> Открытая комната: видна всем в списке ниже</label><span class="note" id="netStatus">Введите ник, создайте комнату и скажите другу код, или введите код друга.</span><div id="lobby" class="lobby" hidden></div><div id="pubBox" style="margin-top:8px"><div class="note" id="pubOnline">Сейчас в игре: …</div><div id="pubList"></div></div></div>
-      <div class="group"><h2>Сложность бота</h2><div class="opts" id="optD"></div></div>
-      <div class="group" id="optPoison" hidden><h2>Яды разбойника</h2><span class="note">Правая рука</span><div class="opts" id="poisonMH"></div><span class="note">Левая рука</span><div class="opts" id="poisonOH"></div></div>
-    </div>
-    <div class="row"><button class="btn primary" id="btnStart">В бой</button><button class="btn" id="btnTal">Таланты</button><button class="btn" id="btnHelp2">Управление</button><button class="btn" id="btnSnd2">Настройки</button><span class="score" id="score"></span></div>
+    <button class="btn primary cs-go" id="btnStart">На арену</button>
     <span class="note" id="loadNote">Загружаю модели…</span>
+  </div>
+  <div class="cs-bl"><button class="btn" id="btnLobby">Лобби</button><button class="btn" id="btnHelp2">Управление</button><button class="btn" id="btnSnd2">Настройки</button></div>
+</div>
+<div id="lobbyWin" class="overlay" hidden>
+  <div class="card">
+    <h1 style="font-size:28px">Лобби</h1>
+    <div class="group"><div class="opts"><input id="netNick" maxlength="16" placeholder="Ваш ник" aria-label="Ваш ник" style="width:150px;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"></div><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><label class="note" id="netPubRow" style="display:block;margin:2px 0"><input type="checkbox" id="netPub" checked> Открытая комната: видна всем в списке ниже</label><span class="note" id="netStatus">Введите ник, создайте комнату и скажите другу код, или введите код друга.</span><div id="lobby" class="lobby" hidden></div><div id="pubBox" style="margin-top:8px"><div class="note" id="pubOnline">Сейчас в игре: …</div><div id="pubList"></div></div></div>
+    <div class="row"><button class="btn primary" id="lobbyStart">В бой</button><button class="btn" id="lobbyClose">Закрыть</button></div>
   </div>
 </div>
 
@@ -793,7 +831,7 @@ const SCHOOL_NAME={phys:"Физический",frost:"Лёд",fire:"Огонь",
 const RES_NAME={rage:"ярости",mana:"маны",energy:"энергии"};
 const RES_COLOR={rage:"#e00000",mana:"#1a3cff",energy:"#ffe000"};
 const roll=r=>r[0]+Math.random()*(r[1]-r[0]);
-const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210};const GAME_VER="202610271904";
+const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210};const GAME_VER="202610271923";
 const ICON_COLS=16;
 function iconBg(key,size){const i=ICON[key]??ICON.a_q;return `background-size:${ICON_COLS*size}px auto;background-position:${-(i%ICON_COLS)*size}px ${-Math.floor(i/ICON_COLS)*size}px`}
 
@@ -3091,12 +3129,36 @@ function setSetting(key,v){settings[key]=v;store.set("arena-settings",JSON.strin
 /* ник: только буквы, цифры, пробел, _ и -, до 16 символов (он попадает в журнал боя и рамки) */
 const cleanNick=s=>String(s||"").replace(/[^\p{L}\p{N} _\-]/gu,"").replace(/\s+/g," ").trim().slice(0,16);
 const myNick=()=>cleanNick(settings.nick)||"Игрок";
+/* экран выбора персонажа: по одному персонажу на класс, справа список, слева описание класса, в центре модель на Награнде */
+const CLS_INFO={
+  warrior:["Боец ближнего боя · ярость","Сильный мили с рывком и контролем. Стойки дают разные приёмы: боевая для рывка, оборонительная для щита, берсерка для перехвата. Опасен с Смертельным ударом, но уязвим к замедлениям."],
+  mage:["Заклинатель · мана","Мастер контроля и урона издалека: Превращение, Кольцо льда, Скачок. Держит врага на расстоянии и взрывает его заклинаниями. Слаб, если его поймали в ближнем бою."],
+  rogue:["Боец ближнего боя · энергия","Убийца из скрытности. Ошеломление, Ослепление и Удар по почкам позволяют держать врага в контроле почти весь бой. Яды на оружии замедляют и мешают лечению."],
+  paladin:["Боец и лекарь · мана","Крепкий воин Света: лечит себя и союзника, снимает эффекты, ставит Божественный щит и Благословение свободы. Ауры и благословения усиливают всю команду."],
+  priest:["Лекарь и заклинатель · мана","Лечение, Слово силы: Щит и массовый страх. Тёмный жрец наносит урон тенью и молчанием прерывает заклинателей."]};
+function renderChars(){const el=$("#optP");el.innerHTML="";
+  for(const c of CLASSES){const b=document.createElement("button");b.className="cs-char";b.setAttribute("role","option");b.setAttribute("aria-selected",settings.pcls===c);
+    b.innerHTML=`<i style="${iconBg("cls_"+c,40)}"></i><b>${B[c].name}</b><span>Уровень 60 · ${B[c].name}</span>`;b.onclick=()=>setSetting("pcls",c);el.appendChild(b);}
+  const c=settings.pcls,inf=CLS_INFO[c]||["",""];$("#csCls").textContent=B[c].name;$("#csRole").textContent=inf[0];$("#csDesc").textContent=inf[1];$("#csName").textContent=myNick();
+  menuPreview();}
+let PREV=null;
+function menuPreview(){if(SRV)return;const c=settings.pcls,hd=!!ASSETS.human;if(PREV&&PREV.cls===c&&PREV.hd===hd)return;
+  if(PREV){scene.remove(PREV.m.g);if(PREV.m.glow)scene.remove(PREV.m.glow);if(PREV.m.fx)scene.remove(PREV.m.fx);}
+  let m;try{m=buildModel(c,true,1);}catch(e){PREV=null;return}
+  for(const k of ["sheep","stars","ice","iceM","blockM","wall","shield","bubble","fear","glow","castRune","fx"])if(m[k])m[k].visible=false;
+  for(const o of m.g.children)if(o.geometry&&o.geometry.type==="RingGeometry")o.visible=false;
+  const x=0,z=MAP?MAP.spawns[0][1]*.0:0;m.g.position.set(x,GY(x,z),z);m.g.rotation.y=0;if(m.acts)setBase(m,"stand");PREV={cls:c,hd,m,x,z};}
+function previewTick(dt){if(!PREV)return;const on=state==="menu"&&!$("#menu").hidden;PREV.m.g.visible=on;if(!on)return;
+  if(!PREV.m.g.parent)scene.add(PREV.m.g);const y=GY(PREV.x,PREV.z);PREV.m.g.position.y=y;if(PREV.m.mixer)PREV.m.mixer.update(dt);
+  const w=innerWidth>1100?0:0;camera.position.set(PREV.x+w,y+1.5,PREV.z+7.5);camera.lookAt(PREV.x+w,y+.45,PREV.z);}
 function renderMenu(){
   const om=$("#optMode");om.innerHTML="";for(const [k,l] of [["1v1","1 на 1"],["2v2","2 на 2"]]){const b=document.createElement("button");b.className="opt txt";b.textContent=l;b.setAttribute("aria-pressed",settings.mode===k);b.onclick=()=>{setSetting("mode",k);renderNet();};om.appendChild(b);}
   let netR=null;try{netR=NET.role;}catch(e){}const coopNet=false;
   $("#modeNote").textContent=settings.mode==="2v2"?(netR?"По сети: состав команд в лобби ниже, пустые места занимают боты. F2 или щелчок по союзнику: лечить его, F1: себя.":"Вы и бот-союзник против двух ботов. Tab или щелчок по врагу меняет цель. Лечение и защита идут на союзника после F2 или щелчка по нему, F1 возвращает на себя."):(netR?"По сети: дуэль, состав в лобби ниже.":"Дуэль против бота.");
   $("#duoPick").hidden=settings.mode!=="2v2";$("#optAh").hidden=$("#optA").hidden=!!coopNet;
-  for(const [el,key] of [[$("#optP"),"pcls"],[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
+  renderChars();
+  $("#csBots").hidden=!!netR;
+  for(const [el,key] of [[$("#optE"),"ecls"],[$("#optA"),"acls"],[$("#optE2"),"ecls2"]]){el.innerHTML="";for(const c of CLASSES)el.appendChild(clsOpt(c,settings[key]===c,()=>setSetting(key,c)));}
   const od=$("#optD");od.innerHTML="";for(const [k,v] of Object.entries(DIFF)){const b=document.createElement("button");b.className="opt txt";b.textContent=v.label;b.setAttribute("aria-pressed",settings.diff===k);b.onclick=()=>setSetting("diff",k);od.appendChild(b);}
   $("#score").textContent=`Побед ${wins.w} · поражений ${wins.l}`;
   const pt=myTal[settings.pcls],free=B.general.maxTalentPoints-totalPts(pt);$("#buildP").textContent=`Таланты: ${buildSummary(settings.pcls,pt)}${free>0?` (свободно ${free})`:""}`;
@@ -3274,7 +3336,7 @@ const HIT_SND={warrior:"hit_2hsword",paladin:"hit_2hmace",rogue:"hit_1hsword"};
 /* ================= ЗАГРУЗКА МОДЕЛЕЙ ================= */
 function loadAssets(){
   const btn=$("#btnStart");btn.disabled=true;
-  const done=msg=>{buildArena();btn.disabled=false;$("#loadNote").textContent=msg;renderNet();};
+  const done=msg=>{buildArena();PREV&&(PREV.hd=null);try{menuPreview();}catch(e){}btn.disabled=false;$("#loadNote").textContent=msg;renderNet();};
   if(!THREE.GLTFLoader||!THREE.SkeletonUtils){done("Модели не загрузились, играем на простых фигурах.");return}
   const L=new THREE.GLTFLoader(),T=new THREE.TextureLoader();
   const gl=url=>fetch(url).then(r=>{if(!r.ok)throw new Error(r.status);return r.text()}).then(b64=>{const bin=atob(b64.trim()),buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
@@ -3455,8 +3517,8 @@ function renderLobby(){const el=$("#lobby");if(!el)return;if(!NET.role){el.hidde
   const n=document.createElement("div");n.className="note";const cnt=L.teams.flat().filter(p=>!p.bot).length;
   n.textContent=`Комната ${NET.code} · ${L.mode==="2v2"?"2 на 2":"1 на 1"} · людей ${cnt}${L.over?` из ${netGuestsCount(L)}: в 1 на 1 играют двое, переключите на 2 на 2`:""}${!host&&NET.rtt?` · пинг до хоста ${NET.rtt} мс`:""}${NET.via==="server"?" · через сервер":NET.via==="p2p"?" · напрямую":""}`;el.appendChild(n);}
 const netGuestsCount=L=>NET.role==="host"?netHumans().length:L.teams.flat().filter(p=>!p.bot).length;
-function renderNet(){renderLobby();const on=!!NET.role;$("#netPubRow").hidden=on;$("#pubBox").hidden=on;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
-  const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{const gs=netGuests(),rd=gs.filter(([,g])=>g.ready).length;b.textContent=NET.role==="host"?(gs.length?`В бой (готовы ${rd} из ${gs.length})`:"В бой (по сети)"):"В бой";if(NET.role==="host")b.disabled=!netGuests().length||netHumans().length>2*netSize();else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
+function renderNet(){renderLobby();{const ls=$("#lobbyStart");if(ls){ls.hidden=!NET.role;}const bl=$("#btnLobby");if(bl)bl.textContent=NET.role?"Лобби · в комнате":"Лобби";}const on=!!NET.role;$("#netPubRow").hidden=on;$("#pubBox").hidden=on;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
+  const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{const gs=netGuests(),rd=gs.filter(([,g])=>g.ready).length;b.textContent=NET.role==="host"?(gs.length?`В бой (готовы ${rd} из ${gs.length})`:"В бой (по сети)"):"На арену";if(NET.role==="host")b.disabled=!netGuests().length||netHumans().length>2*netSize();else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
   $("#optE").closest(".group").style.opacity=1;}
 /* пинг раз в 2 секунды в обе стороны: хост видит пинг каждого гостя в лобби, гость — свой */
 setInterval(()=>{if(!NET.tx||!NET.role)return;const ts=performance.now();if(NET.role==="host"){for(const id in NET.peers){const g=NET.peers[id];if(g.seen&&ts-g.seen>45000){NET.tx.drop&&NET.tx.drop(id);NET.tx.onclose(id);}}if(netGuests().length){NET.tx.send({t:"pg",ts});if(state==="menu")renderLobby();}}else if(NET.tx.open){NET.tx.send({t:"pg",ts});if(state==="menu")renderLobby();}},2000);
@@ -3725,7 +3787,7 @@ function netInfoHud(tNow){fpsN++;if(tNow-fpsT<1000)return;const el=$("#netInfo")
 function frame(){
   if(SRV)return;
   requestAnimationFrame(frame);
-  const tNow=performance.now(),dt=Math.min(.05,(tNow-last)/1000);last=tNow;now+=dt;netInfoHud(tNow);
+  const tNow=performance.now(),dt=Math.min(.05,(tNow-last)/1000);last=tNow;now+=dt;netInfoHud(tNow);if(PREV&&(state!=="menu"||$("#menu").hidden))PREV.m.g.visible=false;
   if(state==="countdown"){const left=countEnd-now;const cd=$("#countdown");cd.hidden=false;cd.textContent=left>0?Math.ceil(left):"В бой!";
     if(left<=0){state="fight";roundStart=now;setTimeout(()=>{$("#countdown").hidden=true},700);}}
   if(player&&(state==="fight"||state==="countdown"||state==="over")){
@@ -3733,7 +3795,7 @@ function frame(){
     netHostTick();
     renderFrame(player,"p");if(enemy)renderFrame(enemy,"t");renderBar();renderTeams();
     placeCamera(dt);
-  }else{const a=now*.06;camera.position.set(Math.sin(a)*30,14,Math.cos(a)*30);camera.lookAt(0,4,0);}
+  }else if(PREV&&!$("#menu").hidden)previewTick(dt);else{if(PREV)PREV.m.g.visible=false;const a=now*.06;camera.position.set(Math.sin(a)*30,14,Math.cos(a)*30);camera.lookAt(0,4,0);}
   for(let i=fxs.length-1;i>=0;i--){const f=fxs[i],k=(now-f.t0)/f.dur;if(k>=1){scene.remove(f.mesh);fxs.splice(i,1);continue}f.fn(k);}
   updateTexts();
   if(fbkT){const k=(now-fbkT)/1.1;const e=$("#pfbk");if(k>=1){e.style.opacity=0;fbkT=0;}else e.style.opacity=k<.6?1:1-(k-.6)/.4;}
@@ -3749,4 +3811,8 @@ if(SRV){let st=performance.now();setInterval(()=>{const t=performance.now(),dt=M
     if(player&&(state==="fight"||state==="countdown"||state==="over")){step(dt,true);netHostTick();}
     const gs=netGuests();if(gs.length&&gs.every(([,g])=>g.ready&&g.cls)&&state!=="fight"&&state!=="countdown"&&netHumans().length<=2*netSize())startNetRound();},33);
   window.srvHost=code=>{NET.pub=SRVQ.get("pub")==="1";NET.code=code;NET.role="host";NET.peers={};return netOpen(code,"host").then(T=>{NET.tx=T;netWire();return true});};}
+$("#btnLobby").onclick=()=>{$("#lobbyWin").hidden=false;try{renderNet();}catch(e){}};
+$("#lobbyClose").onclick=()=>{$("#lobbyWin").hidden=true;renderMenu();};
+$("#lobbyStart").onclick=()=>{$("#lobbyWin").hidden=true;$("#btnStart").click();};
 </script>
+
