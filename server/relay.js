@@ -30,7 +30,12 @@ const server = http.createServer((req, res) => {
   if (req.url === "/arena/api/lobby" && req.method === "GET") {
     /* открытые комнаты и сколько людей сейчас в игре: видно всем в меню игры */
     const list = [];
-    for (const [code, r] of rooms) if (r.pub && r.info && r.host.readyState === 1) list.push({ code, ...r.info, n: 1 + r.guests.size });
+    for (const [code, r] of rooms) {
+      if (!r.pub || !r.info || r.host.readyState !== 1) continue;
+      /* в серверной комнате хост — сам сервер, людей считаем только гостей; пустую не показываем */
+      const n = sims.has(code) ? r.guests.size : 1 + r.guests.size;
+      if (n > 0) list.push({ code, ...r.info, n });
+    }
     res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store", "access-control-allow-origin": "*" });
     res.end(JSON.stringify({ online: admin.onlineCount(), rooms: list.slice(0, 50) }));
     return;
