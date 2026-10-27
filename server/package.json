@@ -1,0 +1,10 @@
+{
+  "name": "wow-arena-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Room relay for the browser arena: players connect through this server instead of peer to peer",
+  "main": "relay.js",
+  "scripts": { "start": "node relay.js" },
+  "dependencies": { "ws": "8.18.3" },
+  "engines": { "node": ">=20" }
+}

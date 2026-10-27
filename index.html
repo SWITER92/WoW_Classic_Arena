@@ -2919,13 +2919,45 @@ async function peerTransport(code,role){await netLoadPeer();
         res(T);}});});}
 function netStatus(s){const e=$("#netStatus");if(e)e.textContent=s;}
 function netMakeCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)];return s}
-function netUseBC(){const q=new URLSearchParams(location.search);if(q.has("peerhost"))return false;return location.protocol==="file:"||/^(localhost|127\.)/.test(location.hostname)||q.has("local")}
+function netUseBC(){const q=new URLSearchParams(location.search);if(q.has("peerhost")||q.has("ws"))return false;return location.protocol==="file:"||/^(localhost|127\.)/.test(location.hostname)||q.has("local")}
+/* свой сервер комнат (server/relay.js): все игроки подключаются к нему по WebSocket, это проходит через любой роутер.
+   Если сервер недоступен, игра сама переходит на прямое соединение через PeerJS, как раньше */
+const NET_WS_URL="";
+function netWsUrl(){const q=new URLSearchParams(location.search);return q.get("ws")||NET_WS_URL;}
+function wsTransport(url,code,role){return new Promise((res,rej)=>{
+  let done=false,ws;const fin=(ok,v)=>{if(done)return;done=true;clearTimeout(to);ok?res(v):rej(v);};
+  try{ws=new WebSocket(`${url}?room=${code}&role=${role}`);}catch(e){rej(e);return}
+  const to=setTimeout(()=>{fin(false,{type:"timeout"});try{ws.close()}catch(e){}},5000);
+  const T={peers:new Set(),close(){done=true;try{ws.close()}catch(e){}}};
+  const raw=o=>{if(ws.readyState===1)ws.send(JSON.stringify(o));};
+  if(role==="host"){T.send=o=>raw({o});T.sendTo=(id,o)=>raw({to:id,o});T.drop=id=>{T.peers.delete(id);raw({kick:id});};}
+  else{T.send=o=>raw(o);}
+  T.sendFast=T.send;T.sendFastTo=T.sendTo;
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(err){return}if(!m||typeof m!=="object")return;
+    if(m.t==="_err"){fin(false,{type:m.e,final:role==="host"&&m.e!=="server-full"});if(m.e==="unavailable-id")netStatus("Такой код уже занят, создайте комнату ещё раз.");return}
+    if(role==="host"){
+      if(m.t==="_hosted"){T.open=true;fin(true,T);return}
+      if(m.t==="_open"){T.peers.add(m.id);T.onopen&&T.onopen(m.id);return}
+      if(m.t==="_close"){if(T.peers.delete(m.id))T.onclose&&T.onclose(m.id);return}
+      if(m.t==="_m"&&T.peers.has(m.from)){T.onmsg&&T.onmsg(m.o,m.from);}return}
+    if(m.t==="_open"){T.open=true;fin(true,T);setTimeout(()=>T.onopen&&T.onopen(),0);return}
+    if(m.t==="full"&&!done){netStatus(`Комната ${code} заполнена: в ней уже ${NET_MAX_GUESTS+1} игрока.`);fin(false,{type:"full",final:true});return}
+    if(m.t==="_close")return;
+    T.onmsg&&T.onmsg(m);};
+  ws.onerror=()=>fin(false,{type:"network"});
+  ws.onclose=()=>{if(!done){fin(false,{type:"network"});return}if(T.open||role==="client"){T.open=false;T.onclose&&T.onclose();}};});}
+/* открыть комнату: свой сервер, если он отвечает, иначе прямое соединение */
+async function netOpen(code,role){
+  if(netUseBC()){NET.via="local";return bcTransport(code,role);}
+  const u=netWsUrl();
+  if(u){try{const T=await wsTransport(u,code,role);NET.via="server";return T}catch(e){if(e&&e.final)throw e;}}
+  NET.via="p2p";return await peerTransport(code,role);}
 async function netHost(){netLeave();const code=netMakeCode();NET.code=code;NET.role="host";NET.peers={};NET.myTeam=0;netStatus("Создаю комнату…");
-  try{NET.tx=netUseBC()?bcTransport(code,"host"):await peerTransport(code,"host");}catch(e){NET.role=null;return}
+  try{NET.tx=await netOpen(code,"host");}catch(e){NET.role=null;return}
   netStatus(`Комната ${code}. Скажите друзьям этот код и ждите подключения (до ${NET_MAX_GUESTS+1} игроков).`);netWire();renderNet();}
 async function netJoin(){netLeave();const code=($("#netCode").value||"").trim().toUpperCase();if(!/^[A-Z0-9]{4}$/.test(code)){netStatus("Код комнаты — четыре символа.");return}
   NET.code=code;NET.role="client";netStatus("Подключаюсь…");
-  try{NET.tx=netUseBC()?bcTransport(code,"client"):await peerTransport(code,"client");}catch(e){NET.role=null;return}
+  try{NET.tx=await netOpen(code,"client");}catch(e){NET.role=null;return}
   netWire();renderNet();
   clearTimeout(NET.joinT);NET.joinT=setTimeout(()=>{if(NET.role==="client"&&!NET.lobby)netStatus("Хост не отвечает. Проверьте код комнаты и что хост не закрыл вкладку.");},12000);}
 /* --- состав комнаты: у хоста NET.peers[id]={nick,cls,tal,team,rtt}, сам хост в NET.myTeam --- */
@@ -2999,7 +3031,7 @@ function renderLobby(){const el=$("#lobby");if(!el)return;if(!NET.role){el.hidde
     if(!inTeam&&free&&state!=="fight"&&state!=="countdown"){const bt=document.createElement("button");bt.className="opt txt";bt.textContent="Перейти сюда";bt.onclick=()=>netPickTeam(ti);col.appendChild(bt);}
     el.appendChild(col);});
   const n=document.createElement("div");n.className="note";const cnt=L.teams.flat().filter(p=>!p.bot).length;
-  n.textContent=`Комната ${NET.code} · ${L.mode==="2v2"?"2 на 2":"1 на 1"} · людей ${cnt}${L.over?` из ${netGuestsCount(L)}: в 1 на 1 играют двое, переключите на 2 на 2`:""}${!host&&NET.rtt?` · пинг до хоста ${NET.rtt} мс`:""}`;el.appendChild(n);}
+  n.textContent=`Комната ${NET.code} · ${L.mode==="2v2"?"2 на 2":"1 на 1"} · людей ${cnt}${L.over?` из ${netGuestsCount(L)}: в 1 на 1 играют двое, переключите на 2 на 2`:""}${!host&&NET.rtt?` · пинг до хоста ${NET.rtt} мс`:""}${NET.via==="server"?" · через сервер":NET.via==="p2p"?" · напрямую":""}`;el.appendChild(n);}
 const netGuestsCount=L=>NET.role==="host"?netHumans().length:L.teams.flat().filter(p=>!p.bot).length;
 function renderNet(){renderLobby();const on=!!NET.role;$("#netHost").hidden=on;$("#netJoinRow").hidden=on;$("#netLeave").hidden=!on;
   const b=$("#btnStart");if(NET.role==="client"){b.disabled=true;b.textContent="Бой начинает хост";}else{b.textContent=NET.role==="host"?"В бой (по сети)":"В бой";if(NET.role==="host")b.disabled=!netGuests().length||netHumans().length>2*netSize();else if(!$("#loadNote").textContent.startsWith("Загружаю"))b.disabled=false;}
