@@ -41,7 +41,23 @@ else
   git clone -q --depth 1 "$REPO" "$DIR/repo"
 fi
 (cd "$DIR/repo/server" && npm ci --omit=dev --no-audit --no-fund)
+mkdir -p "$DIR/data/history"
 chown -R arena:arena "$DIR"
+chmod 700 "$DIR/data"
+
+# пароль админки: sudo arena-admin-password (спросит пароль дважды, хранится только хеш)
+cat > /usr/local/bin/arena-admin-password <<'EOF'
+#!/bin/bash
+set -e
+read -r -s -p "Новый пароль админки: " P1; echo
+read -r -s -p "Ещё раз: " P2; echo
+[ "$P1" = "$P2" ] || { echo "Пароли не совпали"; exit 1; }
+[ ${#P1} -ge 8 ] || { echo "Нужно хотя бы 8 символов"; exit 1; }
+P="$P1" node -e 'const c=require("crypto"),s=c.randomBytes(16);process.stdout.write(JSON.stringify({salt:s.toString("hex"),hash:c.scryptSync(process.env.P,s,64).toString("hex")}))' > /opt/arena/data/admin.json
+chown arena:arena /opt/arena/data/admin.json; chmod 600 /opt/arena/data/admin.json
+echo "Пароль сохранён. Админка открывается по адресу https://ваш-домен/arena/admin"
+EOF
+chmod 700 /usr/local/bin/arena-admin-password
 
 echo "== Службы"
 cat > /etc/systemd/system/arena-relay.service <<EOF
@@ -53,6 +69,8 @@ After=network.target
 User=arena
 WorkingDirectory=$DIR/repo/server
 Environment=PORT=8080
+Environment=DATA_DIR=$DIR/data
+ReadWritePaths=$DIR/data
 ExecStart=/usr/bin/node relay.js
 Restart=always
 RestartSec=2

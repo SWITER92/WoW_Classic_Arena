@@ -10,6 +10,7 @@
 "use strict";
 const http = require("http");
 const { WebSocketServer } = require("ws");
+const admin = require("./admin");
 
 const PORT = +process.env.PORT || 8080;
 const MAX_GUESTS = 3;
@@ -21,6 +22,10 @@ const rooms = new Map();
 const perIp = new Map();
 
 const server = http.createServer((req, res) => {
+  if (req.url.startsWith("/arena/admin") || req.url.startsWith("/arena/api/")) {
+    admin.handle(req, res).catch(() => { try { res.writeHead(500); res.end(); } catch (e) {} });
+    return;
+  }
   if (req.url === "/health" || req.url === "/arena/health") {
     res.writeHead(200, { "content-type": "application/json", "access-control-allow-origin": "*" });
     res.end(JSON.stringify({ ok: true, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + 1 + r.guests.size, 0) }));
