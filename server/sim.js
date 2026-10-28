@@ -16,6 +16,7 @@ const LOCAL = `http://127.0.0.1:${port}`;
 let html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8").replace(/<script src="[^"]*"><\/script>/g, "");
 const vc = new VirtualConsole();
 vc.on("jsdomError", e => console.error("page:", String(e.message).slice(0, 300)));
+vc.on("warn", (...a) => { const m = a.join(" "); if (m.startsWith("[anticheat]")) console.log(m.slice(0, 300)); });
 const q = new URLSearchParams({ srv: "1", mode, pub, nick, ws: `ws://127.0.0.1:${port}/arena` });
 const dom = new JSDOM(html, { runScripts: "outside-only", url: "https://switer92.github.io/WoW_Classic_Arena/?" + q, pretendToBeVisual: true, virtualConsole: vc });
 const w = dom.window, ctx = dom.getInternalVMContext();
