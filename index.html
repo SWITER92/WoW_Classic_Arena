@@ -537,23 +537,29 @@ const DEF={
     }},
   priest:{armor:1600, name:"Жрец", res:"mana", hp:3700, speed:7, maxRes:5000, startRes:5000, crit:5, dodge:3, manaRegen:35,
     abilities:{
-      swp:{name:"Слово Тьмы: Боль", range:30, cost:200, dmg:700, dur:18},
-      mindblast:{name:"Взрыв разума", range:30, cast:1.5, cd:8, cost:300, dmg:[480,530]},
-      flay:{name:"Истощение разума", range:20, channel:3, ticks:3, cost:250, dmg:[150,170], slow:50},
-      manaburn:{name:"Сожжение маны", range:30, cast:3, cost:350, burn:600, pct:50},
-      smite:{name:"Кара", range:30, cast:2.5, cost:200, dmg:[380,420]},
-      holyfire:{name:"Святой огонь", range:30, cast:3.5, cd:10, cost:300, dmg:[430,470], dot:150, dotDur:10},
-      pws:{name:"Слово силы: Щит", cd:15, cost:350, absorb:700, dur:30},
-      flash:{name:"Быстрое исцеление", cast:1.5, cost:300, heal:[640,730]},
-      gheal:{name:"Великое исцеление", cast:3, cost:600, heal:[1500,1700]},
-      renew:{name:"Обновление", cost:250, heal:900, dur:15},
-      scream:{name:"Ментальный крик", radius:8, cd:30, cost:200, dur:6},
-      dispel:{name:"Рассеивание заклинаний", range:30, cost:200, count:2},
-      innerfire:{name:"Внутренний огонь", cost:100, reduce:8, dmg:3},
-      pi:{name:"Придание сил", cd:90, dur:15, dmg:20},
-      desperate:{name:"Молитва отчаяния", cd:120, heal:[1100,1300]},
-      silence:{name:"Безмолвие", range:20, cd:45, cost:200, dur:5},
-      shadowform:{name:"Облик Тьмы", cd:1.5, dmg:15, reduce:15}
+      swp:{name:"Слово Тьмы: Боль", range:30, cost:470, dmg:852, dur:18},
+      mindblast:{name:"Взрыв разума", range:30, cast:1.5, cd:8, cost:350, dmg:[508,536]},
+      flay:{name:"Пытка разума", range:20, channel:3, ticks:3, cost:205, dmg:[142,142], slow:50},
+      manaburn:{name:"Сожжение маны", range:30, cast:3, cost:270, burn:[746,788], pct:50},
+      smite:{name:"Кара", range:30, cast:2.5, cost:280, dmg:[384,428]},
+      holyfire:{name:"Святой огонь", range:30, cast:3.5, cost:255, dmg:[355,449], dot:145, dotDur:10},
+      pws:{name:"Слово силы: Щит", range:40, cd:4, cost:500, absorb:942, dur:30, ws:15},
+      flash:{name:"Быстрое исцеление", range:40, cast:1.5, cost:380, heal:[828,974]},
+      heal:{name:"Исцеление", range:40, cast:3, cost:305, heal:[734,826]},
+      gheal:{name:"Великое исцеление", range:40, cast:3, cost:710, heal:[1966,2194]},
+      renew:{name:"Обновление", range:40, cost:410, heal:970, dur:15},
+      prayerheal:{name:"Молитва исцеления", cast:3, cost:1070, radius:30, heal:[1041,1099]},
+      holynova:{name:"Кольцо света", cost:750, radius:10, dmg:[181,209], heal:[302,350]},
+      scream:{name:"Ментальный крик", radius:8, cd:30, cost:210, dur:8},
+      dispel:{name:"Рассеивание заклинаний", range:30, cost:258, count:2},
+      innerfire:{name:"Внутренний огонь", cost:315, armor:1395, charges:20},
+      fortitude:{name:"Слово силы: Стойкость", range:30, cost:1695, stamina:54},
+      divinespirit:{name:"Божественный дух", range:30, cost:970, spirit:40},
+      innerfocus:{name:"Внутреннее сосредоточение", cd:180, crit:25},
+      pi:{name:"Придание сил", range:30, cd:180, cost:287, dur:15, dmg:20},
+      silence:{name:"Безмолвие", range:20, cd:45, cost:225, dur:5},
+      vampiric:{name:"Объятия вампира", range:30, cd:10, cost:40, dur:60, pct:20},
+      shadowform:{name:"Облик Тьмы", cd:1.5, cost:574, dmg:15, reduce:15}
     }},
   talents:{
     warrior:{
@@ -765,45 +771,57 @@ const DEF={
     },
     priest:{
       disc:{name:"Послушание", list:{
-        unbreakable:{n:"Несокрушимая воля",t:1,c:2,max:5,v:5,k:"ccDur",d:"Контроль действует на вас на {x}% короче."},
-        spiritStr:{n:"Сила духа",t:1,c:3,max:5,v:2,k:"resPct",d:"Запас маны выше на {x}%."},
-        impPWS:{n:"Улучшенный щит",t:2,c:1,max:3,v:50,k:"add",a:"pws",f:"absorb",d:"Слово силы: Щит поглощает на {x} больше."},
-        meditationP:{n:"Медитация",t:2,c:2,max:3,v:8,k:"regen",d:"Мана восстанавливается на {x}% быстрее."},
-        innerStr:{n:"Внутренняя сила",t:2,c:3,max:5,v:2,k:"hp",d:"Запас здоровья выше на {x}%."},
-        mentalAgility:{n:"Ментальная ловкость",t:3,c:2,max:5,v:2,k:"costPct",d:"Все заклинания стоят на {x}% меньше."},
-        impPWScd:{n:"Быстрый щит",t:3,c:3,max:2,v:3,k:"add",a:"pws",f:"cd",sg:-1,d:"Восстановление Щита короче на {x} с."},
-        mentalStr:{n:"Сила мысли",t:4,c:2,max:5,v:1,k:"crit",d:"Шанс крита выше на {x}%."},
-        focusedPower:{n:"Сосредоточенная сила",t:5,c:2,max:2,v:2,k:"dmg",d:"Весь ваш урон выше на {x}%."},
-        absolution:{n:"Отпущение",t:6,c:2,max:3,v:50,k:"add",a:"dispel",f:"cost",sg:-1,d:"Рассеивание стоит на {x} маны меньше."},
-        tPI:{n:"Придание сил",t:7,c:2,max:1,v:1,d:"Новая способность: +20% урона заклинаний на 15 с."}
+        unbreakableWill:{n: "Несокрушимая воля", t: 1, c: 2, max: 5, v: 3, d: "Шанс сопротивления оглушению, страху и немоте выше на {x}%."},
+        wandSpecialization:{n: "Специализация на жезлах", t: 1, c: 3, max: 5, v: 5, d: "Урон жезлами выше на {x}%. (В арене эффекта нет.)"},
+        silentResolve:{n: "Молчаливая решимость", t: 2, c: 1, max: 5, v: 4, d: "Угроза от ваших заклинаний ниже на {x}%. На выбор цели игроком не влияет. (В арене эффекта нет.)"},
+        improvedPowerWordFortitude:{n: "Улучшенное слово силы: Стойкость", t: 2, c: 2, max: 2, v: 15, d: "Бонус выносливости Слова силы: Стойкость и Молитвы стойкости выше на {x}%."},
+        improvedPowerWordShield:{n: "Улучшенное слово силы: Щит", t: 2, c: 3, max: 3, v: 5, d: "Объем поглощения Слова силы: Щит выше на {x}%."},
+        martyrdom:{n: "Мученичество", t: 2, c: 4, max: 2, v: 50, d: "Полученный критический удар в ближнем или дальнем бою с шансом {x}% дает на 6 с Сосредоточенное колдовство: урон не задерживает подготовку заклинаний, сопротивление прерыванию выше на 10% за ранг."},
+        innerFocus:{n: "Внутреннее сосредоточение", t: 3, c: 2, max: 1, v: 1, d: "Новая способность: следующее подходящее заклинание бесплатно и имеет +25 процентных пунктов шанса критического эффекта. Восстановление 180 с."},
+        meditation:{n: "Медитация", t: 3, c: 3, max: 3, v: 5, k: "regen", d: "Во время произнесения заклинаний продолжается {x}% обычного восстановления маны от духа."},
+        improvedInnerFire:{n: "Улучшенный внутренний огонь", t: 4, c: 1, max: 3, v: 10, d: "Бонус брони Внутреннего огня выше на {x}%."},
+        mentalAgility:{n: "Подвижность мысли", t: 4, c: 2, max: 5, v: 2, d: "Мгновенные заклинания стоят на {x}% меньше маны."},
+        improvedManaBurn:{n: "Улучшенное сожжение маны", t: 4, c: 4, max: 2, v: 0.25, k: "add", a: "manaburn", f: "cast", sg: -1, d: "Сожжение маны произносится на {x} с быстрее."},
+        mentalStrength:{n: "Сила мысли", t: 5, c: 2, max: 5, v: 2, k: "resPct", d: "Максимальный запас маны выше на {x}%."},
+        divineSpirit:{n: "Божественный дух", t: 5, c: 3, max: 1, v: 1, req: "meditation", reqr: 3, d: "Новая способность: +40 духа союзнику на 30 мин на максимальном ранге; также открывает Молитву духа."},
+        forceOfWill:{n: "Сила воли", t: 6, c: 3, max: 5, v: 1, d: "Урон заклинаний и шанс их критического эффекта выше на {x}%."},
+        powerInfusion:{n: "Чародейское ускорение", t: 7, c: 2, max: 1, v: 1, req: "mentalStrength", reqr: 5, d: "Новая способность: урон и лечение заклинаниями союзника выше на 20% на 15 с. Дальность 30 ярдов, стоимость 20% базовой маны, восстановление 180 с."}
       }},
       holy:{name:"Свет", list:{
-        healFocus:{n:"Сосредоточенное исцеление",t:1,c:2,max:2,v:20,k:"add",a:"flash",f:"cost",sg:-1,d:"Быстрое исцеление стоит на {x} маны меньше."},
-        divineWisdom:{n:"Божественная мудрость",t:1,c:3,max:5,v:2,k:"heal",d:"Исцеление сильнее на {x}%."},
-        holySpec:{n:"Специализация на Свете",t:2,c:1,max:5,v:1,k:"crit",d:"Шанс крита выше на {x}%."},
-        divineFury:{n:"Божественная ярость",t:2,c:2,max:5,v:0.1,k:"add",a:"flash",f:"cast",sg:-1,d:"Быстрое исцеление читается на {x} с быстрее."},
-        inspiration:{n:"Вдохновение",t:2,c:3,max:3,v:8,d:"Критическое исцеление снижает получаемый урон на {x}% на 10 с."},
-        holyReach:{n:"Священная досягаемость",t:3,c:2,max:2,v:1,k:"add",a:"scream",f:"radius",d:"Радиус Ментального крика больше на {x} м."},
-        impHealing:{n:"Улучшенное исцеление",t:3,c:3,max:3,v:3,k:"heal",d:"Исцеление сильнее на {x}%."},
-        spiritGuide:{n:"Духовное руководство",t:4,c:2,max:3,v:2,k:"dmg",d:"Весь ваш урон выше на {x}%."},
-        spiritualHealing:{n:"Духовное исцеление",t:5,c:2,max:5,v:2,k:"heal",d:"Исцеление сильнее на {x}%."},
-        spiritRedemption:{n:"Дух воздаяния",t:6,c:2,max:1,v:30,d:"Один раз за бой при здоровье ниже 20% вы мгновенно восстанавливаете {x}% здоровья."},
-        tDesperate:{n:"Молитва отчаяния",t:7,c:2,max:1,v:1,d:"Новая способность: мгновенно исцеляет 1100–1300 здоровья."}
+        healingFocus:{n: "Средоточие исцеления", t: 1, c: 1, max: 2, v: 35, d: "С шансом {x}% полученный урон не задерживает подготовку исцеляющих заклинаний."},
+        improvedRenew:{n: "Улучшенное обновление", t: 1, c: 2, max: 3, v: 5, d: "Объем лечения Обновлением выше на {x}%."},
+        holySpecialization:{n: "Специализация на магии Света", t: 1, c: 3, max: 5, v: 1, d: "Шанс критического эффекта заклинаний Света выше на {x} процентных пунктов."},
+        spellWarding:{n: "Защита от заклинаний", t: 2, c: 2, max: 5, v: 2, d: "Получаемый урон от заклинаний ниже на {x}%."},
+        divineFury:{n: "Божественное неистовство", t: 2, c: 3, max: 5, v: 0.1, d: "Кара, Святой огонь, Исцеление и Великое исцеление произносятся на {x} с быстрее."},
+        holyNova:{n: "Кольцо света", t: 3, c: 1, max: 1, v: 1, d: "Новая способность: мгновенно наносит врагам в радиусе 10 ярдов 181–209 урона Светом и лечит членов группы на 302–350. Не создает угрозы; максимальный ранг стоит 750 маны."},
+        blessedRecovery:{n: "Благословенное восстановление", t: 3, c: 2, max: 3, v: [8, 16, 25], d: "После полученного критического удара в ближнем или дальнем бою восстанавливает за 6 с здоровье в размере {x}% полученного урона."},
+        inspiration:{n: "Вдохновение", t: 3, c: 4, max: 3, v: [8, 16, 25], d: "Критическое Быстрое исцеление, Исцеление, Великое исцеление или Молитва исцеления повышает броню цели на {x}% на 15 с."},
+        holyReach:{n: "Предел сил", t: 4, c: 1, max: 2, v: 10, d: "Дальность Кары и Святого огня, а также радиус Молитвы исцеления и Кольца света выше на {x}%."},
+        improvedHealing:{n: "Улучшенное исцеление", t: 4, c: 2, max: 3, v: 5, d: "Малое исцеление, Исцеление и Великое исцеление стоят на {x}% меньше маны."},
+        searingLight:{n: "Опаляющий свет", t: 4, c: 3, max: 2, v: 5, req: "divineFury", reqr: 5, d: "Урон Кары и Святого огня выше на {x}%."},
+        improvedPrayerOfHealing:{n: "Улучшенная молитва исцеления", t: 5, c: 1, max: 2, v: 10, d: "Молитва исцеления стоит на {x}% меньше маны."},
+        spiritOfRedemption:{n: "Дух искупления", t: 5, c: 2, max: 1, v: 1, d: "Новая пассивная способность: после смерти на 10 с превращает в неподвижного недоступного для атак духа. Дух может бесплатно применять исцеляющие заклинания; затем окончательно умирает. (Пока не реализовано.)"},
+        spiritualGuidance:{n: "Духовное направление", t: 5, c: 3, max: 5, v: 5, d: "Бонус к урону и лечению заклинаниями равен {x}% вашего духа. (В арене эффекта нет.)"},
+        spiritualHealing:{n: "Духовное исцеление", t: 6, c: 3, max: 5, v: 2, k: "heal", d: "Объем лечения исцеляющими заклинаниями выше на {x}%."},
+        lightwell:{n: "Колодец Света", t: 7, c: 2, max: 1, v: 1, req: "spiritOfRedemption", reqr: 1, d: "Новая способность: за 1,5 с создает колодец на 3 мин или 5 использований. Взаимодействие лечит на 1600 за 10 с на максимальном ранге, урон прерывает лечение. Стоимость 365 маны, восстановление 10 мин. (Пока не реализовано.)"}
       }},
       shadow:{name:"Тьма", list:{
-        spiritTap:{n:"Захват духа",t:1,c:2,max:5,v:4,k:"regen",d:"Мана восстанавливается на {x}% быстрее."},
-        blackout:{n:"Затмение",t:1,c:3,max:5,v:2,d:"Заклинания Тьмы с шансом {x}% оглушают на 3 с."},
-        shadowAffinity:{n:"Родство с Тьмой",t:2,c:1,max:3,v:1,k:"taken",d:"Получаемый урон ниже на {x}%."},
-        impSWP:{n:"Улучшенное Слово Тьмы: Боль",t:2,c:2,max:2,v:3,k:"add",a:"swp",f:"dur",d:"Слово Тьмы: Боль длится на {x} с дольше."},
-        shadowFocus:{n:"Средоточие Тьмы",t:2,c:3,max:5,v:1,k:"crit",d:"Шанс крита выше на {x}%."},
-        impScream:{n:"Улучшенный ментальный крик",t:3,c:1,max:2,v:3,k:"add",a:"scream",f:"cd",sg:-1,d:"Восстановление Ментального крика короче на {x} с."},
-        impMB:{n:"Улучшенный взрыв разума",t:3,c:3,max:5,v:0.5,k:"add",a:"mindblast",f:"cd",sg:-1,d:"Восстановление Взрыва разума короче на {x} с."},
-        tMindFlay:{n:"Истощение разума",t:3,c:2,max:1,v:1,d:"Новая способность: канал 3 с, урон Тьмой и замедление цели на 50%."},
-        darkness:{n:"Тьма",t:4,c:2,max:5,v:2,k:"school",s:"shadow",d:"Урон от Тьмы выше на {x}%."},
-        shadowReach:{n:"Досягаемость Тьмы",t:5,c:2,max:2,v:3,k:"add",a:"mindblast",f:"range",d:"Дальность Взрыва разума больше на {x} м."},
-        tSilence:{n:"Безмолвие",t:5,c:3,max:1,v:1,d:"Новая способность: прерывает заклинание и накладывает безмолвие на 5 с."},
-        vampiric:{n:"Вампирские объятия",t:6,c:2,max:5,v:4,d:"Ваш урон Тьмой исцеляет вас на {x}% нанесённого."},
-        tShadowform:{n:"Облик Тьмы",t:7,c:2,max:1,v:1,d:"Новая способность: +15% урона Тьмой, −15% физического урона по вам, но нельзя применять заклинания Света (кроме щита и рассеивания)."}
+        spiritTap:{n: "Захват духа", t: 1, c: 2, max: 5, v: 20, d: "После убийства цели, дающей опыт, с шансом {x}% дух увеличивается на 100% на 15 с; в это время 50% восстановления маны от духа продолжается при произнесении заклинаний. (В арене эффекта нет.)"},
+        blackout:{n: "Затмение", t: 1, c: 3, max: 5, v: 2, d: "Наносящие урон заклинания Тьмы с шансом {x}% оглушают цель на 3 с."},
+        shadowAffinity:{n: "Родство с Тьмой", t: 2, c: 1, max: 3, v: [8, 16, 25], d: "Угроза от заклинаний Тьмы ниже на {x}%. На выбор цели игроком не влияет. (В арене эффекта нет.)"},
+        improvedShadowWordPain:{n: "Улучшенное слово Тьмы: Боль", t: 2, c: 2, max: 2, v: 3, k: "add", a: "swp", f: "dur", d: "Слово Тьмы: Боль длится на {x} с дольше; добавляет тики, не меняя урон одного тика."},
+        shadowFocus:{n: "Средоточие Тьмы", t: 2, c: 3, max: 5, v: 2, d: "Вероятность сопротивления вашим заклинаниям Тьмы ниже на {x} процентных пунктов."},
+        improvedPsychicScream:{n: "Улучшенный ментальный крик", t: 3, c: 1, max: 2, v: 2, k: "add", a: "scream", f: "cd", sg: -1, d: "Восстановление Ментального крика короче на {x} с."},
+        improvedMindBlast:{n: "Улучшенный взрыв разума", t: 3, c: 2, max: 5, v: 0.5, k: "add", a: "mindblast", f: "cd", sg: -1, d: "Восстановление Взрыва разума короче на {x} с."},
+        mindFlay:{n: "Пытка разума", t: 3, c: 3, max: 1, v: 1, d: "Новая способность: поддерживается 3 с, наносит 426 урона Тьмой тремя тиками и замедляет на 50%. Дальность 20 ярдов, стоимость 205 маны на максимальном ранге."},
+        improvedFade:{n: "Улучшенное исчезновение во тьме", t: 4, c: 2, max: 2, v: 3, d: "Восстановление Исчезновения во тьме короче на {x} с. (В арене эффекта нет.)"},
+        shadowReach:{n: "Предел Тьмы", t: 4, c: 3, max: 3, v: [6, 13, 20], d: "Дальность заклинаний Тьмы выше на {x}%. Радиус Ментального крика не изменяется."},
+        shadowWeaving:{n: "Плетение Тьмы", t: 4, c: 4, max: 5, v: 20, d: "Наносящие урон заклинания Тьмы с шансом {x}% повышают получаемый целью урон Тьмы на 3% на 15 с. Складывается до 5 раз."},
+        silence:{n: "Безмолвие", t: 5, c: 1, max: 1, v: 1, req: "improvedPsychicScream", reqr: 2, d: "Новая способность: немота на 5 с, дальность 20 ярдов, стоимость 225 маны, восстановление 45 с."},
+        vampiricEmbrace:{n: "Объятия вампира", t: 5, c: 2, max: 1, v: 1, d: "Новая способность: проклятие на враге на 60 с. Ваш урон Тьмой по нему лечит членов вашей группы на 20% нанесенного урона. Дальность 30 ярдов, 40 маны, восстановление 10 с."},
+        improvedVampiricEmbrace:{n: "Улучшенные объятия вампира", t: 5, c: 3, max: 2, v: 5, req: "vampiricEmbrace", reqr: 1, d: "Доля лечения Объятий вампира выше на {x} процентных пунктов: 25% или 30% урона вместо 20%."},
+        darkness:{n: "Мрак", t: 6, c: 3, max: 5, v: 2, k: "school", s: "shadow", d: "Урон заклинаний Тьмы выше на {x}%."},
+        shadowform:{n: "Облик Тьмы", t: 7, c: 2, max: 1, v: 1, req: "vampiricEmbrace", reqr: 1, d: "Новая способность: +15% к урону Тьмы, −15% получаемого физического урона. Запрещает заклинания Света с соответствующим ограничением Spell.dbc, включая лечение; доступность каждой способности задает allowedInShadowform. Стоимость 40% базовой маны, действует до отмены."}
       }}
     }
   }
@@ -833,7 +851,7 @@ const SCHOOL_NAME={phys:"Физический",frost:"Лёд",fire:"Огонь",
 const RES_NAME={rage:"ярости",mana:"маны",energy:"энергии"};
 const RES_COLOR={rage:"#e00000",mana:"#1a3cff",energy:"#ffe000"};
 const roll=r=>r[0]+Math.random()*(r[1]-r[0]);
-const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210};const GAME_VER="202610281326";
+const ICON={"charge":0,"strike":1,"mortal":2,"bloodthirst":3,"shieldslam":4,"hamstring":5,"heroic":6,"pummel":7,"shieldwall":8,"frostbolt":9,"fireblast":10,"nova":11,"poly":12,"counter":13,"blink":14,"apower":15,"combust":16,"barrier":17,"sinister":18,"eviscerate":19,"kidney":20,"gouge":21,"kick":22,"sprint":23,"coldblood":17,"adrenaline":24,"prep":25,"judgement":26,"hammer":27,"pflash":28,"holylight":29,"bubble":30,"freedom":31,"holyshock":32,"holyshield":33,"repentance":34,"swp":35,"mindblast":36,"pws":37,"flash":38,"scream":39,"dispel":40,"pi":41,"desperate":42,"silence":43,"impHeroic":6,"deflection":44,"impCharge":0,"tactical":45,"deepWounds":46,"twoHand":47,"impale":48,"axeSpec":49,"impHamstring":5,"angerMgmt":50,"tMortal":2,"cruelty":19,"unbridled":51,"impPummel":7,"dualWield":52,"enrage":36,"bloodCraze":53,"flurry":54,"deathWish":55,"tBloodthirst":3,"shieldSpec":56,"toughness":57,"impShieldWall":8,"hardened":58,"lastStand":59,"ironWill":58,"revenge":60,"concussion":61,"oneHand":62,"unbreak":63,"tShieldSlam":4,"clearcast":64,"arcaneFort":65,"impBlink":14,"impCounter":13,"arcaneMind":66,"meditation":67,"pom":45,"instability":68,"impPoly":12,"potency":69,"tArcanePower":15,"impFireBlast":10,"impact":70,"ignite":71,"flameThrowing":72,"incinerate":73,"burningSoul":74,"moe":75,"blastWave":76,"criticalMass":77,"firePower":78,"tCombustion":16,"impFrostbolt":9,"frostbite":79,"iceShards":80,"impNova":81,"permafrost":82,"piercingIce":83,"coldSnap":84,"shatter":85,"arcticReach":86,"frozenCore":87,"tIceBarrier":17,"malice":88,"impEvisc":19,"ruthless":89,"murder":90,"impSinister":18,"lethality":91,"poison":92,"sealFate":93,"vigor":94,"impKidney":20,"tColdBlood":17,"impGouge":21,"precision":95,"lightReflex":96,"impKick":22,"rdeflect":44,"rdual":52,"impSprint":23,"aggression":97,"swordSpec":98,"endurance":99,"weaponExp":50,"tAdrenaline":24,"opportunity":100,"elusiveness":101,"camouflage":102,"initiative":103,"masterDeceit":66,"setup":104,"dirtyTricks":105,"serrated":106,"heightened":107,"deadliness":108,"tPrep":25,"divineInt":109,"spirituality":14,"healingLight":29,"impHL":29,"illumination":110,"impJudge":26,"holyPower":111,"unyielding":112,"lightsGrace":113,"divineFavor":38,"tHolyShock":32,"impDevotion":114,"redoubt":63,"pprecision":6,"guardians":115,"ptough":57,"impFreedom":31,"impHammer":27,"reckoning":116,"poneHand":62,"sacredDuty":30,"tHolyShield":33,"impBless":117,"benediction":118,"impJudgeR":26,"pdeflect":44,"vindication":119,"conviction":120,"pursuit":121,"ptwoHand":122,"sanctity":123,"vengeance":97,"tRepentance":34,"unbreakable":58,"spiritStr":109,"impPWS":37,"meditationP":109,"innerStr":124,"mentalAgility":125,"impPWScd":37,"mentalStr":45,"focusedPower":64,"absolution":40,"tPI":41,"healFocus":126,"divineWisdom":127,"holySpec":128,"divineFury":129,"inspiration":56,"holyReach":130,"impHealing":131,"spiritGuide":132,"spiritualHealing":133,"spiritRedemption":134,"tDesperate":42,"spiritTap":135,"blackout":136,"shadowAffinity":99,"impSWP":35,"shadowFocus":137,"impScream":39,"impMB":36,"darkness":138,"shadowReach":93,"vampiric":139,"tSilence":43,"a_stun":140,"a_root":11,"a_incap":12,"a_fear":141,"a_silence":43,"a_lockout":13,"a_slow":9,"a_dot":35,"a_hot":142,"a_healred":2,"a_weak":119,"a_bleed":46,"a_ignite":71,"a_poison":92,"a_flurry":54,"a_enrage":36,"a_clearcast":64,"a_weakened":59,"a_q":143,"cls_warrior":98,"cls_mage":144,"cls_rogue":145,"cls_paladin":61,"cls_priest":146,"battle":147,"defensive":148,"berserker":97,"intercept":23,"overpower":149,"execute":150,"rend":21,"shieldbash":151,"disarm":152,"shout":153,"zerkrage":154,"reckless":91,"bloodrage":88,"fireball":155,"missiles":156,"cone":157,"iceblock":158,"manashield":159,"frostarmor":160,"explosion":161,"evocation":162,"stealth":102,"sap":105,"cheapshot":163,"garrote":164,"ambush":6,"backstab":46,"slice":165,"rupture":166,"blind":167,"vanish":168,"evasion":99,"crip":169,"numb":170,"deadly":171,"sealR":61,"sealJ":129,"bop":115,"cleanse":172,"loh":173,"consecration":174,"flay":67,"manaburn":64,"smite":113,"holyfire":32,"gheal":110,"renew":172,"innerfire":174,"shadowform":175,"tMindFlay":67,"tShadowform":175,"trinket":176,"food":177,"a_forbear":178,"a_justice":129,"a_numb":170,"a_disarm":152,"a_hsq":6,"a_stealth":102,"a_eat":177,"a_bloodrage":88,"arcaneSubtlety":40,"arcaneFocus":57,"impMissiles":156,"wandSpecM":179,"magicAbsorption":180,"magicAttunement":181,"impExplosion":161,"arcaneResilience":65,"impManaShield":159,"tPom":45,"impFireball":155,"impFlamestrike":182,"tPyroblast":183,"impScorch":184,"impFireWard":185,"tBlastWave":76,"frostWarding":87,"elemPrecision":186,"tColdSnap":84,"impBlizzard":187,"frostChanneling":140,"tIceBlock":158,"impCone":157,"wintersChill":188,"pyroblast":183,"blastwave":76,"coldsnap":84,"scorch":184,"flamestrike":182,"blizzard":187,"fireward":185,"frostward":87,"a_firevuln":184,"a_wchill":188,"remorseless":189,"impSlice":165,"relentless":1,"impExpose":190,"vilePoisons":191,"impBackstab":46,"rDeflection":44,"rPrecision":95,"tRiposte":192,"daggerSpec":193,"dwSpec":52,"maceSpec":194,"tBladeFlurry":195,"fistSpec":7,"masterDec":66,"sleight":196,"tGhostly":197,"impAmbush":6,"impSap":105,"dirtyDeeds":198,"tHemo":199,"tPremed":141,"riposte":192,"bladeflurry":195,"ghostly":197,"hemo":199,"premed":141,"a_hemo":199,"a_ghostly":197,"a_bflurry":195,"expose":190,"divStr":153,"spFocus":14,"impSoR":61,"tConsec":174,"impLoH":173,"impBoW":127,"tDivineFavor":38,"lastingJ":200,"pPrecision":6,"guardFavor":115,"pTough":57,"kings":58,"impRF":201,"pShieldSpec":56,"anticip":101,"impConc":202,"sanctuary":203,"pOneHand":62,"impBoM":117,"impSotC":113,"pDeflect":44,"tSoC":204,"eyeForEye":205,"impRetAura":206,"pTwoHand":122,"sealCr":113,"wrath":207,"dfavor":38,"sealC":204,"tKings":58,"tSanct":203,"tSanctity":123,"devotion":114,"retaura":206,"conc":202,"shadowres":208,"frostres":84,"fireres":16,"sanctaura":123,"bom":117,"bow":127,"sanctbless":203,"sacrifice":209,"dprot":42,"sealL":200,"sealW":210,"unbreakableWill":58,"wandSpecialization":179,"silentResolve":211,"improvedPowerWordFortitude":124,"improvedPowerWordShield":37,"martyrdom":212,"innerFocus":118,"improvedInnerFire":174,"improvedManaBurn":64,"mentalStrength":45,"divineSpirit":213,"forceOfWill":214,"powerInfusion":41,"healingFocus":126,"improvedRenew":172,"holySpecialization":128,"spellWarding":215,"holyNova":132,"blessedRecovery":216,"improvedHealing":131,"searingLight":217,"improvedPrayerOfHealing":218,"spiritOfRedemption":134,"spiritualGuidance":219,"lightwell":220,"improvedShadowWordPain":35,"improvedPsychicScream":39,"improvedMindBlast":36,"mindFlay":67,"improvedFade":101,"shadowWeaving":221,"vampiricEmbrace":139,"improvedVampiricEmbrace":222,"heal":131,"prayerheal":218,"holynova":132,"fortitude":124,"divinespirit":213,"innerfocus":118};const GAME_VER="202610281345";
 const ICON_COLS=16;
 function iconBg(key,size){const i=ICON[key]??ICON.a_q;return `background-size:${ICON_COLS*size}px auto;background-position:${-(i%ICON_COLS)*size}px ${-Math.floor(i/ICON_COLS)*size}px`}
 
@@ -889,9 +907,9 @@ const PRESETS={
     "Воздаяние":[["impBoM", 5], ["benediction", 5], ["impJudge", 2], ["impSotC", 3], ["pDeflect", 5], ["vindication", 3], ["conviction", 5], ["tSoC", 1], ["pursuit", 2], ["eyeForEye", 2], ["pTwoHand", 3], ["tSanctity", 1], ["vengeance", 5], ["tRepentance", 1], ["divStr", 5], ["divineInt", 5], ["spFocus", 1], ["tConsec", 1]]
   },
   priest:{
-    "Послушание":[["unbreakable",5],["spiritStr",5],["impPWS",3],["meditationP",3],["innerStr",5],["mentalAgility",5],["impPWScd",2],["mentalStr",5],["focusedPower",2],["absolution",3],["tPI",1],["healFocus",2],["divineWisdom",5],["holySpec",5]],
-    "Свет":[["healFocus",2],["divineWisdom",5],["holySpec",5],["divineFury",5],["inspiration",3],["holyReach",2],["impHealing",3],["spiritGuide",3],["spiritualHealing",5],["spiritRedemption",1],["tDesperate",1],["unbreakable",5],["spiritStr",5],["impPWS",3],["meditationP",3]],
-    "Тьма":[["spiritTap",5],["blackout",5],["shadowAffinity",3],["impSWP",2],["tMindFlay",1],["impMB",4],["darkness",5],["tSilence",1],["vampiric",4],["tShadowform",1],["unbreakable",5],["spiritStr",5],["impPWS",3],["meditationP",3],["innerStr",2]]
+    "Послушание":[["unbreakableWill", 5], ["improvedPowerWordShield", 3], ["improvedPowerWordFortitude", 2], ["martyrdom", 2], ["innerFocus", 1], ["meditation", 3], ["improvedInnerFire", 3], ["mentalAgility", 5], ["mentalStrength", 5], ["divineSpirit", 1], ["forceOfWill", 5], ["powerInfusion", 1], ["healingFocus", 2], ["improvedRenew", 3], ["holySpecialization", 5], ["spellWarding", 5], ["divineFury", 5]],
+    "Свет":[["healingFocus", 2], ["improvedRenew", 3], ["holySpecialization", 5], ["spellWarding", 5], ["divineFury", 5], ["holyNova", 1], ["blessedRecovery", 3], ["inspiration", 3], ["improvedHealing", 3], ["holyReach", 1], ["spiritualHealing", 5], ["searingLight", 2], ["unbreakableWill", 5], ["improvedPowerWordShield", 3], ["improvedPowerWordFortitude", 2], ["martyrdom", 2], ["innerFocus", 1], ["meditation", 3]],
+    "Тьма":[["blackout", 5], ["improvedShadowWordPain", 2], ["shadowFocus", 3], ["improvedPsychicScream", 2], ["improvedMindBlast", 5], ["mindFlay", 1], ["shadowReach", 3], ["shadowWeaving", 2], ["silence", 1], ["vampiricEmbrace", 1], ["improvedVampiricEmbrace", 2], ["darkness", 5], ["shadowform", 1], ["unbreakableWill", 5], ["improvedPowerWordShield", 3], ["improvedPowerWordFortitude", 2], ["martyrdom", 2], ["innerFocus", 1], ["meditation", 3], ["improvedInnerFire", 3]]
   }
 };
 const BOT_PRESET={warrior:"Оружие",mage:"Лёд",rogue:"Бой",paladin:"Воздаяние",priest:"Тьма"};
@@ -904,7 +922,7 @@ function buildSummary(cls,tal){return Object.keys(B.talents[cls]).map(k=>treePts
 const ab=(cls,id)=>B[cls].abilities[id]||B.common.abilities[id];
 function strikeId(u){return rk(u,"tMortal")?"mortal":rk(u,"tBloodthirst")?"bloodthirst":rk(u,"tShieldSlam")?"shieldslam":null}
 const CAPS={mage:[["tPom", "pom"], ["tArcanePower", "apower"], ["tPyroblast", "pyroblast"], ["tBlastWave", "blastwave"], ["tCombustion", "combust"], ["tColdSnap", "coldsnap"], ["tIceBlock", "iceblock"], ["tIceBarrier", "barrier"]],rogue:[["tColdBlood", "coldblood"], ["tRiposte", "riposte"], ["tBladeFlurry", "bladeflurry"], ["tAdrenaline", "adrenaline"], ["tGhostly", "ghostly"], ["tPrep", "prep"], ["tHemo", "hemo"], ["tPremed", "premed"]],
-  paladin:[["tConsec", "consecration"], ["tDivineFavor", "dfavor"], ["tHolyShock", "holyshock"], ["tHolyShield", "holyshield"], ["tSoC", "sealC"], ["tRepentance", "repentance"]],priest:[["tPI","pi"],["tDesperate","desperate"],["tShadowform","shadowform"]]};
+  paladin:[["tConsec", "consecration"], ["tDivineFavor", "dfavor"], ["tHolyShock", "holyshock"], ["tHolyShield", "holyshield"], ["tSoC", "sealC"], ["tRepentance", "repentance"]],priest:[["innerFocus", "innerfocus"], ["divineSpirit", "divinespirit"], ["powerInfusion", "pi"], ["holyNova", "holynova"], ["vampiricEmbrace", "vampiric"], ["shadowform", "shadowform"]]};
 /* раскладка панелей по умолчанию: 12 ячеек нижней панели и 12 верхней; "cap" — способность вершины ветки */
 const BAR_ORDER={
   warrior:["charge","intercept","cap","heroic","overpower","execute","rend","hamstring","pummel","shieldbash","disarm","shout",
@@ -915,15 +933,15 @@ const BAR_ORDER={
          "stealth","blind","vanish","evasion","sprint","cap","trinket","food"],
   paladin:["judgement","sealR","sealCr","sealJ","hammer","wrath","flashlight","holylight","cap","cleanse","freedom","bubble",
            "bop","dprot","loh","sealL","sealW","bom","bow","sacrifice","trinket","food"],
-  priest:["swp","mindblast","flay","smite","holyfire","manaburn","flash","gheal","renew","pws","scream","dispel",
-          "silence","cap","innerfire","trinket","food"]
+  priest:["swp","mindblast","flay","smite","holyfire","manaburn","flash","heal","gheal","renew","pws","scream",
+          "dispel","silence","prayerheal","cap","fortitude","innerfire","trinket","food"]
 };
 function abilityList(u){
   const l=[];
   for(const id of BAR_ORDER[u.cls]){
     if(id==="cap"){if(u.cls==="warrior"){const s=strikeId(u);if(s)l.push(s);}else for(const [t,c] of CAPS[u.cls])if(rk(u,t))l.push(c);}
-    else if(id==="flay"){if(rk(u,"tMindFlay"))l.push(id);}
-    else if(id==="silence"){if(rk(u,"tSilence"))l.push(id);}
+    else if(id==="flay"){if(rk(u,"mindFlay"))l.push(id);}
+    else if(id==="silence"){if(rk(u,"silence"))l.push(id);}
     else l.push(id);
   }
   return l;
@@ -946,6 +964,15 @@ function eff(u,id){
     case "stealth":a.cd-=rk(u,"camouflage");break;
     case "cheapshot":case "garrote":a.cost-=tv(u,"dirtyDeeds");break;
     case "bop":a.cd-=tv(u,"guardFavor");break;
+    case "smite":case "holyfire":a.cast-=tv(u,"divineFury");a.range*=1+tv(u,"holyReach")/100;break;
+    case "heal":case "gheal":a.cast-=tv(u,"divineFury");a.cost*=1-tv(u,"improvedHealing")/100;break;
+    case "prayerheal":a.cost*=1-tv(u,"improvedPrayerOfHealing")/100;a.radius*=1+tv(u,"holyReach")/100;break;
+    case "holynova":a.radius*=1+tv(u,"holyReach")/100;break;
+    case "pws":a.absorb*=1+tv(u,"improvedPowerWordShield")/100;break;
+    case "renew":a.heal*=1+tv(u,"improvedRenew")/100;break;
+    case "fortitude":a.stamina*=1+tv(u,"improvedPowerWordFortitude")/100;break;
+    case "innerfire":a.armor*=1+tv(u,"improvedInnerFire")/100;break;
+    case "vampiric":a.pct+=tv(u,"improvedVampiricEmbrace");break;
     case "freedom":a.dur+=3*rk(u,"guardFavor");break;
     case "sealCr":a.ap*=1+tv(u,"impSotC")/100;a.holyBonus*=1+tv(u,"impSotC")/100;
     case "sealR":case "sealJ":case "sealC":case "judgement":a.cost*=1-tv(u,"benediction")/100;break;
@@ -953,6 +980,10 @@ function eff(u,id){
   if(u.cls==="mage"){const sc=META[id]&&META[id].school;
     if(sc==="fire"&&a.range)a.range+=tv(u,"flameThrowing");
     if(sc==="frost"&&a.cost)a.cost*=1-tv(u,"frostChanneling")/100;}
+  if(u.cls==="priest"){const sc=META[id]&&META[id].school;
+    if(sc==="shadow"&&a.range)a.range*=1+tv(u,"shadowReach")/100;
+    if(!a.cast&&!a.channel&&a.cost)a.cost*=1-tv(u,"mentalAgility")/100;
+    if(a.cost&&has(u,"ifocus")&&id!=="innerfocus")a.cost=0;}
   if(u.K)for(const [aid,f,x] of u.K.add)if(aid===id&&typeof a[f]==="number")a[f]+=x;
   if(a.cd!==undefined)a.cd=Math.max(0,a.cd);if(a.cast!==undefined)a.cast=Math.max(.3,a.cast);
   if(a.cost){if(u.K&&u.K.costPct)a.cost*=1-u.K.costPct/100;a.cost=Math.max(0,Math.round(a.cost));}
@@ -961,11 +992,11 @@ function eff(u,id){
 }
 /* исцеление заклинанием: таланты на силу исцеления, крит ×1.5 */
 function healSpell(u,a,id,f){f=f||u;
-  let amt=roll(a.heal)*(1+u.K.heal/100)*(blessOf(u,"kings")?1.03:1);const df=aura(u,"dfavor");if(df)df.until=0;const crit=!!df||Math.random()*100<critChance(u,"holy",u,{spell:true});
+  let amt=roll(a.heal)*(1+u.K.heal/100)*(blessOf(u,"kings")?1.03:1);{const pi=aura(u,"pi");if(pi)amt*=1+pi.pct/100;}const df=aura(u,"dfavor");if(df)df.until=0;const crit=!!df||Math.random()*100<critChance(u,"holy",u,{spell:true});
   if(crit)amt*=B.general.spellCritMult;
   heal(f,amt,a.name,crit,u);healFx(f,a.heal[1]>900);if(f!==u){if(inCombat(f))enterCombat(u);log(u,a.name,f);}
   if(crit){if(rk(u,"illumination")&&Math.random()*100<tv(u,"illumination")&&a.cost){u.res=Math.min(u.maxRes,u.res+a.cost);statusText(u,"Озарение","#ffe9a0");}
-    if(rk(u,"inspiration"))addAura(u,{type:"inspire",name:"Вдохновение",pct:tv(u,"inspiration"),until:now+10,good:true});}
+    if(rk(u,"inspiration")&&f.alive)addAura(f,{type:"inspire",name:"Вдохновение",pct:tv(u,"inspiration"),until:now+15,good:true});}
 }
 function addCp(u,n){u.cp=Math.min(5,(u.cp||0)+n);}
 /* приём серии за попадание; Печать судьбы даёт второй при крите */
@@ -986,7 +1017,7 @@ function rogueHit(u,t,slot){if(u.cls==="rogue"&&u.lastHit.amt!==undefined&&!u.la
 function chill(src,t,name,pct,dur,icd){if(!t.alive||isImmune(t))return;const pf=rk(src,"permafrost");if(pf){dur+=pf;pct+=[4,7,10][pf-1];}
   slowAura(src,t,name,pct,dur,"magic");if(!(icd&&(src.fbIcd||0)>now)&&Math.random()*100<tv(src,"frostbite")&&(!icd||(src.fbIcd=now+15)))cc(src,t,"root",5,"Обморожение",{noDr:true});}
 /* сопротивление заклинанию: базово 4% против игрока своего уровня, таланты на меткость снижают */
-function spellHitBonus(s,school){if(s.cls==="mage")return school==="arcane"?tv(s,"arcaneFocus"):(school==="fire"||school==="frost")?tv(s,"elemPrecision"):0;return 0}
+function spellHitBonus(s,school){if(s.cls==="priest"&&school==="shadow")return tv(s,"shadowFocus");if(s.cls==="mage")return school==="arcane"?tv(s,"arcaneFocus"):(school==="fire"||school==="frost")?tv(s,"elemPrecision"):0;return 0}
 function spellResisted(src,t,school){
   if(school==="phys"||src===t||src.team===t.team)return false;
   if(Math.random()*100>=Math.max(0,B.general.spellMiss-spellHitBonus(src,school)+tv(t,"heightened")))return false;
@@ -1347,38 +1378,49 @@ const META={
     desc:a=>`Цель выведена из строя на ${a.dur} с. Любой урон снимает эффект.`,
     exec(u,t,a){castFx(u);burstFx(t.pos,0xffe9a0);cc(u,t,"incap",a.dur,a.name,{drc:"repent"});}},
   /* жрец */
-  swp:{school:"shadow",target:true,
+  swp:{school:"shadow",target:true,sfOk:true,
     desc:a=>`${Math.round(a.dmg*a.dur/18)} урона Тьмой за ${a.dur} с.`,
-    exec(u,t,a){castFx(u);addDot(t,u,a.name,a.dmg*(a.dur/18)*dmgMult(u,"shadow",{id:"swp"}),a.dur,"shadow");log(u,a.name,t);}},
+    exec(u,t,a){castFx(u);addDot(t,u,a.name,a.dmg*(a.dur/18)*dmgMult(u,"shadow",{id:"swp"}),a.dur,"shadow");if(t.alive&&Math.random()*100<tv(u,"shadowWeaving")){const ex=aura(t,"sweave"),st=ex?Math.min(5,ex.stacks+1):1;addAura(t,{type:"sweave",name:"Плетение Тьмы",stacks:st,until:now+15,dt:"magic"});}log(u,a.name,t);}},
   mindblast:{school:"shadow",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона Тьмой.`,
     exec(u,t,a){castFx(u);burstFx(t.pos,0x9b6bff);damage(u,t,roll(a.dmg),a.name,"shadow",{spell:true,id:"mindblast",cost:a.cost});}},
   flay:{school:"shadow",target:true,
-    desc:a=>`Канал ${a.channel} с: ${a.ticks} раза по ${a.dmg[0]}–${a.dmg[1]} урона Тьмой, цель замедлена на ${a.slow}%. Движение обрывает канал.`,
+    desc:a=>`Канал ${a.channel} с: ${a.ticks} раза по ${a.dmg[0]} урона Тьмой, цель замедлена на ${a.slow}%. Движение обрывает канал.`,
     tick(u,t,a){burstFx(t.pos,0x9b6bff);damage(u,t,roll(a.dmg),a.name,"shadow",{spell:true,id:"flay"});if(t.alive)slowAura(u,t,a.name,a.slow,a.channel/a.ticks+.3,"magic");}},
   manaburn:{school:"shadow",target:true,
-    desc:a=>`Каст ${a.cast.toFixed(1)} с. Сжигает до ${a.burn} маны цели и наносит урон, равный ${a.pct}% сожжённого.`,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Сжигает ${a.burn[0]}–${a.burn[1]} маны цели и наносит урон, равный ${a.pct}% сожжённого.`,
     exec(u,t,a){castFx(u);burstFx(t.pos,0x6b8bff);if(isImmune(t)){statusText(t,"Невосприимчив","#cfd6df");return}
-      const b=Math.min(t.res,a.burn);t.res-=b;statusText(t,`−${Math.round(b)} маны`,"#6b8bff");damage(u,t,b*a.pct/100,a.name,"shadow",{spell:true,id:"manaburn",noCrit:true});}},
+      if(spellResisted(u,t,"shadow"))return;
+      const b=Math.min(t.res,roll(a.burn));t.res-=b;statusText(t,`−${Math.round(b)} маны`,"#6b8bff");damage(u,t,b*a.pct/100,a.name,"shadow",{spell:true,id:"manaburn",noCrit:true,noResist:true});}},
   smite:{school:"holy",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона Светом.`,
     exec(u,t,a){castFx(u);burstFx(t.pos,0xffe9a0);damage(u,t,roll(a.dmg),a.name,"holy",{spell:true,id:"smite",cost:a.cost});}},
   holyfire:{school:"holy",target:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. ${a.dmg[0]}–${a.dmg[1]} урона Светом и ещё ${a.dot} за ${a.dotDur} с.`,
-    exec(u,t,a){castFx(u);projectile(u,t,30,"holy",()=>{damage(u,t,roll(a.dmg),a.name,"holy",{spell:true,id:"holyfire",cost:a.cost});if(t.alive)addDot(t,u,a.name,a.dot*dmgMult(u,"holy",{id:"holyfire"}),a.dotDur,"holy",2);});}},
+    exec(u,t,a){castFx(u);projectile(u,t,30,"holy",()=>{damage(u,t,roll(a.dmg),a.name,"holy",{spell:true,id:"holyfire",cost:a.cost});if(t.alive&&!u.lastHit.resisted)addDot(t,u,a.name,a.dot*dmgMult(u,"holy",{id:"holyfire"}),a.dotDur,"holy",2);});}},
   pws:{school:"holy",target:false,ally:true,sfOk:true,noCombat:true,
-    desc:a=>`Щит на вас или союзника, поглощающий ${a.absorb} урона, на ${a.dur} с.`,
-    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"absorb",name:a.name,amount:a.absorb,max:a.absorb,until:now+a.dur,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
+    desc:a=>`Щит на вас или союзника: поглощает ${Math.round(a.absorb)} урона ${a.dur} с, пока он держится, урон не замедляет ваши заклинания. Потом ${a.ws} с Ослабленная душа: повторно щит на эту цель нельзя.`,
+    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"absorb",name:a.name,amount:a.absorb,max:a.absorb,until:now+a.dur,good:true,mb:true});addAura(f,{type:"ws",name:"Ослабленная душа",icon:"a_weakened",until:now+a.ws,dt:"none"});log(u,a.name,f!==u?f:0);}},
   flash:{school:"holy",target:false,ally:true,noCombat:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
+  heal:{school:"holy",target:false,ally:true,noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}. Дешевле Великого исцеления.`,
     exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
   gheal:{school:"holy",target:false,ally:true,noCombat:true,
     desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас или союзника на ${a.heal[0]}–${a.heal[1]}.`,
     exec(u,t,a){castFx(u,"castomni");healSpell(u,a,0,F(u));}},
   renew:{school:"holy",target:false,ally:true,noCombat:true,
-    desc:a=>`Исцеляет на ${a.heal} за ${a.dur} с.`,
-    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"hot",name:a.name,src:u,per:a.heal*(1+u.K.heal/100)/a.dur,next:now+1,until:now+a.dur+.05,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
-  scream:{school:"shadow",target:false,hostile:true,
+    desc:a=>`Исцеляет на ${Math.round(a.heal)} за ${a.dur} с (раз в 3 с).`,
+    exec(u,t,a){const f=F(u);castFx(u,"castomni");let h=a.heal*(1+u.K.heal/100);{const pi=aura(u,"pi");if(pi)h*=1+pi.pct/100;}addAura(f,{type:"hot",name:a.name,src:u,per:h/(a.dur/3),period:3,next:now+3,until:now+a.dur+.05,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
+  prayerheal:{school:"holy",target:false,noCombat:true,
+    desc:a=>`Каст ${a.cast.toFixed(1)} с. Исцеляет вас и союзников в радиусе ${Math.round(a.radius)} м на ${a.heal[0]}–${a.heal[1]}.`,
+    exec(u,t,a){castFx(u,"castomni");for(const f of units)if(f.alive&&f.team===u.team&&dist(u,f)<=a.radius)healSpell(u,a,0,f);}},
+  holynova:{school:"holy",target:false,noCombat:true,
+    desc:a=>`Мгновенно: ${a.dmg[0]}–${a.dmg[1]} урона Светом врагам в радиусе ${Math.round(a.radius)} м и исцеление на ${a.heal[0]}–${a.heal[1]} вам и союзникам рядом.`,
+    exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0xffe9a0);for(const e of foes(u))if(dist(u,e)<=a.radius&&canSee(u,e))damage(u,e,roll(a.dmg),a.name,"holy",{spell:true,id:"holynova"});
+      for(const f of units)if(f.alive&&f.team===u.team&&dist(u,f)<=a.radius)healSpell(u,a,0,f);}},
+  scream:{school:"shadow",target:false,hostile:true,sfOk:true,
     desc:a=>`Враги в радиусе ${a.radius} м в страхе бегут ${a.dur} с. Урон может снять страх.`,
     exec(u,t,a){castFx(u,"castomni");novaFx(u.pos,a.radius,0x9b6bff);log(u,a.name);for(const t of foes(u))if(dist(u,t)<=a.radius)cc(u,t,"fear",a.dur,a.name);}},
   dispel:{school:"holy",target:false,ally:true,sfOk:true,noCombat:true,
@@ -1390,21 +1432,30 @@ const META={
         for(let i=0;i<a.count;i++){const x=t.auras.find(z=>z.good&&z.mb&&z.until>now);if(!x)break;t.auras=t.auras.filter(z=>z!==x);n++;statusText(t,`−${x.name}`,"#9fd0ff");}
         if(n){enterCombat(u,t);burstFx(t.pos,0x9fd0ff);}}
       log(u,`${a.name}${n?`: снято с противника ${n}`:" — снимать нечего"}`);}},
-  innerfire:{school:"holy",target:false,noCombat:true,
-    desc:a=>`Бафф на весь бой: физический урон по вам −${a.reduce}%, ваш урон +${a.dmg}%.`,
-    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"innerfire",name:a.name,pct:a.reduce,dmg:a.dmg,until:Infinity,good:true,mb:true});}},
-  pi:{school:"holy",target:false,gcd:false,cap:true,sfOk:true,noCombat:true,
-    desc:a=>`+${a.dmg}% урона заклинаний на ${a.dur} с.`,
-    exec(u,t,a){addAura(u,{type:"pi",name:a.name,pct:a.dmg,until:now+a.dur,good:true,mb:true});castFx(u,"castomni");log(u,a.name);}},
-  desperate:{school:"holy",target:false,cap:true,noCombat:true,
-    desc:a=>`Мгновенно исцеляет вас на ${a.heal[0]}–${a.heal[1]}.`,
-    exec(u,t,a){castFx(u,"castomni");healSpell(u,a);}},
-  silence:{school:"shadow",target:true,gcd:false,
+  innerfire:{school:"holy",target:false,noCombat:true,sfOk:true,
+    desc:a=>`Бафф: +${Math.round(a.armor)} брони, ${a.charges} зарядов. Каждый удар ближнего боя по вам тратит заряд.`,
+    exec(u,t,a){castFx(u,"castomni");addAura(u,{type:"innerfire",name:a.name,armor:a.armor,charges:a.charges,until:Infinity,good:true,mb:true});}},
+  fortitude:{school:"holy",target:false,ally:true,noCombat:true,sfOk:true,
+    desc:a=>`Вам или союзнику +${Math.round(a.stamina)} выносливости (+${Math.round(a.stamina*10)} здоровья) на весь бой.`,
+    exec(u,t,a){castFx(u,"castomni");fortitude(u,F(u),a);}},
+  divinespirit:{school:"holy",target:false,ally:true,noCombat:true,sfOk:true,
+    desc:a=>`Вам или союзнику +${a.spirit} духа на весь бой: мана восстанавливается быстрее (+${a.spirit/8} в секунду).`,
+    exec(u,t,a){const f=F(u);castFx(u,"castomni");addAura(f,{type:"dspirit",name:a.name,regen:a.spirit/8,until:Infinity,good:true,mb:true});log(u,a.name,f!==u?f:0);}},
+  innerfocus:{school:"holy",target:false,gcd:false,cap:true,sfOk:true,noCombat:true,
+    desc:a=>`Следующее заклинание бесплатно и получает +${a.crit}% к шансу крита.`,
+    exec(u,t,a){addAura(u,{type:"ifocus",name:a.name,until:Infinity,good:true});castFx(u,"castomni");log(u,a.name);}},
+  pi:{school:"holy",target:false,ally:true,gcd:false,cap:true,sfOk:true,noCombat:true,
+    desc:a=>`Вам или союзнику: урон и исцеление заклинаниями +${a.dmg}% на ${a.dur} с.`,
+    exec(u,t,a){const f=F(u);addAura(f,{type:"pi",name:a.name,pct:a.dmg,until:now+a.dur,good:true,mb:true});castFx(u,"castomni");log(u,a.name,f!==u?f:0);}},
+  silence:{school:"shadow",target:true,gcd:false,sfOk:true,
     desc:a=>`Прерывает заклинание и накладывает безмолвие на ${a.dur} с.`,
-    exec(u,t,a){castFx(u);if(isImmune(t))return;const was=t.cast;if(t.cast){t.cast=null;u.stats.interrupts++;castFailU(t,"Прервано");}
+    exec(u,t,a){castFx(u);if(isImmune(t))return;if(rk(t,"unbreakableWill")&&Math.random()*100<tv(t,"unbreakableWill")){statusText(t,"Сопротивление","#cfd6df");return}const was=t.cast;if(t.cast){t.cast=null;u.stats.interrupts++;castFailU(t,"Прервано");}
       addAura(t,{type:"silence",name:a.name,until:now+a.dur,dt:"magic"});enterCombat(u,t);statusText(t,a.name,"#d7b0ff");logRaw(`<b>${u.name}</b>: ${a.name}${was?" сбивает заклинание":""}`);}},
-  shadowform:{school:"shadow",target:false,gcd:false,cap:true,noCombat:true,
-    desc:a=>`Включает и выключает облик: +${a.dmg}% урона Тьмой, −${a.reduce}% физического урона по вам. В облике нельзя применять заклинания Света, кроме Слова силы: Щит и Рассеивания.`,
+  vampiric:{school:"shadow",target:true,cap:true,sfOk:true,
+    desc:a=>`Проклятие на враге на ${a.dur} с: ваш урон Тьмой по нему исцеляет вас и союзников на ${a.pct}% нанесённого.`,
+    exec(u,t,a){castFx(u);if(isImmune(t))return;if(spellResisted(u,t,"shadow"))return;addAura(t,{type:"ve",name:a.name,src:u,pct:a.pct,until:now+a.dur,dt:"curse"});enterCombat(u,t);log(u,a.name,t);}},
+  shadowform:{school:"shadow",target:false,gcd:false,cap:true,noCombat:true,sfOk:true,
+    desc:a=>`Включает и выключает облик: +${a.dmg}% урона Тьмой, −${a.reduce}% физического урона по вам. В облике нельзя исцелять и применять Кару и Святой огонь.`,
     exec(u,t,a){if(has(u,"shadowform")){u.auras=u.auras.filter(x=>x.type!=="shadowform");log(u,a.name+": выход");return}
       addAura(u,{type:"shadowform",name:a.name,dmg:a.dmg,pct:a.reduce,until:Infinity,good:true});castFx(u,"castomni");log(u,a.name);}}
 };
@@ -1418,6 +1469,9 @@ function bless(u,f,kind,a,until){f.auras=f.auras.filter(x=>!(x.type==="bless"&&x
   ap:kind==="bom"?a.ap*(1+tv(u,"impBoM")/100):0,mana:kind==="bow"?a.mana*(1+tv(u,"impBoW")/100):0,reduce:a.reduce||0,dmg:a.dmg||0,amount:a.amount||0,until:until||Infinity,good:true,mb:true});
   castFx(u,"castomni");log(u,a.name,f!==u?f:0);}
 const blessOf=(t,kind)=>t.auras.find(x=>x.type==="bless"&&x.kind===kind&&x.until>now);
+/* Слово силы: Стойкость: +10 здоровья за единицу выносливости */
+function fortitude(u,f,a){const add=Math.round(a.stamina*10),ex=aura(f,"fort");if(ex){f.maxHp-=ex.hp;f.hp=Math.min(f.hp,f.maxHp);}
+  addAura(f,{type:"fort",name:a.name,hp:add,until:Infinity,good:true});f.maxHp+=add;f.hp+=add;if(u!==f)log(u,a.name,f);}
 function forbear(u){addAura(u,{type:"forbear",name:"Воздержанность",until:now+B.general.forbearance,dt:"none"});}
 const ICON_BY_NAME={"Глубокие раны":"deepWounds","Шквал":"flurry","Исступление":"enrage","Кровавое безумие":"bloodCraze","Воспламенение":"ignite","Ясность мысли":"clearcast","Обезоружен":"riposte","Пинок — немота":"kick",
   "Смертельная рана":"mortal","Безмолвие":"a_silence","Обморожение":"frostbite","Сотрясение":"impact","Оглушение (Рывок)":"charge","Оглушающий удар":"concussion",
@@ -1791,7 +1845,7 @@ function dodgeChance(t){const ev=aura(t,"evasion"),gs=aura(t,"ghostly");return (
 /* промах и парирование в ближнем бою: базово 5% промаха, парируют воин, разбойник и паладин, только спереди и с оружием в руках */
 /* броня: снижение физического урона как в 1.12, броня/(броня+5500); кровотечения броню игнорируют */
 function devArmor(t){const p=pauraOn(t,"devotion");return p?ab("paladin","devotion").armor*(1+tv(p,"impDevotion")/100):0}
-function armorOf(t,src){const ex=aura(t,"expose");return Math.max(0,(B[t.cls].armor||0)*(1+tv(t,"pTough")/100)+devArmor(t)-(ex?ex.amount:0)-(src?rk(src,"serrated")*187:0))}
+function armorOf(t,src){const ex=aura(t,"expose"),inf=aura(t,"innerfire"),ins=aura(t,"inspire");return Math.max(0,(B[t.cls].armor||0)*(1+tv(t,"pTough")/100+(ins?ins.pct/100:0))+(inf?inf.armor:0)+devArmor(t)-(ex?ex.amount:0)-(src?rk(src,"serrated")*187:0))}
 function meleeHit(s){return tv(s,"rPrecision")+tv(s,"weaponExp")+tv(s,"pPrecision")}
 function parryChance(t){if(has(t,"disarm"))return 0;return (B.general.parry[t.cls]||0)+tv(t,"rDeflection")+tv(t,"pDeflect")}
 
@@ -1839,6 +1893,7 @@ function canUse(u,id){
   if(m.forbear&&has(ft,"forbear"))return ft===u?"Воздержанность: пока нельзя":"На союзнике Воздержанность";
   if(ft!==u){if(dist(u,ft)>ALLY_RANGE())return "Союзник слишком далеко";if(!los(u.pos,ft.pos))return "Союзник вне поля зрения";}
   if(m.needSeal&&!has(u,"seal"))return "Нет активной печати";
+  if(id==="pws"&&has(ft,"ws"))return "Ослабленная душа: пока нельзя";
   if(m.stealthOnly&&!stealthed(u))return "Нужна скрытность";
   if(id==="food"&&(u.moving||u.air))return "Нельзя есть на ходу";
   if(id==="overpower"&&now>=u.opUntil)return "Цель не уклонялась";
@@ -1882,6 +1937,7 @@ function tryUse(u,id){
 /* оплата способности: ресурс, восстановление, выход из скрытности, вход в бой */
 function pay(u,id,a,m,t){
   if(u.cls==="mage"&&a.cost===0&&has(u,"clearcast")&&ab(u.cls,id).cost)u.auras=u.auras.filter(x=>x.type!=="clearcast");
+  if(u.cls==="priest"&&id!=="innerfocus"&&has(u,"ifocus")&&ab(u.cls,id).cost){u.auras=u.auras.filter(x=>x.type!=="ifocus");u.ifNow=true;}
   if(!m.costOnHit)u.res-=(a.cost||0);
   if(a.cd&&!m.cdOnBreak)u.cds[id]=now+a.cd;
   if(!m.keepStealth)breakStealth(u);
@@ -1894,11 +1950,12 @@ function finish(u,id,t,ally){
   else{fxSpell=id;fxLaunched=false;try{m.exec(u,t,a);}finally{fxSpell=null;}sfxUse(u,id);useFx(u,id);
     spellVis(u,id,"cast");if(!fxLaunched){const it=m.ally?(u.allyNow||u):m.target?t:u;if(it)spellVis(it,id,"impact");}}
   if(u.cls==="mage"&&ab(u.cls,id).cost&&Math.random()*100<tv(u,"clearcast"))addAura(u,{type:"clearcast",name:"Ясность мысли",until:now+15,good:true});
-  u.allyNow=null;
+  u.allyNow=null;u.ifNow=false;
   if(u.isPlayer)flashBtn(id);
 }
 /* урон сбивает время чтения: каст откладывается (1 с, потом меньше), канал теряет четверть длительности */
-function pushback(u){const c=u.cast,m=META[c.id],sc=m.school;if(sc==="phys")return;if((c.id==="flashlight"||c.id==="holylight")&&Math.random()*100<tv(u,"spFocus"))return;{const ca=pauraOn(u,"conc");if(ca&&Math.random()*100<ab("paladin","conc").pct+tv(ca,"impConc"))return;}
+function pushback(u){const c=u.cast,m=META[c.id],sc=m.school;if(sc==="phys")return;
+  if(u.cls==="priest"&&(aura(u,"absorb")||has(u,"fcast")||(m.ally&&Math.random()*100<tv(u,"healingFocus"))))return;if((c.id==="flashlight"||c.id==="holylight")&&Math.random()*100<tv(u,"spFocus"))return;{const ca=pauraOn(u,"conc");if(ca&&Math.random()*100<ab("paladin","conc").pct+tv(ca,"impConc"))return;}
   if(u.cls==="mage"&&((sc==="fire"&&Math.random()*100<tv(u,"burningSoul"))||(c.id==="missiles"&&Math.random()*100<tv(u,"impMissiles"))))return;
   const G=B.general;c.pb=(c.pb||0)+1;
   if(c.channel){const a=eff(u,c.id);c.end-=a.channel*G.channelPushback/100;if(c.end<=now)u.cast=null;}
@@ -1920,6 +1977,7 @@ function cc(src,t,type,dur,name,o){
   if((type==="fear"||type==="incap")&&has(t,"zerk")){statusText(t,"Невосприимчив","#cfd6df");return false}
   if(type==="fear"&&has(t,"reckless")){statusText(t,"Невосприимчив","#cfd6df");return false}
   if((type==="fear"||type==="incap")&&rk(t,"unyielding")&&Math.random()*100<tv(t,"unyielding")){statusText(t,"Сопротивление","#cfd6df");logRaw(`${t.name} сопротивляется: ${name}`);return false}
+  if((type==="stun"||type==="fear")&&rk(t,"unbreakableWill")&&Math.random()*100<tv(t,"unbreakableWill")){statusText(t,"Сопротивление","#cfd6df");logRaw(`${t.name} сопротивляется: ${name}`);return false}
   if(type==="stun")dur*=1-tv(t,"ironWill")/100;
   dur*=1-(t.K.ccDur||0)/100;
   const G=B.general,dk=o.drc||type,d=t.dr[dk],lvl=(!o.noDr&&d&&now<d.reset)?d.level:0;
@@ -1951,7 +2009,7 @@ function dmgMult(s,school,o){
   const vg=aura(s,"veng");if(vg&&(school==="phys"||school==="holy"))m*=1+vg.pct/100;
   const wk=aura(s,"weak");if(wk)m*=1-wk.pct/100;
   const sf=aura(s,"shadowform");if(sf&&school==="shadow")m*=1+sf.dmg/100;
-  const inf=aura(s,"innerfire");if(inf)m*=1+inf.dmg/100;
+  if(s.cls==="priest"&&school!=="phys"){m*=1+tv(s,"forceOfWill")/100;if(o.id==="smite"||o.id==="holyfire")m*=1+tv(s,"searingLight")/100;}
   const dis=aura(s,"disarm");if(dis&&school==="phys"&&(o.auto||o.melee))m*=1-dis.pct/100;
   return m;
 }
@@ -1962,6 +2020,7 @@ function critChance(s,school,t,o){
     if(o.id==="explosion")c+=tv(s,"impExplosion");if(o.id==="flamestrike")c+=tv(s,"impFlamestrike");
     const cb=aura(s,"combust");if(cb&&school==="fire"&&o.spell)c+=cb.pct;const wc=aura(t,"wchill");if(wc&&school==="frost")c+=2*wc.stacks;}
   else if(s.cls==="rogue"){if(o.id==="backstab")c+=tv(s,"impBackstab");if(o.id==="ambush")c+=tv(s,"impAmbush");if(o.id==="backstab"||o.id==="ambush"||(o.auto&&s.ohNext))c+=tv(s,"daggerSpec");}
+  else if(s.cls==="priest"&&o.spell){if(school==="holy")c+=tv(s,"holySpecialization");if(t&&t.team!==s.team)c+=tv(s,"forceOfWill");if(s.ifNow)c+=ab("priest","innerfocus").crit;}
   else if(s.cls==="paladin"){if(school==="holy"&&o.spell)c+=tv(s,"holyPower");if((o.melee||o.auto)&&school==="phys")c+=tv(s,"conviction");}
   if((o.melee||o.auto)&&t)c-=tv(t,"sleight");
   if(o.ability&&has(s,"coldblood"))c=100;
@@ -2008,13 +2067,15 @@ function damage(src,t,base,name,school,o){
   if(school==="holy"&&!o.dot){const jc=aura(t,"jotc");if(jc)amt+=jc.bonus;}
   const hs=aura(t,"holyshield"),rd=aura(t,"redoubt");
   if((o.melee||o.auto)&&!o.noBlock&&Math.random()*100<tv(t,"shieldSpec")+t.K.block+(hs?hs.pct:0)+(rd?rd.pct:0)){blocked=true;amt*=1-B.general.blockReduce/100;if(rd&&--rd.charges<=0)rd.until=0;}
-  if(school==="phys"){amt*=1-tv(t,"deflection")/100;for(const ty of ["frostarmor","innerfire","shadowform"]){const x=aura(t,ty);if(x)amt*=1-x.pct/100;}}
+  if(school==="phys"){amt*=1-tv(t,"deflection")/100;for(const ty of ["frostarmor","shadowform"]){const x=aura(t,ty);if(x)amt*=1-x.pct/100;}}
   if(school==="phys")amt*=1-(t.K.phys||0)/100;
   if(school==="phys"&&!o.dot)amt*=B.general.physMult*(1-armorOf(t,src)/(armorOf(t,src)+B.general.armorK));
   if(school==="fire"){const fv=aura(t,"firevuln");if(fv)amt*=1+fv.pct/100;}
   {const ks=t.auras.find(x=>x.ikPct&&x.until>now);if(ks)amt*=1+ks.ikPct/100;}
   if(school==="phys"&&!o.dot){const hm=aura(t,"hemo");if(hm){amt+=hm.bonus;if(--hm.charges<=0)hm.until=0;}}
   amt*=1-t.K.taken/100;
+  if(school!=="phys")amt*=1-tv(t,"spellWarding")/100;
+  if(school==="shadow"){const sw=aura(t,"sweave");if(sw)amt*=1+.03*sw.stacks;}
   {const rs={shadow:"shadowres",frost:"frostres",fire:"fireres"}[school];if(rs&&pauraOn(t,rs))amt*=1-ab("paladin",rs).pct/100;}
   if(blessOf(t,"kings"))amt*=.95;
   {const sb=blessOf(t,"sanct");if(sb&&!o.dot)amt=Math.max(0,amt-sb.reduce);}
@@ -2023,7 +2084,6 @@ function damage(src,t,base,name,school,o){
   if(t.stance==="berserker")amt*=1+B.warrior.abilities.berserker.taken/100;
   const rc=aura(t,"reckless");if(rc)amt*=1+rc.taken/100;
   const red=aura(t,"reduce");if(red)amt*=1-red.pct/100;
-  const ins=aura(t,"inspire");if(ins)amt*=1-ins.pct/100;
   amt=Math.round(amt);
   let absorbed=0;
   const ms=aura(t,"manashield");
@@ -2044,7 +2104,8 @@ function damage(src,t,base,name,school,o){
   const fe=aura(t,"fear");if(fe&&amt+absorbed>0){fe.left-=fe.blind?1:amt;if(fe.left<=0){fe.until=0;logRaw(`Урон снимает «${fe.name}» с ${t.name}`);}}
   combatText(src,t,amt,crit,o,school,blocked,absorbed);
   logRaw(`<b>${src.name}</b>: ${name} → ${amt}${crit?" (крит)":""}${blocked?" (блок)":""}${absorbed?`, поглощено ${absorbed}`:""}`);
-  if(school==="shadow"&&rk(src,"vampiric")&&amt>0)heal(src,amt*tv(src,"vampiric")/100,"Вампирские объятия");
+  if(school==="shadow"&&amt>0){const ve=t.auras.find(x=>x.type==="ve"&&x.src===src&&x.until>now);if(ve)for(const f of units)if(f.alive&&f.team===src.team&&(f===src||dist(f,src)<=40))heal(f,amt*ve.pct/100,"Объятия вампира",false,src);}
+  if((o.melee||o.auto)&&!o.dot&&amt+absorbed>0){const inf=aura(t,"innerfire");if(inf&&--inf.charges<=0)inf.until=0;}
   if((o.melee||o.auto)&&!o.dot){const fa=aura(t,"frostarmor");if(fa&&src.alive)chill(t,src,fa.name,fa.slow,fa.slowDur,1);}
   if(!o.dot&&!o.noProc){
     if(crit){
@@ -2053,6 +2114,8 @@ function damage(src,t,base,name,school,o){
       if(src.cls==="mage"){if(school==="fire"&&rk(src,"ignite"))addDot(t,src,"Воспламенение",(amt+absorbed)*tv(src,"ignite")/100,4,"fire",2);
         if(rk(src,"moe")&&o.cost&&(school==="fire"||school==="frost"))src.res=Math.min(src.maxRes,src.res+o.cost*tv(src,"moe")/100);}
       if(rk(src,"vengeance"))addAura(src,{type:"veng",name:"Отмщение",pct:tv(src,"vengeance"),until:now+8,good:true});
+      if((o.melee||o.auto)&&t.cls==="priest"){if(rk(t,"martyrdom")&&Math.random()*100<tv(t,"martyrdom"))addAura(t,{type:"fcast",name:"Сосредоточенное колдовство",until:now+6,good:true});
+        if(rk(t,"blessedRecovery"))addAura(t,{type:"hot",name:"Благословенное восстановление",per:(amt+absorbed)*tv(t,"blessedRecovery")/100/6,next:now+1,until:now+6.05,good:true});}
       if(rk(t,"redoubt"))addAura(t,{type:"redoubt",name:"Несгибаемость",pct:tv(t,"redoubt"),charges:5,until:now+10,good:true});
       if(rk(t,"eyeForEye")&&o.spell&&src.alive&&src!==t){const x=Math.min(t.maxHp*.5,(amt+absorbed)*tv(t,"eyeForEye")/100),ss=src,tt=t;setTimeout(()=>{if(ss.alive&&tt.alive)damage(tt,ss,x,"Око за око","holy",{noCrit:true,noProc:true,noResist:true,spell:true});},100);}
       if(rk(t,"enrage"))addAura(t,{type:"enrage",name:"Исступление",pct:tv(t,"enrage"),until:now+8,good:true});
@@ -2063,11 +2126,11 @@ function damage(src,t,base,name,school,o){
     if(school==="frost"&&o.spell&&t.hp>0&&Math.random()*100<tv(src,"wintersChill")){const ex=aura(t,"wchill"),st=ex?Math.min(5,ex.stacks+1):1;addAura(t,{type:"wchill",name:"Зимняя стужа",stacks:st,until:now+15,dt:"magic"});}
     /* Затмение срабатывает от прямых заклинаний Тьмы, не от тиков дотов и Истощения разума */
     if(school==="shadow"&&o.spell&&!o.dot&&o.id!=="flay"&&t.hp>0&&Math.random()*100<tv(src,"blackout"))cc(src,t,"stun",3,"Затмение",{drc:"rstun"});
+    if(school==="shadow"&&o.spell&&!o.dot&&t.hp>0&&Math.random()*100<tv(src,"shadowWeaving")){const ex=aura(t,"sweave"),st=ex?Math.min(5,ex.stacks+1):1;addAura(t,{type:"sweave",name:"Плетение Тьмы",stacks:st,until:now+15,dt:"magic"});}
     if(rk(src,"vindication")&&(o.melee||o.auto||o.id==="judgement")&&Math.random()<.2)addAura(t,{type:"weak",name:"Возмездие",pct:tv(src,"vindication")/3,until:now+10,dt:"magic"});
   }
   if(t.hp<=0){t.alive=false;t.cast=null;t.auras=t.auras.filter(a=>a.type==="dampen");log(t,"погибает");if(teamDead(t.team))endRound(src);return amt}
   if(rk(t,"lastStand")&&!t.lastStandUsed&&t.hp<t.maxHp*.2){t.lastStandUsed=true;heal(t,t.maxHp*tv(t,"lastStand")/100,"Последний рубеж");logRaw(`<b>${t.name}</b>: Последний рубеж`);}
-  if(rk(t,"spiritRedemption")&&!t.srUsed&&t.hp<t.maxHp*.2){t.srUsed=true;heal(t,t.maxHp*tv(t,"spiritRedemption")/100,"Дух воздаяния");logRaw(`<b>${t.name}</b>: Дух воздаяния`);}
   if(blocked&&rk(t,"revenge")&&src.alive)damage(t,src,tv(t,"revenge"),"Ответный удар","phys",{noCrit:true,noProc:true});
   {const sb=blessOf(t,"sanct");if(blocked&&sb&&src.alive)damage(t,src,sb.dmg,sb.name,"holy",{noCrit:true,noProc:true});}
   if((o.melee||o.auto)&&!o.dot&&amt>0&&src.alive&&src!==t){const ra=pauraOn(t,"retaura");if(ra&&src.team!==t.team)damage(ra,src,ab("paladin","retaura").dmg*(1+tv(ra,"impRetAura")/100),ab("paladin","retaura").name,"holy",{noCrit:true,noProc:true,noResist:true});
@@ -2088,12 +2151,12 @@ function updateUnit(u,dt){
   if(!u.alive)return;
   for(const a of u.auras.slice()){
     if(a.type==="dot"&&now>=a.next){a.next+=a.period||3;damage(a.src,u,a.per,a.name,a.school,{dot:true});if(!u.alive)return;}
-    if(a.type==="hot"&&now>=a.next){a.next+=1;heal(u,a.per,a.name,false,a.src&&a.src.alive!==undefined?a.src:u);schoolBurst(u.pos.x,u.y+1,u.pos.z,"holy",5,1.5,.35);}
+    if(a.type==="hot"&&now>=a.next){a.next+=a.period||1;heal(u,a.per,a.name,false,a.src&&a.src.alive!==undefined?a.src:u);schoolBurst(u.pos.x,u.y+1,u.pos.z,"holy",5,1.5,.35);}
     if(a.type==="bloodrage"&&now>=a.next){a.next+=1;u.res=Math.min(u.maxRes,u.res+a.per);}
   }
   const G=B.general,ooc=!inCombat(u);
   {const bw=blessOf(u,"bow");if(bw&&u.resType==="mana")u.res=Math.min(u.maxRes,u.res+bw.mana/5*dt);}
-  if(u.resType==="mana")u.res=Math.min(u.maxRes,u.res+B[u.cls].manaRegen*(1+(tv(u,"meditation")+u.K.regen)/100)*(ooc?G.oocManaMult:1)*dt);
+  if(u.resType==="mana")u.res=Math.min(u.maxRes,u.res+(aura(u,"dspirit")?aura(u,"dspirit").regen*dt:0)+B[u.cls].manaRegen*(1+(tv(u,"meditation")+u.K.regen)/100)*(ooc?G.oocManaMult:1)*dt);
   if(u.resType==="energy"){const ad=aura(u,"adren");u.res=Math.min(u.maxRes,u.res+B[u.cls].energyRegen*(1+u.K.regen/100)*(ad?1+ad.pct/100:1)*dt);}
   if(u.cls==="warrior"&&state==="fight"){if(ooc&&!u.charging)u.res=Math.max(0,u.res-G.rageDecay*dt);else u.res=Math.min(u.maxRes,u.res+tv(u,"angerMgmt")*dt);}
   if(ooc&&state==="fight")u.hp=Math.min(u.maxHp,u.hp+u.maxHp*G.oocHpRegen/100*dt);
@@ -2437,6 +2500,8 @@ class Bot{
       if(sf&&(u.hp<u.maxHp*.35&&(incap(e)||d>14)||lockedSchool(u,"shadow")&&u.hp<u.maxHp*.8)&&this.ready("shadowform")){tryUse(u,"shadowform");return}
     }
     if(this.ready("pi"))tryUse(u,"pi");
+    if(see&&d<=30&&!e.auras.some(x=>x.type==="ve"&&x.src===u)&&this.ready("vampiric")){tryUse(u,"vampiric");return}
+    if(this.ready("innerfocus")&&u.res<u.maxRes*.6)tryUse(u,"innerfocus");
     const eCC=incap(e);
     if(!sf&&u.hp<u.maxHp*.85&&!has(u,"hot")&&this.ready("renew")){tryUse(u,"renew");return}
     if(!sf&&u.hp<u.maxHp*.5&&eCC&&Math.max(...e.auras.filter(a=>LOSS[a.type]).map(a=>a.until-now),0)>3.2&&this.ready("gheal")){this.stop();tryUse(u,"gheal");return}
@@ -3259,7 +3324,7 @@ function startRound(){if(SRV_PENDING)applyServerBalance();
 }
 function roundBegin(){
   castHideAt=0;$("#pcast").hidden=true;$("#book").hidden=true;
-  for(const u of units)prepUnit(u);prepPaladins();
+  for(const u of units)prepUnit(u);prepPaladins();prepPriests();
   buildTeams();
   buildBar();$("#menu").hidden=true;$("#result").hidden=true;$("#talents").hidden=true;$("#hud").hidden=false;
   state="countdown";countEnd=now+3;}
@@ -3290,10 +3355,12 @@ function startNetRound(){
 /* перед боем: бафы на весь бой и скрытность разбойника, как будто всё наложено заранее */
 function prepUnit(u){
   if(u.cls==="mage")addAura(u,{type:"frostarmor",name:B.mage.abilities.frostarmor.name,pct:B.mage.abilities.frostarmor.reduce,slow:B.mage.abilities.frostarmor.slow,slowDur:B.mage.abilities.frostarmor.slowDur,until:Infinity,good:true,mb:true});
-  if(u.cls==="priest"){const a=B.priest.abilities.innerfire;addAura(u,{type:"innerfire",name:a.name,pct:a.reduce,dmg:a.dmg,until:Infinity,good:true,mb:true});}
   if(u.cls==="rogue")addAura(u,{type:"stealth",name:B.rogue.abilities.stealth.name,until:Infinity,good:true});
 }
 /* паладины до начала боя: аура благочестия и благословения себе и союзникам (короли, если есть, иначе могущество бойцам и мудрость заклинателям) */
+/* жрец перед боем: Внутренний огонь на себя, Стойкость (и Божественный дух с талантом) на себя и союзников */
+function prepPriests(){for(const p of units)if(p.cls==="priest"){const a=eff(p,"innerfire");addAura(p,{type:"innerfire",name:a.name,armor:a.armor,charges:a.charges,until:Infinity,good:true,mb:true});
+  for(const f of units)if(f.team===p.team&&!aura(f,"fort")){fortitude(p,f,eff(p,"fortitude"));if(rk(p,"divineSpirit")){const d=eff(p,"divinespirit");addAura(f,{type:"dspirit",name:d.name,regen:d.spirit/8,until:Infinity,good:true,mb:true});}}}}
 function prepPaladins(){for(const p of units)if(p.cls==="paladin"){setPAura(p,p.isPlayer&&settings.paura&&PAURAS.includes(settings.paura)?settings.paura:"devotion");
   for(const f of units)if(f.team===p.team){const k=rk(p,"tKings")?"kings":(f.resType==="mana"&&f.cls!=="paladin"?"bow":"bom");bless(p,f,k,ab("paladin",k));}}}
 function clearArena(){
