@@ -137,6 +137,7 @@ async function handle(req, res) {
       if (text.length < 3) { json(req, res, 400, { error: "Напишите текст" }); return true; }
       /* антиспам: скрытое поле заполняют только боты, человек не пишет отзыв быстрее 3 с, ссылки и повторы не принимаем */
       const norm = text.toLowerCase().replace(/\s+/g, " ");
+      if (!(b.played >= 1)) { json(req, res, 400, { error: "Отзыв можно оставить после первого сыгранного боя" }); return true; }
       if (b.hp || !(b.ms >= 3000)) { json(req, res, 200, { ok: true }); return true; }
       if ((text.match(/https?:\/\/|www\./gi) || []).length > 1) { json(req, res, 400, { error: "Слишком много ссылок" }); return true; }
       if (feedback.slice(-300).some(x => x.text.toLowerCase().replace(/\s+/g, " ") === norm)) { json(req, res, 400, { error: "Такой отзыв уже есть" }); return true; }
