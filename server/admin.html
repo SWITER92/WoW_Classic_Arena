@@ -113,6 +113,13 @@ const badge=pre=>{const k=nEdits(pre);return k?`<span class="n">${k}</span>`:""}
 function smallIcon(k,s){const i=ICONS[k]??0;return `background-size:${16*s}px auto;background-position:${-(i%16)*s}px ${-Math.floor(i/16)*s}px`}
 const STAT_ROWS=[["hp"],["armor"],["maxRes"],["startRes"],["manaRegen"],["energyRegen"],["crit"],["dodge"],["speed"],["ap"],["sp"],["swing","interval"],["swing","dmg"],["swing","rage"],["ohSwing","interval"],["ohSwing","dmg"],["ohSwing","pct"],["rageFromDamageTaken"],["stanceRage"]];
 const RES_N={mana:"мана",rage:"ярость",energy:"энергия"};
+/* ввод в поле: число задаёт значение; -10% / +15% меняют на процент; +50 / -50 прибавляют; *1.2 и /2 умножают и делят; =-5 задаёт отрицательное */
+function calcVal(str,old){const t=String(str).replace(/,/g,".").replace(/\s+/g,"");let m;
+  if((m=/^=(-?\d*\.?\d+)$/.exec(t)))return +m[1];
+  if((m=/^([+\-*\/])(\d*\.?\d+)(%?)$/.exec(t))&&isFinite(old)){const n=+m[2],pc=m[3]==="%";let r;
+    if(m[1]==="+")r=pc?old*(1+n/100):old+n;else if(m[1]==="-")r=pc?old*(1-n/100):old-n;else if(m[1]==="*")r=pc?old*n/100:old*n;else r=n?old/n:NaN;
+    return Number.isInteger(old)&&Math.abs(r)>=10?Math.round(r):Math.round(r*1000)/1000;}
+  return parseFloat(t);}
 const FBS={new:"Новый",work:"В работе",done:"Сделано",no:"Отклонено"};
 async function render(){navRender();const m=$("#main");
   if(view==="stats"){const cl=Object.keys(CLS);
@@ -178,8 +185,9 @@ async function render(){navRender();const m=$("#main");
   else if(view==="history"){m.innerHTML=`<h2>История изменений</h2><p class="sub">Каждая публикация сохраняется. Откат публикует выбранную версию заново.</p><div id="hl">Загружаю…</div>`;
     try{const h=await api("history");$("#hl").innerHTML=h.list.length?`<table class="hist"><tr><th>Версия</th><th>Когда</th><th>Что изменилось</th><th>Комментарий</th><th></th></tr>${h.list.map(v=>`<tr><td class="${v.version===h.current?"cur":""}">${v.version}${v.version===h.current?" · сейчас":""}</td><td>${new Date(v.at).toLocaleString("ru")}</td><td>${chList(v.changes)}</td><td>${esc(v.note||"")}</td><td>${v.version===h.current?"":`<button class="btn ghost" data-rb="${v.version}">Откатить</button>`}</td></tr>`).join("")}</table>`:"Публикаций пока не было.";
       $("#hl").querySelectorAll("[data-rb]").forEach(b=>b.onclick=async()=>{if(!confirm("Откатить баланс к версии "+b.dataset.rb+"?"))return;await api("rollback",{version:+b.dataset.rb});await load();render();});}catch(e){$("#hl").textContent=e.message}}
+  m.querySelectorAll("input[data-p]").forEach(inp=>inp.title="Можно ввести число, -10% или +15%, +50 или -50, *1.2 и нажать Enter");
   m.querySelectorAll("input[data-p]").forEach(inp=>inp.onchange=()=>{const p=JSON.parse(inp.dataset.p),d=get(D,p),cur=get(over,p)!==undefined?get(over,p):d;
-    let v=parseFloat(inp.value.replace(",","."));if(!isFinite(v)){inp.value=Array.isArray(d)?val(p)[+inp.dataset.i]:val(p);return}
+    const old=Array.isArray(d)?val(p)[+inp.dataset.i]:val(p);let v=calcVal(inp.value,old);if(!isFinite(v)){inp.value=Array.isArray(d)?val(p)[+inp.dataset.i]:val(p);return}
     if(Array.isArray(d)){const arr=val(p).slice();arr[+inp.dataset.i]=v;v=arr;}
     if(JSON.stringify(v)===JSON.stringify(cur))delp(edits,p);else setp(edits,p,v);
     const k=scrollY;render().then(()=>scrollTo(0,k));});
