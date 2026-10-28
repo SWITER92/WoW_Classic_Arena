@@ -28,6 +28,12 @@ const writeJson = (f, o) => { const t = f + ".tmp"; fs.writeFileSync(t, JSON.str
 const FB = path.join(DATA, "feedback.json");
 let feedback = readJson(FB, []);
 const fbIp = new Map();
+/* адрес клиента: последний в x-forwarded-for ставит наш Caddy, первые клиент может подделать */
+const clientIp = req => (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",").pop().trim();
+const ipTag = ip => crypto.createHash("sha256").update("arena-fb:" + ip).digest("hex").slice(0, 10);
+const gameVer = () => { try { return fs.readFileSync(path.join(__dirname, "..", "version.txt"), "utf8").trim(); } catch (e) { return ""; } };
+let fbHour = { t: 0, n: 0 };
+const fbBan = new Set(readJson(path.join(DATA, "feedback-ban.json"), []));
 const FB_STATUS = ["new", "work", "done", "no"];
 const str = (v, n) => typeof v === "string" ? v.replace(/[\u0000-\u0008\u000b-\u001f]/g, "").trim().slice(0, n) : "";
 
@@ -129,7 +135,7 @@ async function handle(req, res) {
     }
     if (r === "roadmap" && req.method === "GET") { json(req, res, 200, { list: roadmap }); return true; }
     if (r === "feedback" && req.method === "POST") {
-      const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+      const ip = clientIp(req);
       const t = Date.now(), f = fbIp.get(ip) || { last: 0, day: t, n: 0 };
       if (t - f.day > 86400000) { f.day = t; f.n = 0; }
       if (t - f.last < 20000 || f.n >= 20) { json(req, res, 429, { error: "Слишком часто, попробуйте позже" }); return true; }
@@ -137,20 +143,26 @@ async function handle(req, res) {
       if (text.length < 3) { json(req, res, 400, { error: "Напишите текст" }); return true; }
       /* антиспам: скрытое поле заполняют только боты, человек не пишет отзыв быстрее 3 с, ссылки и повторы не принимаем */
       const norm = text.toLowerCase().replace(/\s+/g, " ");
+      const tag = ipTag(ip);
+      if (fbBan.has(tag)) { json(req, res, 200, { ok: true }); return true; }
+      const gv = gameVer();
+      if (gv && b.ver !== gv) { json(req, res, 400, { error: "Обновите страницу (Ctrl+F5): у вас старая версия игры" }); return true; }
+      if (t - fbHour.t > 3600000) fbHour = { t, n: 0 };
+      if (fbHour.n >= 60) { json(req, res, 429, { error: "Слишком много отзывов, попробуйте через час" }); return true; }
       if (!(b.played >= 1)) { json(req, res, 400, { error: "Отзыв можно оставить после первого сыгранного боя" }); return true; }
       if (b.hp || !(b.ms >= 3000)) { json(req, res, 200, { ok: true }); return true; }
       if ((text.match(/https?:\/\/|www\./gi) || []).length > 1) { json(req, res, 400, { error: "Слишком много ссылок" }); return true; }
       if (feedback.slice(-300).some(x => x.text.toLowerCase().replace(/\s+/g, " ") === norm)) { json(req, res, 400, { error: "Такой отзыв уже есть" }); return true; }
-      f.last = t; f.n++; fbIp.set(ip, f);
+      f.last = t; f.n++; fbIp.set(ip, f); fbHour.n++;
       feedback.push({ id: crypto.randomBytes(6).toString("hex"), at: new Date().toISOString(), kind: b.kind === "idea" ? "idea" : "bug", text,
-        nick: str(b.nick, 24), ver: str(b.ver, 16), cls: str(b.cls, 12), status: "new", note: "" });
+        nick: str(b.nick, 24), ver: str(b.ver, 16), cls: str(b.cls, 12), status: "new", note: "", ip: tag });
       if (feedback.length > 5000) feedback = feedback.slice(-5000);
       writeJson(FB, feedback);
       json(req, res, 200, { ok: true });
       return true;
     }
     if (r === "login" && req.method === "POST") {
-      const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+      const ip = clientIp(req);
       const f = fails.get(ip) || { n: 0, until: 0 };
       if (f.until > Date.now()) { json(req, res, 429, { error: "Слишком много попыток, подождите минуту" }); return true; }
       const b = await body(req);
@@ -190,7 +202,8 @@ async function handle(req, res) {
     if (r === "feedback/set" && req.method === "POST") {
       const b = await body(req), it = feedback.find(x => x.id === b.id);
       if (!it) { json(req, res, 404, { error: "Нет такого отзыва" }); return true; }
-      if (b.del) feedback = feedback.filter(x => x !== it);
+      if (b.ban) { fbBan.add(it.ip); writeJson(path.join(DATA, "feedback-ban.json"), [...fbBan]); feedback = feedback.filter(x => x.ip !== it.ip); }
+      else if (b.del) feedback = feedback.filter(x => x !== it);
       else { if (FB_STATUS.includes(b.status)) it.status = b.status; if (typeof b.note === "string") it.note = str(b.note, 500); }
       writeJson(FB, feedback);
       json(req, res, 200, { ok: true });

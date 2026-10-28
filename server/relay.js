@@ -62,7 +62,7 @@ const originOk = o => !o || ORIGINS.includes(o) || /^http:\/\/(localhost|127\.0\
 server.on("upgrade", (req, sock, head) => {
   const url = new URL(req.url, "http://x");
   if (url.pathname !== "/arena" || !originOk(req.headers.origin)) { sock.destroy(); return; }
-  const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+  const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",").pop().trim();
   if ((perIp.get(ip) || 0) >= MAX_PER_IP) { sock.destroy(); return; }
   wss.handleUpgrade(req, sock, head, ws => {
     perIp.set(ip, (perIp.get(ip) || 0) + 1);
@@ -137,7 +137,7 @@ function createRoom(req, res) {
   const h = { "content-type": "application/json", "cache-control": "no-store", "access-control-allow-origin": originOk(origin) && origin ? origin : ORIGINS[0], vary: "origin" };
   if (req.method === "OPTIONS") { res.writeHead(204, h); res.end(); return; }
   const reply = (code, o) => { res.writeHead(code, h); res.end(JSON.stringify(o)); };
-  const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+  const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",").pop().trim();
   if (Date.now() - (createdAt.get(ip) || 0) < 5000) return reply(429, { error: "Подождите несколько секунд" });
   if (sims.size >= MAX_SIMS) return reply(503, { error: "Сервер занят" });
   let body = "";
