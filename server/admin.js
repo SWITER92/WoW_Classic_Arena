@@ -135,6 +135,11 @@ async function handle(req, res) {
       if (t - f.last < 20000 || f.n >= 20) { json(req, res, 429, { error: "Слишком часто, попробуйте позже" }); return true; }
       const b = await body(req), text = str(b.text, 2000);
       if (text.length < 3) { json(req, res, 400, { error: "Напишите текст" }); return true; }
+      /* антиспам: скрытое поле заполняют только боты, человек не пишет отзыв быстрее 3 с, ссылки и повторы не принимаем */
+      const norm = text.toLowerCase().replace(/\s+/g, " ");
+      if (b.hp || !(b.ms >= 3000)) { json(req, res, 200, { ok: true }); return true; }
+      if ((text.match(/https?:\/\/|www\./gi) || []).length > 1) { json(req, res, 400, { error: "Слишком много ссылок" }); return true; }
+      if (feedback.slice(-300).some(x => x.text.toLowerCase().replace(/\s+/g, " ") === norm)) { json(req, res, 400, { error: "Такой отзыв уже есть" }); return true; }
       f.last = t; f.n++; fbIp.set(ip, f);
       feedback.push({ id: crypto.randomBytes(6).toString("hex"), at: new Date().toISOString(), kind: b.kind === "idea" ? "idea" : "bug", text,
         nick: str(b.nick, 24), ver: str(b.ver, 16), cls: str(b.cls, 12), status: "new", note: "" });
