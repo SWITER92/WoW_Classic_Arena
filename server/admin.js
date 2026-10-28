@@ -31,6 +31,11 @@ const fbIp = new Map();
 const FB_STATUS = ["new", "work", "done", "no"];
 const str = (v, n) => typeof v === "string" ? v.replace(/[\u0000-\u0008\u000b-\u001f]/g, "").trim().slice(0, n) : "";
 
+/* дорожная карта: список пунктов, игра читает, админка сохраняет целиком */
+const RM = path.join(DATA, "roadmap.json");
+let roadmap = readJson(RM, []);
+const RM_STATUS = ["plan", "work", "done"];
+
 let current = readJson(path.join(DATA, "balance.json"), { version: 0, at: null, note: "", data: {} });
 
 /* оставляем только то, что есть в игре и имеет тот же тип: число или массив чисел той же длины */
@@ -122,6 +127,7 @@ async function handle(req, res) {
       json(req, res, 200, { ok: true });
       return true;
     }
+    if (r === "roadmap" && req.method === "GET") { json(req, res, 200, { list: roadmap }); return true; }
     if (r === "feedback" && req.method === "POST") {
       const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
       const t = Date.now(), f = fbIp.get(ip) || { last: 0, day: t, n: 0 };
@@ -164,6 +170,14 @@ async function handle(req, res) {
       const last = current.version ? readJson(path.join(HIST, current.version + ".json"), {}) : null;
       json(req, res, 200, { online: list.length, fight: list.filter(o => o.fight).length, net: list.filter(o => o.net).length, relay: relayStats(),
         version: current.version, overrides: count(current.data), last: last && { version: last.version, at: last.at, note: last.note, changes: last.changes || [] } });
+      return true;
+    }
+    if (r === "roadmap" && req.method === "POST") {
+      const b = await body(req);
+      if (!Array.isArray(b.list)) { json(req, res, 400, { error: "Плохой список" }); return true; }
+      roadmap = b.list.slice(0, 200).map(x => ({ title: str(x && x.title, 120), desc: str(x && x.desc, 1000), status: RM_STATUS.includes(x && x.status) ? x.status : "plan" })).filter(x => x.title);
+      writeJson(RM, roadmap);
+      json(req, res, 200, { ok: true, list: roadmap });
       return true;
     }
     if (r === "feedback" && req.method === "GET") { json(req, res, 200, { list: feedback }); return true; }
