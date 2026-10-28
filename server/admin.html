@@ -107,12 +107,13 @@ function numFields(base,obj,skip){return Object.keys(obj).filter(k=>!skip||!skip
 function navRender(){const n=$("#nav");let h=`<h3>Общее</h3><a data-v="overview">Обзор</a><a data-v="general">Общие правила${badge("general")}</a><h3>Классы</h3><a data-v="stats">Характеристики классов${["warrior","mage","rogue","paladin","priest"].some(c=>STAT_ROWS.some(r=>nEdits(c+"."+r.join(".")))||nEdits("general.parry."+c))?'<span class="n">•</span>':""}</a>`;
   for(const c in CLS)h+=`<a data-v="cls:${c}"><i class="ic" style="width:20px;height:20px;${smallIcon("cls_"+c,20)}"></i>${CLS[c]}${badge(c)}</a>`;
   h+=`<h3>Таланты</h3>`;for(const c in CLS)h+=`<a data-v="tal:${c}">${CLS[c]}${badge("talents."+c)}</a>`;
-  h+=`<h3>Сервер</h3><a data-v="history">История изменений</a>`;n.innerHTML=h;
+  h+=`<h3>Сервер</h3><a data-v="feedback">Отзывы игроков</a><a data-v="history">История изменений</a>`;n.innerHTML=h;
   n.querySelectorAll("a").forEach(a=>{a.classList.toggle("on",a.dataset.v===view);a.onclick=()=>{view=a.dataset.v;render()}});}
 const badge=pre=>{const k=nEdits(pre);return k?`<span class="n">${k}</span>`:""};
 function smallIcon(k,s){const i=ICONS[k]??0;return `background-size:${16*s}px auto;background-position:${-(i%16)*s}px ${-Math.floor(i/16)*s}px`}
 const STAT_ROWS=[["hp"],["armor"],["maxRes"],["startRes"],["manaRegen"],["energyRegen"],["crit"],["dodge"],["speed"],["ap"],["swing","interval"],["swing","dmg"],["swing","rage"],["ohSwing","interval"],["ohSwing","dmg"],["ohSwing","pct"],["rageFromDamageTaken"],["stanceRage"]];
 const RES_N={mana:"мана",rage:"ярость",energy:"энергия"};
+const FBS={new:"Новый",work:"В работе",done:"Сделано",no:"Отклонено"};
 async function render(){navRender();const m=$("#main");
   if(view==="stats"){const cl=Object.keys(CLS);
     m.innerHTML=`<h2>Характеристики классов</h2><p class="sub">Основные числа каждого класса рядом для сравнения. Пустая клетка: у класса нет такого параметра. Правки те же, что на странице класса.</p>
@@ -145,6 +146,18 @@ async function render(){navRender();const m=$("#main");
     if(tr){const t=T[tr].list[talSel],v=val(["talents",c,tr,"list",talSel,"v"]),x=r=>Array.isArray(v)?v[r-1]:+(v*r).toFixed(2);
       $("#tedit").innerHTML=`<div class="card"><i class="ic" style="${iconCss(talSel)}"></i><div><div class="t">${esc(t.n)} <small>${esc(T[tr].name)} · ряд ${t.t} · рангов ${t.max}${t.req?` · требует «${esc(T[tr].list[t.req].n)}» ${t.reqr}`:""}</small></div>
         <div class="ds">${[...Array(t.max)].map((_,i)=>`<b>Ранг ${i+1}:</b> ${esc(t.d.replace("{x}",x(i+1)))}`).join("<br>")}</div><div class="fields">${field(["talents",c,tr,"list",talSel,"v"])}</div></div></div>`;}}
+  else if(view==="feedback"){m.innerHTML=`<h2>Отзывы игроков</h2><p class="sub">Баги и предложения из кнопки «Отзыв» в игре.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><select id="fk"><option value="">Все типы</option><option value="bug">Баги</option><option value="idea">Предложения</option></select>
+    <select id="fs"><option value="open">Открытые</option><option value="">Все статусы</option>${Object.entries(FBS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+    <select id="fo"><option value="new">Сначала новые</option><option value="old">Сначала старые</option></select><input id="fq" placeholder="Поиск по тексту" style="flex:1;min-width:140px"></div><div id="fl">Загружаю…</div>`;
+    let all=[];const draw=()=>{const k=$("#fk").value,st=$("#fs").value,q=$("#fq").value.toLowerCase();
+      let l=all.filter(x=>(!k||x.kind===k)&&(st==="open"?x.status==="new"||x.status==="work":!st||x.status===st)&&(!q||(x.text+" "+x.nick).toLowerCase().includes(q)));
+      if($("#fo").value==="new")l=l.slice().reverse();
+      $("#fl").innerHTML=l.length?`<table class="hist"><tr><th>Когда</th><th>Тип</th><th>Текст</th><th>Игрок</th><th>Статус</th><th></th></tr>${l.map(x=>`<tr><td>${new Date(x.at).toLocaleString("ru")}<br><span style="color:var(--dim)">${esc(x.ver)}</span></td><td>${x.kind==="bug"?"🐞 Баг":"💡 Идея"}</td><td style="white-space:pre-wrap;max-width:520px">${esc(x.text)}</td><td>${esc(x.nick||"—")}<br><span style="color:var(--dim)">${esc(x.cls)}</span></td><td><select data-fs="${x.id}">${Object.entries(FBS).map(([s,v])=>`<option value="${s}"${s===x.status?" selected":""}>${v}</option>`).join("")}</select></td><td><button class="btn ghost" data-fd="${x.id}">Удалить</button></td></tr>`).join("")}</table>`:"Отзывов нет.";
+      $("#fl").querySelectorAll("[data-fs]").forEach(e=>e.onchange=async()=>{await api("feedback/set",{id:e.dataset.fs,status:e.value});all.find(x=>x.id===e.dataset.fs).status=e.value;});
+      $("#fl").querySelectorAll("[data-fd]").forEach(e=>e.onclick=async()=>{if(!confirm("Удалить отзыв?"))return;await api("feedback/set",{id:e.dataset.fd,del:1});all=all.filter(x=>x.id!==e.dataset.fd);draw();});};
+    ["#fk","#fs","#fo"].forEach(q=>$(q).onchange=draw);$("#fq").oninput=draw;
+    try{all=(await api("feedback")).list;draw();}catch(e){$("#fl").textContent=e.message}}
   else if(view==="history"){m.innerHTML=`<h2>История изменений</h2><p class="sub">Каждая публикация сохраняется. Откат публикует выбранную версию заново.</p><div id="hl">Загружаю…</div>`;
     try{const h=await api("history");$("#hl").innerHTML=h.list.length?`<table class="hist"><tr><th>Версия</th><th>Когда</th><th>Что изменилось</th><th>Комментарий</th><th></th></tr>${h.list.map(v=>`<tr><td class="${v.version===h.current?"cur":""}">${v.version}${v.version===h.current?" · сейчас":""}</td><td>${new Date(v.at).toLocaleString("ru")}</td><td>${chList(v.changes)}</td><td>${esc(v.note||"")}</td><td>${v.version===h.current?"":`<button class="btn ghost" data-rb="${v.version}">Откатить</button>`}</td></tr>`).join("")}</table>`:"Публикаций пока не было.";
       $("#hl").querySelectorAll("[data-rb]").forEach(b=>b.onclick=async()=>{if(!confirm("Откатить баланс к версии "+b.dataset.rb+"?"))return;await api("rollback",{version:+b.dataset.rb});await load();render();});}catch(e){$("#hl").textContent=e.message}}

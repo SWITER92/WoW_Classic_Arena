@@ -24,6 +24,13 @@ try { fs.mkdirSync(HIST, { recursive: true }); } catch (e) {}
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch (e) { return d; } };
 const writeJson = (f, o) => { const t = f + ".tmp"; fs.writeFileSync(t, JSON.stringify(o, null, 1)); fs.renameSync(t, f); };
 
+/* отзывы игроков: баги и предложения; хранятся в feedback.json, статус меняется в админке */
+const FB = path.join(DATA, "feedback.json");
+let feedback = readJson(FB, []);
+const fbIp = new Map();
+const FB_STATUS = ["new", "work", "done", "no"];
+const str = (v, n) => typeof v === "string" ? v.replace(/[\u0000-\u0008\u000b-\u001f]/g, "").trim().slice(0, n) : "";
+
 let current = readJson(path.join(DATA, "balance.json"), { version: 0, at: null, note: "", data: {} });
 
 /* оставляем только то, что есть в игре и имеет тот же тип: число или массив чисел той же длины */
@@ -115,6 +122,21 @@ async function handle(req, res) {
       json(req, res, 200, { ok: true });
       return true;
     }
+    if (r === "feedback" && req.method === "POST") {
+      const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+      const t = Date.now(), f = fbIp.get(ip) || { last: 0, day: t, n: 0 };
+      if (t - f.day > 86400000) { f.day = t; f.n = 0; }
+      if (t - f.last < 20000 || f.n >= 20) { json(req, res, 429, { error: "Слишком часто, попробуйте позже" }); return true; }
+      const b = await body(req), text = str(b.text, 2000);
+      if (text.length < 3) { json(req, res, 400, { error: "Напишите текст" }); return true; }
+      f.last = t; f.n++; fbIp.set(ip, f);
+      feedback.push({ id: crypto.randomBytes(6).toString("hex"), at: new Date().toISOString(), kind: b.kind === "idea" ? "idea" : "bug", text,
+        nick: str(b.nick, 24), ver: str(b.ver, 16), cls: str(b.cls, 12), status: "new", note: "" });
+      if (feedback.length > 5000) feedback = feedback.slice(-5000);
+      writeJson(FB, feedback);
+      json(req, res, 200, { ok: true });
+      return true;
+    }
     if (r === "login" && req.method === "POST") {
       const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
       const f = fails.get(ip) || { n: 0, until: 0 };
@@ -142,6 +164,16 @@ async function handle(req, res) {
       const last = current.version ? readJson(path.join(HIST, current.version + ".json"), {}) : null;
       json(req, res, 200, { online: list.length, fight: list.filter(o => o.fight).length, net: list.filter(o => o.net).length, relay: relayStats(),
         version: current.version, overrides: count(current.data), last: last && { version: last.version, at: last.at, note: last.note, changes: last.changes || [] } });
+      return true;
+    }
+    if (r === "feedback" && req.method === "GET") { json(req, res, 200, { list: feedback }); return true; }
+    if (r === "feedback/set" && req.method === "POST") {
+      const b = await body(req), it = feedback.find(x => x.id === b.id);
+      if (!it) { json(req, res, 404, { error: "Нет такого отзыва" }); return true; }
+      if (b.del) feedback = feedback.filter(x => x !== it);
+      else { if (FB_STATUS.includes(b.status)) it.status = b.status; if (typeof b.note === "string") it.note = str(b.note, 500); }
+      writeJson(FB, feedback);
+      json(req, res, 200, { ok: true });
       return true;
     }
     if (r === "history" && req.method === "GET") {
