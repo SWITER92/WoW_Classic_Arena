@@ -107,7 +107,7 @@ function numFields(base,obj,skip){return Object.keys(obj).filter(k=>!skip||!skip
 function navRender(){const n=$("#nav");let h=`<h3>Общее</h3><a data-v="overview">Обзор</a><a data-v="general">Общие правила${badge("general")}</a><h3>Классы</h3><a data-v="stats">Характеристики классов${["warrior","mage","rogue","paladin","priest"].some(c=>STAT_ROWS.some(r=>nEdits(c+"."+r.join(".")))||nEdits("general.parry."+c))?'<span class="n">•</span>':""}</a>`;
   for(const c in CLS)h+=`<a data-v="cls:${c}"><i class="ic" style="width:20px;height:20px;${smallIcon("cls_"+c,20)}"></i>${CLS[c]}${badge(c)}</a>`;
   h+=`<h3>Таланты</h3>`;for(const c in CLS)h+=`<a data-v="tal:${c}">${CLS[c]}${badge("talents."+c)}</a>`;
-  h+=`<h3>Сервер</h3><a data-v="feedback">Отзывы игроков</a><a data-v="roadmap">Дорожная карта</a><a data-v="history">История изменений</a>`;n.innerHTML=h;
+  h+=`<h3>Сервер</h3><a data-v="visits">Посещаемость</a><a data-v="feedback">Отзывы игроков</a><a data-v="roadmap">Дорожная карта</a><a data-v="history">История изменений</a>`;n.innerHTML=h;
   n.querySelectorAll("a").forEach(a=>{a.classList.toggle("on",a.dataset.v===view);a.onclick=()=>{view=a.dataset.v;render()}});}
 const badge=pre=>{const k=nEdits(pre);return k?`<span class="n">${k}</span>`:""};
 function smallIcon(k,s){const i=ICONS[k]??0;return `background-size:${16*s}px auto;background-position:${-(i%16)*s}px ${-Math.floor(i/16)*s}px`}
@@ -168,6 +168,23 @@ async function render(){navRender();const m=$("#main");
     ["#fk","#fs","#fo"].forEach(q=>$(q).onchange=draw);
     $("#fdelall").onclick=async()=>{if(!shown.length||!confirm("Удалить все показанные отзывы ("+shown.length+" шт.)?"))return;for(const x of shown.slice()){try{await api("feedback/set",{id:x.id,del:1});}catch(e){}all=all.filter(y=>y!==x);}draw();};$("#fq").oninput=draw;
     try{all=(await api("feedback")).list;draw();}catch(e){$("#fl").textContent=e.message}}
+  else if(view==="visits"){m.innerHTML=`<h2>Посещаемость</h2><p class="sub">Каждая точка — наибольшее число игроков онлайн за 5 минут. Время ваше местное.</p>
+    <div class="opts" style="display:flex;gap:6px;margin-bottom:10px">${[["1","Сутки"],["7","Неделя"],["30","Месяц"]].map(([d,n])=>`<button class="btn ghost" data-rng="${d}">${n}</button>`).join("")}</div>
+    <div id="vch" class="card" style="padding:12px;display:block">Загружаю…</div><h3 style="margin-top:18px">Разных игроков за день</h3><div id="vdays"></div>`;
+    let S=null,rng=+(sessionStorage.getItem("vrng")||1);
+    const draw=()=>{if(!S)return;const t1=Date.now(),t0=t1-rng*86400000,P=S.pts.filter(p=>p.t>=t0),W=900,H=260,L=34,Bm=22;
+      const mx=Math.max(4,...P.map(p=>p.on)),X=t=>L+(t-t0)/(t1-t0)*(W-L-8),Y=v=>H-Bm-v/mx*(H-Bm-10);
+      const line=(k,c)=>P.length?`<polyline fill="none" stroke="${c}" stroke-width="2" points="${P.map(p=>X(p.t).toFixed(1)+","+Y(p[k]).toFixed(1)).join(" ")}"/>`:"";
+      let g="";for(let i=0;i<=4;i++){const v=Math.round(mx*i/4);g+=`<line x1="${L}" x2="${W-8}" y1="${Y(v)}" y2="${Y(v)}" stroke="#333"/><text x="${L-6}" y="${Y(v)+4}" fill="#999" font-size="11" text-anchor="end">${v}</text>`;}
+      const step=rng===1?3*3600000:86400000*(rng===7?1:5);for(let t=Math.ceil(t0/step)*step;t<t1;t+=step){const d=new Date(t);g+=`<text x="${X(t)}" y="${H-6}" fill="#999" font-size="11" text-anchor="middle">${rng===1?d.getHours()+":00":d.getDate()+"."+(d.getMonth()+1)}</text>`;}
+      const pk=P.reduce((a,p)=>p.on>a.on?p:a,{on:0,t:0});
+      $("#vch").innerHTML=(P.length?"":`<p class="sub">Данных за этот период пока нет: запись началась после обновления сервера.</p>`)+`<svg viewBox="0 0 ${W} ${H}" style="display:block;width:100%;height:auto">${g}${line("on","#ffd200")}${line("fight","#e05050")}${line("net","#50a0ff")}</svg>
+        <div style="display:flex;gap:16px;color:#bbb;font-size:13px;flex-wrap:wrap"><span style="color:#ffd200">■ онлайн</span><span style="color:#e05050">■ в бою</span><span style="color:#50a0ff">■ в коопе</span><span>Пик за период: <b>${pk.on}</b>${pk.t?" — "+new Date(pk.t).toLocaleString("ru"):""}</span></div>`;
+      document.querySelectorAll("[data-rng]").forEach(b=>b.classList.toggle("on",+b.dataset.rng===rng));
+      const ds=Object.entries(S.days).sort().slice(-30);const dm=Math.max(1,...ds.map(d=>d[1]));
+      $("#vdays").innerHTML=ds.length?ds.reverse().map(([d,n])=>`<div style="display:flex;align-items:center;gap:8px;margin:2px 0"><span style="width:90px;color:#bbb">${d.split("-").reverse().join(".")}</span><span style="background:#ffd200;height:12px;width:${Math.max(2,n/dm*300)}px"></span><b>${n}</b></div>`).join(""):"Пока нет данных.";};
+    document.querySelectorAll("[data-rng]").forEach(b=>b.onclick=()=>{rng=+b.dataset.rng;try{sessionStorage.setItem("vrng",rng)}catch(e){}draw();});
+    try{S=await api("stats");draw();}catch(e){$("#vch").textContent=e.message}}
   else if(view==="roadmap"){m.innerHTML=`<h2>Дорожная карта</h2><p class="sub">Видна игрокам по кнопке «Дорожная карта». Порядок в списке = порядок в игре.</p><div id="rl">Загружаю…</div>
     <div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" id="radd">+ Пункт</button><button class="btn" id="rsave">Сохранить</button><span id="rmsg" style="color:var(--dim);align-self:center"></span></div>`;
     let L=[];const RS={plan:"В планах",work:"В работе",done:"Готово"};

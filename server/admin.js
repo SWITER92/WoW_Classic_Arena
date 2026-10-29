@@ -42,6 +42,12 @@ const RM = path.join(DATA, "roadmap.json");
 let roadmap = readJson(RM, []);
 const RM_STATUS = ["plan", "work", "done"];
 
+/* статистика посещений: каждые 5 минут пик онлайна за интервал, по дням число разных игроков; хранится 30 дней */
+const ST = path.join(DATA, "stats.json");
+let stats = readJson(ST, { pts: [], days: {} });
+let stPeak = { on: 0, fight: 0, net: 0 }, dayKey = new Date().toISOString().slice(0, 10);
+let daySids = new Set(stats.sidDay === dayKey ? stats.sids || [] : []);
+
 let current = readJson(path.join(DATA, "balance.json"), { version: 0, at: null, note: "", data: {} });
 
 /* оставляем только то, что есть в игре и имеет тот же тип: число или массив чисел той же длины */
@@ -129,7 +135,7 @@ async function handle(req, res) {
     if (r === "ping" && req.method === "POST") {
       const b = await body(req);
       if (typeof b.sid === "string" && /^[a-z0-9]{8,32}$/.test(b.sid) && (online.has(b.sid) || online.size < 5000))
-        online.set(b.sid, { t: Date.now(), fight: !!b.fight, net: !!b.net });
+        { online.set(b.sid, { t: Date.now(), fight: !!b.fight, net: !!b.net }); if (daySids.size < 100000) daySids.add(b.sid); }
       json(req, res, 200, { ok: true });
       return true;
     }
@@ -209,6 +215,7 @@ async function handle(req, res) {
       json(req, res, 200, { ok: true });
       return true;
     }
+    if (r === "stats" && req.method === "GET") { sampleStats(); json(req, res, 200, { pts: stats.pts.concat(stPeak.on ? [{ t: Date.now(), ...stPeak }] : []), days: Object.assign({}, stats.days, { [dayKey]: daySids.size }), peak: stPeak }); return true; }
     if (r === "history" && req.method === "GET") {
       const list = fs.readdirSync(HIST).map(f => parseInt(f)).filter(n => n > 0).sort((a, b) => b - a).slice(0, 100)
         .map(n => { const v = readJson(path.join(HIST, n + ".json"), {}); return { version: n, at: v.at, note: v.note, total: count(v.data), changes: v.changes || [] }; });
@@ -233,6 +240,24 @@ async function handle(req, res) {
 function count(o) { let n = 0; for (const k in o || {}) n += o[k] && typeof o[k] === "object" && !Array.isArray(o[k]) ? count(o[k]) : 1; return n; }
 
 setInterval(() => { const t = Date.now(); for (const [k, v] of tokens) if (v < t) tokens.delete(k); for (const [k, v] of online) if (t - v.t > 120000) online.delete(k); }, 60000);
+
+function sampleStats() {
+  const t = Date.now(), list = [...online.values()].filter(o => t - o.t < 75000);
+  stPeak.on = Math.max(stPeak.on, list.length); stPeak.fight = Math.max(stPeak.fight, list.filter(o => o.fight).length); stPeak.net = Math.max(stPeak.net, list.filter(o => o.net).length);
+}
+setInterval(sampleStats, 60000);
+setInterval(() => {
+  sampleStats();
+  stats.pts.push({ t: Date.now(), on: stPeak.on, fight: stPeak.fight, net: stPeak.net, rooms: relayStats().rooms });
+  if (stats.pts.length > 8640) stats.pts = stats.pts.slice(-8640);
+  stPeak = { on: 0, fight: 0, net: 0 };
+  const k = new Date().toISOString().slice(0, 10);
+  stats.days[dayKey] = Math.max(stats.days[dayKey] || 0, daySids.size);
+  if (k !== dayKey) { dayKey = k; daySids = new Set(); }
+  const ks = Object.keys(stats.days).sort(); while (ks.length > 90) delete stats.days[ks.shift()];
+  stats.sidDay = dayKey; stats.sids = [...daySids];
+  try { writeJson(ST, stats); } catch (e) {}
+}, 300000);
 
 function onlineCount() { const t = Date.now(); let n = 0; for (const o of online.values()) if (t - o.t < 75000) n++; return n; }
 
