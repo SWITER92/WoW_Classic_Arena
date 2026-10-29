@@ -1,0 +1,3509 @@
+{
+"mage": {
+"0": {
+"tab": "Fire",
+"list": [
+{
+"id": 26,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Improved Fireball",
+"spells": [
+11069,
+12338,
+12339,
+12340,
+12341
+],
+"prereq": 0,
+"desc": "Reduces the casting time of your Fireball spell by $/1000;S1 sec."
+},
+{
+"id": 30,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Impact",
+"spells": [
+11103,
+12357,
+12358,
+12359,
+12360
+],
+"prereq": 0,
+"desc": "Gives your Fire spells a $h% chance to stun the target for $12355d."
+},
+{
+"id": 34,
+"tier": 1,
+"col": 0,
+"max": 5,
+"name": "Ignite",
+"spells": [
+11119,
+11120,
+12846,
+12847,
+12848
+],
+"prereq": 0,
+"desc": "Your critical strikes from Fire damage spells cause the target to burn for an additional 40% of your spell's damage over $12654d."
+},
+{
+"id": 28,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Flame Throwing",
+"spells": [
+11100,
+12353
+],
+"prereq": 0,
+"desc": "Increases the range of your Fire spells by $s1 yards."
+},
+{
+"id": 27,
+"tier": 1,
+"col": 2,
+"max": 3,
+"name": "Improved Fire Blast",
+"spells": [
+11078,
+11080,
+12342
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Fire Blast spell by $/1000;S1 sec."
+},
+{
+"id": 1141,
+"tier": 2,
+"col": 0,
+"max": 2,
+"name": "Incinerate",
+"spells": [
+18459,
+18460
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Fire Blast and Scorch spells by $s1%."
+},
+{
+"id": 31,
+"tier": 2,
+"col": 1,
+"max": 3,
+"name": "Improved Flamestrike",
+"spells": [
+11108,
+12349,
+12350
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Flamestrike spell by $s1%."
+},
+{
+"id": 29,
+"tier": 2,
+"col": 2,
+"max": 1,
+"name": "Pyroblast",
+"spells": [
+11366
+],
+"prereq": 0,
+"desc": "Hurls an immense fiery boulder that causes $s1 Fire damage and an additional $o2 Fire damage over $d."
+},
+{
+"id": 23,
+"tier": 2,
+"col": 3,
+"max": 2,
+"name": "Burning Soul",
+"spells": [
+11083,
+12351
+],
+"prereq": 0,
+"desc": "Gives your Fire spells a $s1% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by $s2%."
+},
+{
+"id": 25,
+"tier": 3,
+"col": 0,
+"max": 3,
+"name": "Improved Scorch",
+"spells": [
+11095,
+12872,
+12873
+],
+"prereq": 0,
+"desc": "Your Scorch spells have a $s1% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by $22959s1% and lasts $22959d.  Stacks up to $22959u times."
+},
+{
+"id": 24,
+"tier": 3,
+"col": 1,
+"max": 2,
+"name": "Improved Fire Ward",
+"spells": [
+11094,
+13043
+],
+"prereq": 0,
+"desc": "Causes your Fire Ward to have a $s1% chance to reflect Fire spells while active."
+},
+{
+"id": 1639,
+"tier": 3,
+"col": 3,
+"max": 3,
+"name": "Master of Elements",
+"spells": [
+29074,
+29075,
+29076
+],
+"prereq": 0,
+"desc": "Your Fire and Frost spell criticals will refund $s1% of their base mana cost."
+},
+{
+"id": 33,
+"tier": 4,
+"col": 1,
+"max": 3,
+"name": "Critical Mass",
+"spells": [
+11115,
+11367,
+11368
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Fire spells by $s1%."
+},
+{
+"id": 32,
+"tier": 4,
+"col": 2,
+"max": 1,
+"name": "Blast Wave",
+"spells": [
+11113
+],
+"prereq": 29,
+"desc": "A wave of flame radiates outward from the caster, damaging all enemies caught within the blast for $s1 Fire damage, and dazing them for $d."
+},
+{
+"id": 35,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Fire Power",
+"spells": [
+11124,
+12378,
+12398,
+12399,
+12400
+],
+"prereq": 0,
+"desc": "Increases the damage done by your Fire spells by $s1%."
+},
+{
+"id": 36,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Combustion",
+"spells": [
+11129
+],
+"prereq": 33,
+"desc": "When activated, this spell causes each of your Fire damage spell hits to increase your critical strike chance with Fire damage spells by $28682s1%.  This effect lasts until you have caused $n critical strikes with Fire spells."
+},
+{
+"id": 74,
+"tier": 0,
+"col": 0,
+"max": 2,
+"name": "Arcane Subtlety",
+"spells": [
+11210,
+12592
+],
+"prereq": 0,
+"desc": "Reduces your target's resistance to all your spells by $s2 and reduces the threat caused by your Arcane spells by $s1%."
+},
+{
+"id": 76,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Arcane Focus",
+"spells": [
+11222,
+12839,
+12840,
+12841,
+12842
+],
+"prereq": 0,
+"desc": "Reduces the chance that the opponent can resist your Arcane spells by $s1%."
+},
+{
+"id": 80,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Improved Arcane Missiles",
+"spells": [
+11237,
+12463,
+12464,
+16769,
+16770
+],
+"prereq": 0,
+"desc": "Gives you a $s1% chance to avoid interruption caused by damage while channeling Arcane Missiles."
+},
+{
+"id": 78,
+"tier": 1,
+"col": 0,
+"max": 2,
+"name": "Wand Specialization",
+"spells": [
+6057,
+6085
+],
+"prereq": 0,
+"desc": "Increases your damage with Wands by $s1%."
+},
+{
+"id": 1650,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Magic Absorption",
+"spells": [
+29441,
+29444,
+29445,
+29446,
+29447
+],
+"prereq": 0,
+"desc": "Increases all resistances by $s2 and causes all spells you fully resist to restore $s1% of your total mana.  1 sec. cooldown."
+},
+{
+"id": 75,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Arcane Concentration",
+"spells": [
+11213,
+12574,
+12575,
+12576,
+12577
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance of entering a Clearcasting state after any damage spell hits a target.  The Clearcasting state reduces the mana cost of your next damage spell by $/10;12536s1%."
+},
+{
+"id": 82,
+"tier": 2,
+"col": 0,
+"max": 2,
+"name": "Magic Attunement",
+"spells": [
+11247,
+12606
+],
+"prereq": 0,
+"desc": "Increases the effect of your Amplify Magic and Dampen Magic spells by $s1%."
+},
+{
+"id": 81,
+"tier": 2,
+"col": 1,
+"max": 3,
+"name": "Improved Arcane Explosion",
+"spells": [
+11242,
+12467,
+12469
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Arcane Explosion spell by an additional $s1%."
+},
+{
+"id": 85,
+"tier": 2,
+"col": 2,
+"max": 1,
+"name": "Arcane Resilience",
+"spells": [
+28574
+],
+"prereq": 0,
+"desc": "Increases your armor by an amount equal to $s1% of your Intellect."
+},
+{
+"id": 83,
+"tier": 3,
+"col": 0,
+"max": 2,
+"name": "Improved Mana Shield",
+"spells": [
+11252,
+12605
+],
+"prereq": 0,
+"desc": "Decreases the mana lost per point of damage taken when Mana Shield is active by $s1%."
+},
+{
+"id": 88,
+"tier": 3,
+"col": 1,
+"max": 2,
+"name": "Improved Counterspell",
+"spells": [
+11255,
+12598
+],
+"prereq": 0,
+"desc": "Gives your Counterspell a $h% chance to silence the target for $18469d."
+},
+{
+"id": 1142,
+"tier": 3,
+"col": 3,
+"max": 3,
+"name": "Arcane Meditation",
+"spells": [
+18462,
+18463,
+18464
+],
+"prereq": 0,
+"desc": "Allows $s1% of your Mana regeneration to continue while casting."
+},
+{
+"id": 86,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Presence of Mind",
+"spells": [
+12043
+],
+"prereq": 0,
+"desc": "When activated, your next Mage spell with a casting time less than 10 sec becomes an instant cast spell."
+},
+{
+"id": 77,
+"tier": 4,
+"col": 2,
+"max": 5,
+"name": "Arcane Mind",
+"spells": [
+11232,
+12500,
+12501,
+12502,
+12503
+],
+"prereq": 85,
+"desc": "Increases your maximum Mana by $s1%."
+},
+{
+"id": 421,
+"tier": 5,
+"col": 1,
+"max": 3,
+"name": "Arcane Instability",
+"spells": [
+15058,
+15059,
+15060
+],
+"prereq": 86,
+"desc": "Increases your spell damage and critical strike chance by $s1%."
+},
+{
+"id": 87,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Arcane Power",
+"spells": [
+12042
+],
+"prereq": 421,
+"desc": "When activated, your spells deal $s1% more damage while costing $s2% more mana to cast.  This effect lasts $D."
+}
+]
+},
+"2": {
+"tab": "Frost",
+"list": [
+{
+"id": 70,
+"tier": 0,
+"col": 0,
+"max": 2,
+"name": "Frost Warding",
+"spells": [
+11189,
+28332
+],
+"prereq": 0,
+"desc": "Increases the armor and resistances given by your Frost Armor and Ice Armor spells by $s1%.  In addition, gives your Frost Ward a $s2% chance to reflect Frost spells and effects while active."
+},
+{
+"id": 37,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Improved Frostbolt",
+"spells": [
+11070,
+12473,
+16763,
+16765,
+16766
+],
+"prereq": 0,
+"desc": "Reduces the casting time of your Frostbolt spell by $/1000;S1 sec."
+},
+{
+"id": 1649,
+"tier": 0,
+"col": 2,
+"max": 3,
+"name": "Elemental Precision",
+"spells": [
+29438,
+29439,
+29440
+],
+"prereq": 0,
+"desc": "Reduces the chance that the opponent can resist your Frost and Fire spells by $s1%."
+},
+{
+"id": 73,
+"tier": 1,
+"col": 0,
+"max": 5,
+"name": "Ice Shards",
+"spells": [
+11207,
+12672,
+15047,
+15052,
+15053
+],
+"prereq": 0,
+"desc": "Increases the critical strike damage bonus of your Frost spells by $s1%."
+},
+{
+"id": 38,
+"tier": 1,
+"col": 1,
+"max": 3,
+"name": "Frostbite",
+"spells": [
+11071,
+12496,
+12497
+],
+"prereq": 0,
+"desc": "Gives your Chill effects a $s1% chance to freeze the target for $12494d."
+},
+{
+"id": 62,
+"tier": 1,
+"col": 2,
+"max": 2,
+"name": "Improved Frost Nova",
+"spells": [
+11165,
+12475
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Frost Nova spell by $/1000;s1 sec."
+},
+{
+"id": 65,
+"tier": 1,
+"col": 3,
+"max": 3,
+"name": "Permafrost",
+"spells": [
+11175,
+12569,
+12571
+],
+"prereq": 0,
+"desc": "Increases the duration of your Chill effects by $/1000;S1 $lsec:secs; and reduces the target's speed by an additional $s2%."
+},
+{
+"id": 61,
+"tier": 2,
+"col": 0,
+"max": 3,
+"name": "Piercing Ice",
+"spells": [
+11151,
+12952,
+12953
+],
+"prereq": 0,
+"desc": "Increases the damage done by your Frost spells by $s1%."
+},
+{
+"id": 69,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Cold Snap",
+"spells": [
+12472
+],
+"prereq": 0,
+"desc": "When activated, this spell finishes the cooldown on all of your Frost spells."
+},
+{
+"id": 63,
+"tier": 2,
+"col": 3,
+"max": 3,
+"name": "Improved Blizzard",
+"spells": [
+11185,
+12487,
+12488
+],
+"prereq": 0,
+"desc": "Adds a chill effect to your Blizzard spell.  This effect lowers the target's movement speed by $12486s1%.  Lasts $12486d."
+},
+{
+"id": 741,
+"tier": 3,
+"col": 0,
+"max": 2,
+"name": "Arctic Reach",
+"spells": [
+16757,
+16758
+],
+"prereq": 0,
+"desc": "Increases the range of your Frostbolt and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by $s1%."
+},
+{
+"id": 66,
+"tier": 3,
+"col": 1,
+"max": 3,
+"name": "Frost Channeling",
+"spells": [
+11160,
+12518,
+12519
+],
+"prereq": 0,
+"desc": "Reduces the mana cost of your Frost spells by $s1% and reduces the threat caused by your Frost spells by $s2%."
+},
+{
+"id": 67,
+"tier": 3,
+"col": 2,
+"max": 5,
+"name": "Shatter",
+"spells": [
+11170,
+12982,
+12983,
+12984,
+12985
+],
+"prereq": 62,
+"desc": "Increases the critical strike chance of all your spells against frozen targets by 50%."
+},
+{
+"id": 72,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Ice Block",
+"spells": [
+11958
+],
+"prereq": 0,
+"desc": "You become encased in a block of ice, protecting you from all physical attacks and spells for $d, but during that time you cannot attack, move or cast spells."
+},
+{
+"id": 64,
+"tier": 4,
+"col": 2,
+"max": 3,
+"name": "Improved Cone of Cold",
+"spells": [
+11190,
+12489,
+12490
+],
+"prereq": 0,
+"desc": "Increases the damage dealt by your Cone of Cold spell by $s1%."
+},
+{
+"id": 68,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Winter's Chill",
+"spells": [
+11180,
+28592,
+28593,
+28594,
+28595
+],
+"prereq": 0,
+"desc": "Gives your Frost damage spells a $h% chance to apply the Winter's Chill effect, which increases the chance a Frost spell will critically hit the target by $12579s1% for $12579d.  Stacks up to $12579u times."
+},
+{
+"id": 71,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Ice Barrier",
+"spells": [
+11426
+],
+"prereq": 72,
+"desc": "Instantly shields you, absorbing $s1 damage.  Lasts $d.  While the shield holds, spells will not be interrupted.\r\n"
+}
+]
+}
+},
+"warrior": {
+"0": {
+"tab": "Arms",
+"list": [
+{
+"id": 124,
+"tier": 0,
+"col": 0,
+"max": 3,
+"name": "Improved Heroic Strike",
+"spells": [
+12282,
+12663,
+12664
+],
+"prereq": 0,
+"desc": "Reduces the cost of your Heroic Strike ability by $/10;s1 rage points."
+},
+{
+"id": 130,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Deflection",
+"spells": [
+16462,
+16463,
+16464,
+16465,
+16466
+],
+"prereq": 0,
+"desc": "Increases your Parry chance by $s1%."
+},
+{
+"id": 127,
+"tier": 0,
+"col": 2,
+"max": 3,
+"name": "Improved Rend",
+"spells": [
+12286,
+12658,
+12659
+],
+"prereq": 0,
+"desc": "Increases the bleed damage done by your Rend ability by $s1%."
+},
+{
+"id": 126,
+"tier": 1,
+"col": 0,
+"max": 2,
+"name": "Improved Charge",
+"spells": [
+12285,
+12697
+],
+"prereq": 0,
+"desc": "Increases the amount of rage generated by your Charge ability by $/10;s1."
+},
+{
+"id": 641,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Tactical Mastery",
+"spells": [
+12295,
+12676,
+12677,
+12678,
+12679
+],
+"prereq": 0,
+"desc": "You retain up to 25 of your rage points when you change stances."
+},
+{
+"id": 128,
+"tier": 1,
+"col": 3,
+"max": 3,
+"name": "Improved Thunder Clap",
+"spells": [
+12287,
+12665,
+12666
+],
+"prereq": 0,
+"desc": "Reduces the cost of your Thunder Clap ability by $/10;s1 rage points."
+},
+{
+"id": 131,
+"tier": 2,
+"col": 0,
+"max": 2,
+"name": "Improved Overpower",
+"spells": [
+12290,
+12963
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Overpower ability by $s1%."
+},
+{
+"id": 137,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Anger Management",
+"spells": [
+12296
+],
+"prereq": 641,
+"desc": "Increases the time required for your rage to decay while out of combat by 30%."
+},
+{
+"id": 121,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Deep Wounds",
+"spells": [
+12834,
+12849,
+12867
+],
+"prereq": 127,
+"desc": "Your critical strikes cause the opponent to bleed, dealing 60% of your melee weapon's average damage over $12721d."
+},
+{
+"id": 136,
+"tier": 3,
+"col": 1,
+"max": 5,
+"name": "Two-Handed Weapon Specialization",
+"spells": [
+12163,
+12711,
+12712,
+12713,
+12714
+],
+"prereq": 0,
+"desc": "Increases the damage you deal with two-handed melee weapons by $s1%."
+},
+{
+"id": 662,
+"tier": 3,
+"col": 2,
+"max": 2,
+"name": "Impale",
+"spells": [
+16493,
+16494
+],
+"prereq": 121,
+"desc": "Increases the critical strike damage bonus of your abilities in Battle, Defensive, and Berserker stance by $s1%."
+},
+{
+"id": 132,
+"tier": 4,
+"col": 0,
+"max": 5,
+"name": "Axe Specialization",
+"spells": [
+12700,
+12781,
+12783,
+12784,
+12785
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with Axes by $s1%."
+},
+{
+"id": 133,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Sweeping Strikes",
+"spells": [
+12292
+],
+"prereq": 0,
+"desc": "Your next $n melee attacks strike an additional nearby opponent."
+},
+{
+"id": 125,
+"tier": 4,
+"col": 2,
+"max": 5,
+"name": "Mace Specialization",
+"spells": [
+12284,
+12701,
+12702,
+12703,
+12704
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to stun your target for $5530d with a Mace."
+},
+{
+"id": 123,
+"tier": 4,
+"col": 3,
+"max": 5,
+"name": "Sword Specialization",
+"spells": [
+12281,
+12812,
+12813,
+12814,
+12815
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to get an extra attack on the same target after dealing damage with your Sword."
+},
+{
+"id": 134,
+"tier": 5,
+"col": 0,
+"max": 5,
+"name": "Polearm Specialization",
+"spells": [
+12165,
+12830,
+12831,
+12832,
+12833
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with Polearms by $s1%."
+},
+{
+"id": 129,
+"tier": 5,
+"col": 2,
+"max": 3,
+"name": "Improved Hamstring",
+"spells": [
+12289,
+12668,
+23695
+],
+"prereq": 0,
+"desc": "Gives your Hamstring ability a $h% chance to immobilize the target for $23694d."
+},
+{
+"id": 135,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Mortal Strike",
+"spells": [
+12294
+],
+"prereq": 133,
+"desc": "A vicious strike that deals weapon damage plus $s2 and wounds the target, reducing the effectiveness of any healing by $s1% for $d."
+}
+]
+},
+"2": {
+"tab": "Protection",
+"list": [
+{
+"id": 1601,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Shield Specialization",
+"spells": [
+12298,
+12724,
+12725,
+12726,
+12727
+],
+"prereq": 0,
+"desc": "Increases your chance to block attacks with a shield by $s1% and has a $h% chance to generate 1 rage when a block occurs."
+},
+{
+"id": 138,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Anticipation",
+"spells": [
+12297,
+12750,
+12751,
+12752,
+12753
+],
+"prereq": 0,
+"desc": "Increases your Defense skill by $s1."
+},
+{
+"id": 142,
+"tier": 1,
+"col": 0,
+"max": 2,
+"name": "Improved Bloodrage",
+"spells": [
+12301,
+12818
+],
+"prereq": 0,
+"desc": "Increases the instant Rage generated by your Bloodrage ability by $/10;s1."
+},
+{
+"id": 140,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Toughness",
+"spells": [
+12299,
+12761,
+12762,
+12763,
+12764
+],
+"prereq": 0,
+"desc": "Increases your armor value from items by $s1%."
+},
+{
+"id": 141,
+"tier": 1,
+"col": 3,
+"max": 5,
+"name": "Iron Will",
+"spells": [
+12300,
+12959,
+12960,
+12961,
+12962
+],
+"prereq": 0,
+"desc": "Increases your chance to resist Stun and Charm effects by an additional $s1%."
+},
+{
+"id": 153,
+"tier": 2,
+"col": 0,
+"max": 1,
+"name": "Last Stand",
+"spells": [
+12975
+],
+"prereq": 142,
+"desc": "When activated, this ability temporarily grants you 30% of your maximum hit points for 20 seconds.  After the effect expires, the hit points are lost."
+},
+{
+"id": 145,
+"tier": 2,
+"col": 1,
+"max": 3,
+"name": "Improved Shield Block",
+"spells": [
+12945,
+12307,
+12944
+],
+"prereq": 1601,
+"desc": "Allows your Shield Block ability to block an additional attack and increases the duration by $/1000;s2 seconds."
+},
+{
+"id": 147,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Improved Revenge",
+"spells": [
+12797,
+12799,
+12800
+],
+"prereq": 0,
+"desc": "Gives your Revenge ability a $h% chance to stun the target for $12798d."
+},
+{
+"id": 144,
+"tier": 2,
+"col": 3,
+"max": 5,
+"name": "Defiance",
+"spells": [
+12303,
+12788,
+12789,
+12791,
+12792
+],
+"prereq": 0,
+"desc": "Increases the threat generated by your attacks by $s1% while in Defensive Stance."
+},
+{
+"id": 146,
+"tier": 3,
+"col": 0,
+"max": 3,
+"name": "Improved Sunder Armor",
+"spells": [
+12308,
+12810,
+12811
+],
+"prereq": 0,
+"desc": "Reduces the cost of your Sunder Armor ability by $/10;s1 rage points."
+},
+{
+"id": 151,
+"tier": 3,
+"col": 1,
+"max": 3,
+"name": "Improved Disarm",
+"spells": [
+12313,
+12804,
+12807
+],
+"prereq": 0,
+"desc": "Increases the duration of your Disarm ability by $/1000;s1 secs."
+},
+{
+"id": 143,
+"tier": 3,
+"col": 2,
+"max": 2,
+"name": "Improved Taunt",
+"spells": [
+12302,
+12765
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Taunt ability by $/1000;s1 sec."
+},
+{
+"id": 150,
+"tier": 4,
+"col": 0,
+"max": 2,
+"name": "Improved Shield Wall",
+"spells": [
+12312,
+12803
+],
+"prereq": 0,
+"desc": "Increases the effect duration of your Shield Wall ability by $/1000;s1 secs."
+},
+{
+"id": 152,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Concussion Blow",
+"spells": [
+12809
+],
+"prereq": 0,
+"desc": "Stuns the opponent for $d."
+},
+{
+"id": 149,
+"tier": 4,
+"col": 2,
+"max": 2,
+"name": "Improved Shield Bash",
+"spells": [
+12311,
+12958
+],
+"prereq": 0,
+"desc": "Gives your Shield Bash ability a $h% chance to silence the target for $18498d."
+},
+{
+"id": 702,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "One-Handed Weapon Specialization",
+"spells": [
+16538,
+16539,
+16540,
+16541,
+16542
+],
+"prereq": 0,
+"desc": "Increases the damage you deal with One-Handed Melee weapons by $s1%."
+},
+{
+"id": 148,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Shield Slam",
+"spells": [
+23922
+],
+"prereq": 152,
+"desc": "Slam the target with your shield, causing $s2 damage, modified by your shield block value, and has a 50% chance of dispelling $s1 magic effect on the target.  Also causes a high amount of threat."
+}
+]
+},
+"1": {
+"tab": "Fury",
+"list": [
+{
+"id": 158,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Booming Voice",
+"spells": [
+12321,
+12835,
+12836,
+12837,
+12838
+],
+"prereq": 0,
+"desc": "Increases the area of effect and duration of your Battle Shout and Demoralizing Shout by $s1%."
+},
+{
+"id": 157,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Cruelty",
+"spells": [
+12320,
+12852,
+12853,
+12855,
+12856
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with melee weapons by $s1%."
+},
+{
+"id": 161,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Improved Demoralizing Shout",
+"spells": [
+12324,
+12876,
+12877,
+12878,
+12879
+],
+"prereq": 0,
+"desc": "Increases the melee attack power reduction of your Demoralizing Shout by $s1%."
+},
+{
+"id": 159,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Unbridled Wrath",
+"spells": [
+12322,
+12999,
+13000,
+13001,
+13002
+],
+"prereq": 0,
+"desc": "Gives you a $h1% chance to generate an additional Rage point when you deal melee damage with a weapon."
+},
+{
+"id": 166,
+"tier": 2,
+"col": 0,
+"max": 3,
+"name": "Improved Cleave",
+"spells": [
+12329,
+12950,
+20496
+],
+"prereq": 0,
+"desc": "Increases the bonus damage done by your Cleave ability by $s1%."
+},
+{
+"id": 160,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Piercing Howl",
+"spells": [
+12323
+],
+"prereq": 0,
+"desc": "Causes all enemies near the warrior to be dazed, reducing movement speed by $s1% for $d."
+},
+{
+"id": 661,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Blood Craze",
+"spells": [
+16487,
+16489,
+16492
+],
+"prereq": 0,
+"desc": "Regenerates $16491o1% of your total Health over $16491d after being the victim of a critical strike."
+},
+{
+"id": 154,
+"tier": 2,
+"col": 3,
+"max": 5,
+"name": "Improved Battle Shout",
+"spells": [
+12318,
+12857,
+12858,
+12860,
+12861
+],
+"prereq": 0,
+"desc": "Increases the melee attack power bonus of your Battle Shout by $s1%."
+},
+{
+"id": 1581,
+"tier": 3,
+"col": 0,
+"max": 5,
+"name": "Dual Wield Specialization",
+"spells": [
+23584,
+23585,
+23586,
+23587,
+23588
+],
+"prereq": 0,
+"desc": "Increases the damage done by your offhand weapon by $s1%."
+},
+{
+"id": 1542,
+"tier": 3,
+"col": 1,
+"max": 2,
+"name": "Improved Execute",
+"spells": [
+20502,
+20503
+],
+"prereq": 0,
+"desc": "Reduces the Rage cost of your Execute ability by $/10;s1."
+},
+{
+"id": 155,
+"tier": 3,
+"col": 2,
+"max": 5,
+"name": "Enrage",
+"spells": [
+12317,
+13045,
+13046,
+13047,
+13048
+],
+"prereq": 0,
+"desc": "Gives you a $14204s1% melee damage bonus for $14204d up to a maximum of $14204n swings after being the victim of a critical strike."
+},
+{
+"id": 168,
+"tier": 4,
+"col": 0,
+"max": 5,
+"name": "Improved Slam",
+"spells": [
+12862,
+12330,
+20497,
+20498,
+20499
+],
+"prereq": 0,
+"desc": "Decreases the casting time of your Slam ability by $/1000;S1 sec."
+},
+{
+"id": 165,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Death Wish",
+"spells": [
+12328
+],
+"prereq": 0,
+"desc": "When activated, increases your physical damage by $s1% and makes you immune to Fear effects, but lowers your armor and all resistances by $s3%.  Lasts $d."
+},
+{
+"id": 1543,
+"tier": 4,
+"col": 3,
+"max": 2,
+"name": "Improved Intercept",
+"spells": [
+20504,
+20505
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Intercept ability by $/1000;s1 sec."
+},
+{
+"id": 1541,
+"tier": 5,
+"col": 0,
+"max": 2,
+"name": "Improved Berserker Rage",
+"spells": [
+20500,
+20501
+],
+"prereq": 0,
+"desc": "The Berserker Rage ability will generate $/10;23691s1 rage when used."
+},
+{
+"id": 156,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Flurry",
+"spells": [
+12319,
+12971,
+12972,
+12973,
+12974
+],
+"prereq": 155,
+"desc": "Increases your attack speed by $12970s1% for your next 3 swings after dealing a melee critical strike."
+},
+{
+"id": 167,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Bloodthirst",
+"spells": [
+23881
+],
+"prereq": 165,
+"desc": "Instantly attack the target causing damage equal to $s1% of your attack power.  In addition, the next $23885n successful melee attacks will restore $23880s1 health.  This effect lasts $23885d."
+}
+]
+}
+},
+"rogue": {
+"1": {
+"tab": "Combat",
+"list": [
+{
+"id": 203,
+"tier": 0,
+"col": 0,
+"max": 3,
+"name": "Improved Gouge",
+"spells": [
+13741,
+13793,
+13792
+],
+"prereq": 0,
+"desc": "Increases the effect duration of your Gouge ability by $/1000;S1 sec."
+},
+{
+"id": 201,
+"tier": 0,
+"col": 1,
+"max": 2,
+"name": "Improved Sinister Strike",
+"spells": [
+13732,
+13863
+],
+"prereq": 0,
+"desc": "Reduces the Energy cost of your Sinister Strike ability by $s1."
+},
+{
+"id": 186,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Lightning Reflexes",
+"spells": [
+13712,
+13788,
+13789,
+13790,
+13791
+],
+"prereq": 0,
+"desc": "Increases your Dodge chance by $s1%."
+},
+{
+"id": 202,
+"tier": 1,
+"col": 0,
+"max": 3,
+"name": "Improved Backstab",
+"spells": [
+13733,
+13865,
+13866
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Backstab ability by $s1%."
+},
+{
+"id": 187,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Deflection",
+"spells": [
+13713,
+13853,
+13854,
+13855,
+13856
+],
+"prereq": 0,
+"desc": "Increases your Parry chance by $s1%."
+},
+{
+"id": 181,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Precision",
+"spells": [
+13705,
+13832,
+13843,
+13844,
+13845
+],
+"prereq": 0,
+"desc": "Increases your chance to hit with melee weapons by $s1%."
+},
+{
+"id": 204,
+"tier": 2,
+"col": 0,
+"max": 2,
+"name": "Endurance",
+"spells": [
+13742,
+13872
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Sprint and Evasion abilities by $/60000;S1 min."
+},
+{
+"id": 301,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Riposte",
+"spells": [
+14251
+],
+"prereq": 187,
+"desc": "A strike that becomes active after parrying an opponent's attack.  This attack deals $s1% weapon damage and disarms the target for $19718d."
+},
+{
+"id": 222,
+"tier": 2,
+"col": 3,
+"max": 2,
+"name": "Improved Sprint",
+"spells": [
+13743,
+13875
+],
+"prereq": 0,
+"desc": "Gives a $s1% chance to remove all movement impairing effects when you activate your Sprint ability."
+},
+{
+"id": 206,
+"tier": 3,
+"col": 0,
+"max": 2,
+"name": "Improved Kick",
+"spells": [
+13754,
+13867
+],
+"prereq": 0,
+"desc": "Gives your Kick ability a $h% chance to silence the target for $18425d."
+},
+{
+"id": 182,
+"tier": 3,
+"col": 1,
+"max": 5,
+"name": "Dagger Specialization",
+"spells": [
+13706,
+13804,
+13805,
+13806,
+13807
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with Daggers by $s1%."
+},
+{
+"id": 221,
+"tier": 3,
+"col": 2,
+"max": 5,
+"name": "Dual Wield Specialization",
+"spells": [
+13715,
+13848,
+13849,
+13851,
+13852
+],
+"prereq": 181,
+"desc": "Increases the damage done by your offhand weapon by $s1%."
+},
+{
+"id": 184,
+"tier": 4,
+"col": 0,
+"max": 5,
+"name": "Mace Specialization",
+"spells": [
+13709,
+13800,
+13801,
+13802,
+13803
+],
+"prereq": 0,
+"desc": "Increases your skill with Maces by $s2, and gives you a $h% chance to stun your target for $5530d with a mace."
+},
+{
+"id": 223,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Blade Flurry",
+"spells": [
+13877
+],
+"prereq": 0,
+"desc": "Increases your attack speed by $s1%.  In addition, attacks strike an additional nearby opponent.  Lasts $d."
+},
+{
+"id": 242,
+"tier": 4,
+"col": 2,
+"max": 5,
+"name": "Sword Specialization",
+"spells": [
+13960,
+13961,
+13962,
+13963,
+13964
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to get an extra attack on the same target after dealing damage with your Sword."
+},
+{
+"id": 183,
+"tier": 4,
+"col": 3,
+"max": 5,
+"name": "Fist Weapon Specialization",
+"spells": [
+13707,
+13966,
+13967,
+13968,
+13969
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with Fist Weapons by $s1%."
+},
+{
+"id": 1703,
+"tier": 5,
+"col": 1,
+"max": 2,
+"name": "Weapon Expertise",
+"spells": [
+30919,
+30920
+],
+"prereq": 223,
+"desc": "Increases your skill with Sword, Fist and Dagger weapons by $s1."
+},
+{
+"id": 1122,
+"tier": 5,
+"col": 2,
+"max": 3,
+"name": "Aggression",
+"spells": [
+18427,
+18428,
+18429
+],
+"prereq": 0,
+"desc": "Increases the damage of your Sinister Strike and Eviscerate abilities by $s1%."
+},
+{
+"id": 205,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Adrenaline Rush",
+"spells": [
+13750
+],
+"prereq": 0,
+"desc": "Increases your Energy regeneration rate by $s1% for $d."
+}
+]
+},
+"0": {
+"tab": "Assassination",
+"list": [
+{
+"id": 276,
+"tier": 0,
+"col": 0,
+"max": 3,
+"name": "Improved Eviscerate",
+"spells": [
+14162,
+14163,
+14164
+],
+"prereq": 0,
+"desc": "Increases the damage done by your Eviscerate ability by $s1%."
+},
+{
+"id": 272,
+"tier": 0,
+"col": 1,
+"max": 2,
+"name": "Remorseless Attacks",
+"spells": [
+14144,
+14148
+],
+"prereq": 0,
+"desc": "After killing an opponent that yields experience or honor, gives you a $14149s1% increased critical strike chance on your next Sinister Strike, Backstab, Ambush, or Ghostly Strike.  Lasts $14149d."
+},
+{
+"id": 270,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Malice",
+"spells": [
+14138,
+14139,
+14140,
+14141,
+14142
+],
+"prereq": 0,
+"desc": "Increases your critical strike chance by $s1%."
+},
+{
+"id": 273,
+"tier": 1,
+"col": 0,
+"max": 3,
+"name": "Ruthlessness",
+"spells": [
+14156,
+14160,
+14161
+],
+"prereq": 0,
+"desc": "Gives your finishing moves a $h1% chance to add a combo point to your target."
+},
+{
+"id": 274,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Murder",
+"spells": [
+14158,
+14159
+],
+"prereq": 0,
+"desc": "Increases all damage caused against Humanoid, Giant, Beast and Dragonkin targets by $s1%."
+},
+{
+"id": 277,
+"tier": 1,
+"col": 3,
+"max": 3,
+"name": "Improved Slice and Dice",
+"spells": [
+14165,
+14166,
+14167
+],
+"prereq": 0,
+"desc": "Increases the duration of your Slice and Dice ability by $s1%."
+},
+{
+"id": 281,
+"tier": 2,
+"col": 0,
+"max": 1,
+"name": "Relentless Strikes",
+"spells": [
+14179
+],
+"prereq": 0,
+"desc": "Your finishing moves have a $b1% chance per combo point to restore $14181s1 energy."
+},
+{
+"id": 278,
+"tier": 2,
+"col": 1,
+"max": 2,
+"name": "Improved Expose Armor",
+"spells": [
+14168,
+14169
+],
+"prereq": 0,
+"desc": "Increases the armor reduced by your Expose Armor ability by $s1%."
+},
+{
+"id": 269,
+"tier": 2,
+"col": 2,
+"max": 5,
+"name": "Lethality",
+"spells": [
+14128,
+14132,
+14135,
+14136,
+14137
+],
+"prereq": 270,
+"desc": "Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Ghostly Strike, and Hemorrhage abilities by $s1%."
+},
+{
+"id": 682,
+"tier": 3,
+"col": 1,
+"max": 5,
+"name": "Vile Poisons",
+"spells": [
+16513,
+16514,
+16515,
+16719,
+16720
+],
+"prereq": 0,
+"desc": "Increases the damage dealt by your poisons by $s1% and gives your poisons an additional $s3% chance to resist dispel effects."
+},
+{
+"id": 268,
+"tier": 3,
+"col": 2,
+"max": 5,
+"name": "Improved Poisons",
+"spells": [
+14113,
+14114,
+14115,
+14116,
+14117
+],
+"prereq": 0,
+"desc": "Increases the chance to apply poisons to your target by $s1%."
+},
+{
+"id": 280,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Cold Blood",
+"spells": [
+14177
+],
+"prereq": 0,
+"desc": "When activated, increases the critical strike chance of your next Sinister Strike, Backstab, Ambush, or Eviscerate by $s1%."
+},
+{
+"id": 279,
+"tier": 4,
+"col": 2,
+"max": 3,
+"name": "Improved Kidney Shot",
+"spells": [
+14174,
+14175,
+14176
+],
+"prereq": 0,
+"desc": "While affected by your Kidney Shot ability, the target receives an additional $s1% damage from all sources."
+},
+{
+"id": 283,
+"tier": 5,
+"col": 1,
+"max": 5,
+"name": "Seal Fate",
+"spells": [
+14186,
+14190,
+14193,
+14194,
+14195
+],
+"prereq": 280,
+"desc": "Your critical strikes from abilities that add combo points  have a $h% chance to add an additional combo point."
+},
+{
+"id": 382,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Vigor",
+"spells": [
+14983
+],
+"prereq": 0,
+"desc": "Increases your maximum Energy by $s1."
+}
+]
+},
+"2": {
+"tab": "Subtlety",
+"list": [
+{
+"id": 241,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Master of Deception",
+"spells": [
+13958,
+13970,
+13971,
+13972,
+13973
+],
+"prereq": 0,
+"desc": "Reduces the chance enemies have to detect you while in Stealth mode.  More effective than Master of Deception (Rank 4)."
+},
+{
+"id": 261,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Opportunity",
+"spells": [
+14057,
+14072,
+14073,
+14074,
+14075
+],
+"prereq": 0,
+"desc": "Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by $s1%."
+},
+{
+"id": 1700,
+"tier": 1,
+"col": 0,
+"max": 2,
+"name": "Sleight of Hand",
+"spells": [
+30892,
+30893
+],
+"prereq": 0,
+"desc": "Reduces the chance you are critically hit by melee and ranged attacks by $s2% and increases the threat reduction of your Feint ability by $s1%."
+},
+{
+"id": 247,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Elusiveness",
+"spells": [
+13981,
+14066
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Vanish and Blind abilities by $/60000;S1 min."
+},
+{
+"id": 244,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Camouflage",
+"spells": [
+13975,
+14062,
+14063,
+14064,
+14065
+],
+"prereq": 0,
+"desc": "Increases your speed while stealthed by $s1% and reduces the cooldown of your Stealth ability by $/1000;s2 sec."
+},
+{
+"id": 245,
+"tier": 2,
+"col": 0,
+"max": 3,
+"name": "Initiative",
+"spells": [
+13976,
+13979,
+13980
+],
+"prereq": 0,
+"desc": "Gives you a $s1% chance to add an additional combo point to your target when using your Ambush, Garrote, or Cheap Shot ability."
+},
+{
+"id": 303,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Ghostly Strike",
+"spells": [
+14278
+],
+"prereq": 0,
+"desc": "A strike that deals $s1% weapon damage and increases your chance to dodge by $s2% for $d.  Awards $s3 combo $lpoint:points;."
+},
+{
+"id": 263,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Improved Ambush",
+"spells": [
+14079,
+14080,
+14081
+],
+"prereq": 0,
+"desc": "Increases the critical strike chance of your Ambush ability by $s1%."
+},
+{
+"id": 246,
+"tier": 3,
+"col": 0,
+"max": 3,
+"name": "Setup",
+"spells": [
+13983,
+14070,
+14071
+],
+"prereq": 0,
+"desc": "Gives you a $h1% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells."
+},
+{
+"id": 262,
+"tier": 3,
+"col": 1,
+"max": 3,
+"name": "Improved Sap",
+"spells": [
+14076,
+14094,
+14095
+],
+"prereq": 0,
+"desc": "Gives you a $s1% chance to return to stealth mode after using your Sap ability."
+},
+{
+"id": 1123,
+"tier": 3,
+"col": 2,
+"max": 3,
+"name": "Serrated Blades",
+"spells": [
+14171,
+14172,
+14173
+],
+"prereq": 0,
+"desc": "Causes your attacks to ignore $s2 of your target's Armor and increases the damage dealt by your Rupture ability by $s1%.  The amount of Armor reduced increases with your level."
+},
+{
+"id": 1701,
+"tier": 4,
+"col": 0,
+"max": 2,
+"name": "Heightened Senses",
+"spells": [
+30894,
+30895
+],
+"prereq": 0,
+"desc": "Increases your Stealth detection and reduces the chance you are hit by spells and ranged attacks by $s2%.  More effective than Heightened Senses (Rank 1)."
+},
+{
+"id": 284,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Preparation",
+"spells": [
+14185
+],
+"prereq": 0,
+"desc": "When activated, this ability immediately finishes the cooldown on your other Rogue abilities."
+},
+{
+"id": 265,
+"tier": 4,
+"col": 2,
+"max": 2,
+"name": "Dirty Deeds",
+"spells": [
+14082,
+14083
+],
+"prereq": 0,
+"desc": "Reduces the Energy cost of your Cheap Shot and Garrote abilities by $s1."
+},
+{
+"id": 681,
+"tier": 4,
+"col": 3,
+"max": 1,
+"name": "Hemorrhage",
+"spells": [
+16511
+],
+"prereq": 1123,
+"desc": "An instant strike that damages the opponent and causes the target to hemorrhage, increasing any Physical damage dealt to the target by up to $s3.  Lasts $n charges or $d.  Awards $s2 combo $lpoint:points;."
+},
+{
+"id": 1702,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Deadliness",
+"spells": [
+30902,
+30903,
+30904,
+30905,
+30906
+],
+"prereq": 0,
+"desc": "Increases your Attack Power by $s1%."
+},
+{
+"id": 381,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Premeditation",
+"spells": [
+14183
+],
+"prereq": 284,
+"desc": "When used, adds $s1 combo points to your target.  You must add to or use those combo points within $d or the combo points are lost. "
+}
+]
+}
+},
+"priest": {
+"0": {
+"tab": "Discipline",
+"list": [
+{
+"id": 342,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Unbreakable Will",
+"spells": [
+14522,
+14788,
+14789,
+14790,
+14791
+],
+"prereq": 0,
+"desc": "Increases your chance to resist Stun, Fear, and Silence effects by an additional $s1%."
+},
+{
+"id": 345,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Wand Specialization",
+"spells": [
+14524,
+14525,
+14526,
+14527,
+14528
+],
+"prereq": 0,
+"desc": "Increases your damage with Wands by $s1%."
+},
+{
+"id": 352,
+"tier": 1,
+"col": 0,
+"max": 5,
+"name": "Silent Resolve",
+"spells": [
+14523,
+14784,
+14785,
+14786,
+14787
+],
+"prereq": 0,
+"desc": "Reduces the threat generated by your spells by $s1%."
+},
+{
+"id": 344,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Improved Power Word: Fortitude",
+"spells": [
+14749,
+14767
+],
+"prereq": 0,
+"desc": "Increases the effect of your Power Word: Fortitude and Prayer of Fortitude spells by $s1%."
+},
+{
+"id": 343,
+"tier": 1,
+"col": 2,
+"max": 3,
+"name": "Improved Power Word: Shield",
+"spells": [
+14748,
+14768,
+14769
+],
+"prereq": 0,
+"desc": "Increases the damage absorbed by your Power Word: Shield by $s1%."
+},
+{
+"id": 321,
+"tier": 1,
+"col": 3,
+"max": 2,
+"name": "Martyrdom",
+"spells": [
+14531,
+14774
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to gain the Focused Casting effect that lasts for $27828d after being the victim of a melee or ranged critical strike.  The Focused Casting effect prevents you from losing casting time when taking damage and increases resistance to Interrupt effects by $27828s2%."
+},
+{
+"id": 348,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Inner Focus",
+"spells": [
+14751
+],
+"prereq": 0,
+"desc": "When activated, reduces the Mana cost of your next spell by $s1% and increases its critical effect chance by $s2% if it is capable of a critical effect."
+},
+{
+"id": 347,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Meditation",
+"spells": [
+14521,
+14776,
+14777
+],
+"prereq": 0,
+"desc": "Allows $s1% of your Mana regeneration to continue while casting."
+},
+{
+"id": 346,
+"tier": 3,
+"col": 0,
+"max": 3,
+"name": "Improved Inner Fire",
+"spells": [
+14747,
+14770,
+14771
+],
+"prereq": 0,
+"desc": "Increases the Armor bonus of your Inner Fire spell by $s1%."
+},
+{
+"id": 341,
+"tier": 3,
+"col": 1,
+"max": 5,
+"name": "Mental Agility",
+"spells": [
+14520,
+14780,
+14781,
+14782,
+14783
+],
+"prereq": 0,
+"desc": "Reduces the mana cost of your instant cast spells by $s1%."
+},
+{
+"id": 350,
+"tier": 3,
+"col": 3,
+"max": 2,
+"name": "Improved Mana Burn",
+"spells": [
+14750,
+14772
+],
+"prereq": 0,
+"desc": "Reduces the casting time of your Mana Burn spell by $/1000;S1 sec."
+},
+{
+"id": 1201,
+"tier": 4,
+"col": 1,
+"max": 5,
+"name": "Mental Strength",
+"spells": [
+18551,
+18552,
+18553,
+18554,
+18555
+],
+"prereq": 0,
+"desc": "Increases your maximum Mana by $s1%."
+},
+{
+"id": 351,
+"tier": 4,
+"col": 2,
+"max": 1,
+"name": "Divine Spirit",
+"spells": [
+14752
+],
+"prereq": 347,
+"desc": "Holy power infuses the target, increasing their Spirit by $s1 for $d."
+},
+{
+"id": 1202,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Force of Will",
+"spells": [
+18544,
+18547,
+18548,
+18549,
+18550
+],
+"prereq": 0,
+"desc": "Increases your spell damage by $s1% and the critical strike chance of your offensive spells by $s1%."
+},
+{
+"id": 322,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Power Infusion",
+"spells": [
+10060
+],
+"prereq": 1201,
+"desc": "Infuses the target with power, increasing their spell damage and healing by $s2%.  Lasts $d."
+}
+]
+},
+"1": {
+"tab": "Holy",
+"list": [
+{
+"id": 410,
+"tier": 0,
+"col": 0,
+"max": 2,
+"name": "Healing Focus",
+"spells": [
+14913,
+15012
+],
+"prereq": 0,
+"desc": "Gives you a $s1% chance to avoid interruption caused by damage while casting any healing spell."
+},
+{
+"id": 406,
+"tier": 0,
+"col": 1,
+"max": 3,
+"name": "Improved Renew",
+"spells": [
+14908,
+15020,
+17191
+],
+"prereq": 0,
+"desc": "Increases the amount healed by your Renew spell by $s1%."
+},
+{
+"id": 401,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Holy Specialization",
+"spells": [
+14889,
+15008,
+15009,
+15010,
+15011
+],
+"prereq": 0,
+"desc": "Increases the critical effect chance of your Holy spells by $s1%."
+},
+{
+"id": 411,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Spell Warding",
+"spells": [
+27900,
+27901,
+27902,
+27903,
+27904
+],
+"prereq": 0,
+"desc": "Reduces all spell damage taken by $s1%."
+},
+{
+"id": 1181,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Divine Fury",
+"spells": [
+18530,
+18531,
+18533,
+18534,
+18535
+],
+"prereq": 0,
+"desc": "Reduces the casting time of your Smite, Holy Fire, Heal and Greater Heal spells by $/1000;S1 sec."
+},
+{
+"id": 442,
+"tier": 2,
+"col": 0,
+"max": 1,
+"name": "Holy Nova",
+"spells": [
+15237
+],
+"prereq": 0,
+"desc": "Causes an explosion of holy light around the caster, causing $s1 Holy damage to all enemy targets within $a1 yards and healing all party members within $23455a1 yards for $23455s1.  These effects cause no threat."
+},
+{
+"id": 1636,
+"tier": 2,
+"col": 1,
+"max": 3,
+"name": "Blessed Recovery",
+"spells": [
+27811,
+27815,
+27816
+],
+"prereq": 0,
+"desc": "After being struck by a melee or ranged critical hit, heal $s1% of the damage taken over $27818d."
+},
+{
+"id": 361,
+"tier": 2,
+"col": 3,
+"max": 3,
+"name": "Inspiration",
+"spells": [
+14892,
+15362,
+15363
+],
+"prereq": 0,
+"desc": "Increases your target's armor by $15359s1% for $15359d after getting a critical effect from your Flash Heal, Heal, Greater Heal, or Prayer of Healing spell."
+},
+{
+"id": 1635,
+"tier": 3,
+"col": 0,
+"max": 2,
+"name": "Holy Reach",
+"spells": [
+27789,
+27790
+],
+"prereq": 0,
+"desc": "Increases the range of your Smite and Holy Fire spells and the radius of your Prayer of Healing and Holy Nova spells by $s1%."
+},
+{
+"id": 408,
+"tier": 3,
+"col": 1,
+"max": 3,
+"name": "Improved Healing",
+"spells": [
+14912,
+15013,
+15014
+],
+"prereq": 0,
+"desc": "Reduces the Mana cost of your Lesser Heal, Heal, and Greater Heal spells by $s1%."
+},
+{
+"id": 403,
+"tier": 3,
+"col": 2,
+"max": 2,
+"name": "Searing Light",
+"spells": [
+14909,
+15017
+],
+"prereq": 1181,
+"desc": "Increases the damage of your Smite and Holy Fire spells by $s1%."
+},
+{
+"id": 413,
+"tier": 4,
+"col": 0,
+"max": 2,
+"name": "Improved Prayer of Healing",
+"spells": [
+14911,
+15018
+],
+"prereq": 0,
+"desc": "Reduces the Mana cost of your Prayer of Healing spell by $s1%."
+},
+{
+"id": 1561,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Spirit of Redemption",
+"spells": [
+20711
+],
+"prereq": 0,
+"desc": "Upon death, the priest becomes the Spirit of Redemption for $27827d.  The Spirit of Redemption cannot move, attack, be attacked or targeted by any spells or effects.  While in this form the priest can cast any healing spell free of cost.  When the effect ends, the priest dies."
+},
+{
+"id": 402,
+"tier": 4,
+"col": 2,
+"max": 5,
+"name": "Spiritual Guidance",
+"spells": [
+14901,
+15028,
+15029,
+15030,
+15031
+],
+"prereq": 0,
+"desc": "Increases spell damage and healing by up to $s1% of your total Spirit."
+},
+{
+"id": 404,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Spiritual Healing",
+"spells": [
+14898,
+15349,
+15354,
+15355,
+15356
+],
+"prereq": 0,
+"desc": "Increases the amount healed by your healing spells by $s1%."
+},
+{
+"id": 1637,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Lightwell",
+"spells": [
+724
+],
+"prereq": 1561,
+"desc": "Creates a holy Lightwell near the priest.  Members of your raid or party can click the Lightwell to restore $7001o1 health over $7001d.  Being attacked cancels the effect.  Lightwell lasts for $d or 5 charges."
+}
+]
+},
+"2": {
+"tab": "Shadow",
+"list": [
+{
+"id": 465,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Spirit Tap",
+"spells": [
+15270,
+15335,
+15336,
+15337,
+15338
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to gain a $15271s1% bonus to your Spirit after killing a target that yields experience.  For the duration, your Mana will regenerate at a $15271s2% rate while casting.  Lasts $15271d."
+},
+{
+"id": 464,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Blackout",
+"spells": [
+15268,
+15323,
+15324,
+15325,
+15326
+],
+"prereq": 0,
+"desc": "Gives your Shadow damage spells a $h% chance to stun the target for $15269d."
+},
+{
+"id": 466,
+"tier": 1,
+"col": 0,
+"max": 3,
+"name": "Shadow Affinity",
+"spells": [
+15318,
+15272,
+15320
+],
+"prereq": 0,
+"desc": "Reduces the threat generated by your Shadow spells by $s1%."
+},
+{
+"id": 482,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Improved Shadow Word: Pain",
+"spells": [
+15275,
+15317
+],
+"prereq": 0,
+"desc": "Increases the duration of your Shadow Word: Pain spell by $/1000;s1 sec."
+},
+{
+"id": 463,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Shadow Focus",
+"spells": [
+15260,
+15327,
+15328,
+15329,
+15330
+],
+"prereq": 0,
+"desc": "Reduces your target's chance to resist your Shadow spells by $s1%."
+},
+{
+"id": 542,
+"tier": 2,
+"col": 0,
+"max": 2,
+"name": "Improved Psychic Scream",
+"spells": [
+15392,
+15448
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Psychic Scream spell by $/1000;s1 sec."
+},
+{
+"id": 481,
+"tier": 2,
+"col": 1,
+"max": 5,
+"name": "Improved Mind Blast",
+"spells": [
+15273,
+15312,
+15313,
+15314,
+15316
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Mind Blast spell by $/1000;S1 sec."
+},
+{
+"id": 501,
+"tier": 2,
+"col": 2,
+"max": 1,
+"name": "Mind Flay",
+"spells": [
+15407
+],
+"prereq": 0,
+"desc": "Assault the target's mind with Shadow energy, causing $o1 Shadow damage over $d and slowing their movement speed by $s2%."
+},
+{
+"id": 483,
+"tier": 3,
+"col": 1,
+"max": 2,
+"name": "Improved Fade",
+"spells": [
+15274,
+15311
+],
+"prereq": 0,
+"desc": "Decreases the cooldown of your Fade ability by $/1000;s1 sec."
+},
+{
+"id": 881,
+"tier": 3,
+"col": 2,
+"max": 3,
+"name": "Shadow Reach",
+"spells": [
+17322,
+17323,
+17325
+],
+"prereq": 0,
+"desc": "Increases the range of your Shadow damage spells by $s1%."
+},
+{
+"id": 461,
+"tier": 3,
+"col": 3,
+"max": 5,
+"name": "Shadow Weaving",
+"spells": [
+15257,
+15331,
+15332,
+15333,
+15334
+],
+"prereq": 0,
+"desc": "Your Shadow damage spells have a $s1% chance to cause your target to be vulnerable to Shadow damage.  This vulnerability increases the Shadow damage dealt to your target by $15258s1% and lasts $15258d.  Stacks up to $15258u times."
+},
+{
+"id": 541,
+"tier": 4,
+"col": 0,
+"max": 1,
+"name": "Silence",
+"spells": [
+15487
+],
+"prereq": 542,
+"desc": "Silences the target, preventing them from casting spells for $d."
+},
+{
+"id": 484,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Vampiric Embrace",
+"spells": [
+15286
+],
+"prereq": 0,
+"desc": "Afflicts your target with Shadow energy that causes all party members to be healed for $s1% of any Shadow spell damage you deal for $d."
+},
+{
+"id": 1638,
+"tier": 4,
+"col": 2,
+"max": 2,
+"name": "Improved Vampiric Embrace",
+"spells": [
+27839,
+27840
+],
+"prereq": 484,
+"desc": "Increases the percentage healed by Vampiric Embrace by an additional $s1%."
+},
+{
+"id": 462,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Darkness",
+"spells": [
+15259,
+15307,
+15308,
+15309,
+15310
+],
+"prereq": 0,
+"desc": "Increases your Shadow spell damage by $s1%."
+},
+{
+"id": 521,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Shadowform",
+"spells": [
+15473
+],
+"prereq": 484,
+"desc": "Assume a Shadowform, increasing your Shadow damage by $s2% and reducing Physical damage done to you by $s3%.  However, you may not cast Holy spells while in this form."
+}
+]
+}
+},
+"paladin": {
+"2": {
+"tab": "Retribution",
+"list": [
+{
+"id": 1401,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Improved Blessing of Might",
+"spells": [
+20042,
+20045,
+20046,
+20047,
+20048
+],
+"prereq": 0,
+"desc": "Increases the melee attack power bonus of your Blessing of Might by $s1%."
+},
+{
+"id": 1407,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Benediction",
+"spells": [
+20101,
+20102,
+20103,
+20104,
+20105
+],
+"prereq": 0,
+"desc": "Reduces the Mana cost of your Judgement and Seal spells by $s1%."
+},
+{
+"id": 1631,
+"tier": 1,
+"col": 0,
+"max": 2,
+"name": "Improved Judgement",
+"spells": [
+25956,
+25957
+],
+"prereq": 0,
+"desc": "Decreases the cooldown of your Judgement spell by $/1000;s1 sec."
+},
+{
+"id": 1464,
+"tier": 1,
+"col": 1,
+"max": 3,
+"name": "Improved Seal of the Crusader",
+"spells": [
+20335,
+20336,
+20337
+],
+"prereq": 0,
+"desc": "Increases the melee attack power bonus of your Seal of the Crusader and the Holy damage increase of your Judgement of the Crusader by $s1%."
+},
+{
+"id": 1403,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Deflection",
+"spells": [
+20060,
+20061,
+20062,
+20063,
+20064
+],
+"prereq": 0,
+"desc": "Increases your Parry chance by $s1%."
+},
+{
+"id": 1633,
+"tier": 2,
+"col": 0,
+"max": 3,
+"name": "Vindication",
+"spells": [
+9452,
+26016,
+26021
+],
+"prereq": 0,
+"desc": "Gives the Paladin's damaging melee attacks a chance to reduce the target's Strength and Agility by $26018s1% for $26018d."
+},
+{
+"id": 1411,
+"tier": 2,
+"col": 1,
+"max": 5,
+"name": "Conviction",
+"spells": [
+20117,
+20118,
+20119,
+20120,
+20121
+],
+"prereq": 0,
+"desc": "Increases your chance to get a critical strike with melee weapons by $s1%."
+},
+{
+"id": 1481,
+"tier": 2,
+"col": 2,
+"max": 1,
+"name": "Seal of Command",
+"spells": [
+20375
+],
+"prereq": 0,
+"desc": "Gives the Paladin a chance to deal additional Holy damage equal to $20424s1% of normal weapon damage.  Only one Seal can be active on the Paladin at any one time.  Lasts $d.\r\n\r\nUnleashing this Seal's energy will judge an enemy, instantly causing $/2;20467s1 Holy damage, $20467s1 if the target is stunned or incapacitated."
+},
+{
+"id": 1634,
+"tier": 2,
+"col": 3,
+"max": 2,
+"name": "Pursuit of Justice",
+"spells": [
+26022,
+26023
+],
+"prereq": 0,
+"desc": "Increases movement and mounted movement speed by $s1%.  This does not stack with other movement speed increasing effects."
+},
+{
+"id": 1632,
+"tier": 3,
+"col": 0,
+"max": 2,
+"name": "Eye for an Eye",
+"spells": [
+9799,
+25988
+],
+"prereq": 0,
+"desc": "All spell criticals against you cause $s1% of the damage taken to the caster as well.  The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health."
+},
+{
+"id": 1405,
+"tier": 3,
+"col": 2,
+"max": 2,
+"name": "Improved Retribution Aura",
+"spells": [
+20091,
+20092
+],
+"prereq": 0,
+"desc": "Increases the damage done by your Retribution Aura by $s1%."
+},
+{
+"id": 1410,
+"tier": 4,
+"col": 0,
+"max": 3,
+"name": "Two-Handed Weapon Specialization",
+"spells": [
+20111,
+20112,
+20113
+],
+"prereq": 0,
+"desc": "Increases the damage you deal with two-handed melee weapons by $s1%."
+},
+{
+"id": 1409,
+"tier": 4,
+"col": 2,
+"max": 1,
+"name": "Sanctity Aura",
+"spells": [
+20218
+],
+"prereq": 0,
+"desc": "Increases Holy damage done by party members within $a1 yards by $s1%.  Players may only have one Aura on them per Paladin at any one time."
+},
+{
+"id": 1402,
+"tier": 5,
+"col": 1,
+"max": 5,
+"name": "Vengeance",
+"spells": [
+20049,
+20056,
+20057,
+20058,
+20059
+],
+"prereq": 1411,
+"desc": "Gives you a $20055s1% bonus to Physical and Holy damage you deal for $20055d after dealing a critical strike from a weapon swing, spell, or ability."
+},
+{
+"id": 1441,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Repentance",
+"spells": [
+20066
+],
+"prereq": 0,
+"desc": "Puts the enemy target in a state of meditation, incapacitating them for up to $d.  Any damage caused will awaken the target.  Only works against Humanoids."
+}
+]
+},
+"0": {
+"tab": "Holy",
+"list": [
+{
+"id": 1450,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Divine Strength",
+"spells": [
+20262,
+20263,
+20264,
+20265,
+20266
+],
+"prereq": 0,
+"desc": "Increases your Strength by $s1%."
+},
+{
+"id": 1449,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Divine Intellect",
+"spells": [
+20257,
+20258,
+20259,
+20260,
+20261
+],
+"prereq": 0,
+"desc": "Increases your total Intellect by $s1%."
+},
+{
+"id": 1432,
+"tier": 1,
+"col": 1,
+"max": 5,
+"name": "Spiritual Focus",
+"spells": [
+20205,
+20206,
+20207,
+20209,
+20208
+],
+"prereq": 0,
+"desc": "Gives your Flash of Light and Holy Light spells a $s1% chance to not lose casting time when you take damage."
+},
+{
+"id": 1463,
+"tier": 1,
+"col": 2,
+"max": 5,
+"name": "Improved Seal of Righteousness",
+"spells": [
+20224,
+20225,
+20330,
+20331,
+20332
+],
+"prereq": 0,
+"desc": "Increases the damage done by your Seal of Righteousness and Judgement of Righteousness by $s1%."
+},
+{
+"id": 1444,
+"tier": 2,
+"col": 0,
+"max": 3,
+"name": "Healing Light",
+"spells": [
+20237,
+20238,
+20239
+],
+"prereq": 0,
+"desc": "Increases the amount healed by your Holy Light and Flash of Light spells by $s1%."
+},
+{
+"id": 1435,
+"tier": 2,
+"col": 1,
+"max": 1,
+"name": "Consecration",
+"spells": [
+26573
+],
+"prereq": 0,
+"desc": "Consecrates the land beneath Paladin, doing $o1 Holy damage over $d to enemies who enter the area."
+},
+{
+"id": 1443,
+"tier": 2,
+"col": 2,
+"max": 2,
+"name": "Improved Lay on Hands",
+"spells": [
+20234,
+20235
+],
+"prereq": 0,
+"desc": "Gives the target of your Lay on Hands spell a $20236s1% bonus to their armor value from items for $20236d.  In addition, the cooldown for your Lay on Hands spell is reduced by $/60000;s2 min."
+},
+{
+"id": 1628,
+"tier": 2,
+"col": 3,
+"max": 2,
+"name": "Unyielding Faith",
+"spells": [
+9453,
+25836
+],
+"prereq": 0,
+"desc": "Increases your chance to resist Fear and Disorient effects by an additional $s1%."
+},
+{
+"id": 1461,
+"tier": 3,
+"col": 1,
+"max": 5,
+"name": "Illumination",
+"spells": [
+20210,
+20212,
+20213,
+20214,
+20215
+],
+"prereq": 0,
+"desc": "After getting a critical effect from your Flash of Light, Holy Light, or Holy Shock heal spell, gives you a $h% chance to gain Mana equal to the base cost of the spell."
+},
+{
+"id": 1446,
+"tier": 3,
+"col": 2,
+"max": 2,
+"name": "Improved Blessing of Wisdom",
+"spells": [
+20244,
+20245
+],
+"prereq": 0,
+"desc": "Increases the effect of your Blessing of Wisdom spell by $s1%."
+},
+{
+"id": 1433,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Divine Favor",
+"spells": [
+20216
+],
+"prereq": 1461,
+"desc": "When activated, gives your next Flash of Light, Holy Light, or Holy Shock spell a $s1% critical effect chance."
+},
+{
+"id": 1465,
+"tier": 4,
+"col": 2,
+"max": 3,
+"name": "Lasting Judgement",
+"spells": [
+20359,
+20360,
+20361
+],
+"prereq": 0,
+"desc": "Increases the duration of your Judgement of Light and Judgement of Wisdom by $/1000;s1 sec."
+},
+{
+"id": 1627,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "Holy Power",
+"spells": [
+5923,
+5924,
+5925,
+5926,
+25829
+],
+"prereq": 0,
+"desc": "Increases the critical effect chance of your Holy spells by $s1%."
+},
+{
+"id": 1502,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Holy Shock",
+"spells": [
+20473
+],
+"prereq": 1433,
+"desc": "Blasts the target with Holy energy, causing $25912s1 Holy damage to an enemy, or $25914s1 healing to an ally."
+}
+]
+},
+"1": {
+"tab": "Protection",
+"list": [
+{
+"id": 1422,
+"tier": 0,
+"col": 1,
+"max": 5,
+"name": "Improved Devotion Aura",
+"spells": [
+20138,
+20139,
+20140,
+20141,
+20142
+],
+"prereq": 0,
+"desc": "Increases the armor bonus of your Devotion Aura by $s1%."
+},
+{
+"id": 1421,
+"tier": 0,
+"col": 2,
+"max": 5,
+"name": "Redoubt",
+"spells": [
+20127,
+20130,
+20135,
+20136,
+20137
+],
+"prereq": 0,
+"desc": "Increases your chance to block attacks with your shield by $20134s1% after being the victim of a critical strike.  Lasts $20134d or $20134n blocks."
+},
+{
+"id": 1630,
+"tier": 1,
+"col": 0,
+"max": 3,
+"name": "Precision",
+"spells": [
+20189,
+20192,
+20193
+],
+"prereq": 0,
+"desc": "Increases your chance to hit with melee weapons by $s1%."
+},
+{
+"id": 1425,
+"tier": 1,
+"col": 1,
+"max": 2,
+"name": "Guardian's Favor",
+"spells": [
+20174,
+20175
+],
+"prereq": 0,
+"desc": "Reduces the cooldown of your Blessing of Protection by $/1000;s1 sec and increases the duration of your Blessing of Freedom by $/1000;s2 sec."
+},
+{
+"id": 1423,
+"tier": 1,
+"col": 3,
+"max": 5,
+"name": "Toughness",
+"spells": [
+20143,
+20144,
+20145,
+20146,
+20147
+],
+"prereq": 0,
+"desc": "Increases your armor value from items by $s1%."
+},
+{
+"id": 1442,
+"tier": 2,
+"col": 0,
+"max": 1,
+"name": "Blessing of Kings",
+"spells": [
+20217
+],
+"prereq": 0,
+"desc": "Places a Blessing on the friendly target, increasing total stats by $s1% for $d.  Players may only have one Blessing on them per Paladin at any one time."
+},
+{
+"id": 1501,
+"tier": 2,
+"col": 1,
+"max": 3,
+"name": "Improved Righteous Fury",
+"spells": [
+20468,
+20469,
+20470
+],
+"prereq": 0,
+"desc": "Increases the amount of threat generated by your Righteous Fury spell by $s1%."
+},
+{
+"id": 1424,
+"tier": 2,
+"col": 2,
+"max": 3,
+"name": "Shield Specialization",
+"spells": [
+20148,
+20149,
+20150
+],
+"prereq": 1421,
+"desc": "Increases the amount of damage absorbed by your shield by $s1%."
+},
+{
+"id": 1629,
+"tier": 2,
+"col": 3,
+"max": 5,
+"name": "Anticipation",
+"spells": [
+20096,
+20097,
+20098,
+20099,
+20100
+],
+"prereq": 0,
+"desc": "Increases your Defense skill by $s1."
+},
+{
+"id": 1521,
+"tier": 3,
+"col": 1,
+"max": 3,
+"name": "Improved Hammer of Justice",
+"spells": [
+20487,
+20488,
+20489
+],
+"prereq": 0,
+"desc": "Decreases the cooldown of your Hammer of Justice spell by $/1000;s1 sec."
+},
+{
+"id": 1626,
+"tier": 3,
+"col": 2,
+"max": 3,
+"name": "Improved Concentration Aura",
+"spells": [
+20254,
+20255,
+20256
+],
+"prereq": 0,
+"desc": "Increases the effect of your Concentration Aura by an additional $s1% and gives all group members affected by the aura an additional $s1% chance to resist Silence and Interrupt effects."
+},
+{
+"id": 1431,
+"tier": 4,
+"col": 1,
+"max": 1,
+"name": "Blessing of Sanctuary",
+"spells": [
+20911
+],
+"prereq": 0,
+"desc": "Places a Blessing on the friendly target, reducing damage dealt from all sources by up to $s1 for $d.  In addition, when the target blocks a melee attack the attacker will take $s2 Holy damage.  Players may only have one Blessing on them per Paladin at any one time."
+},
+{
+"id": 1426,
+"tier": 4,
+"col": 2,
+"max": 5,
+"name": "Reckoning",
+"spells": [
+20177,
+20179,
+20181,
+20180,
+20182
+],
+"prereq": 0,
+"desc": "Gives you a $h% chance to gain an extra attack after being the victim of a critical strike."
+},
+{
+"id": 1429,
+"tier": 5,
+"col": 2,
+"max": 5,
+"name": "One-Handed Weapon Specialization",
+"spells": [
+20196,
+20197,
+20198,
+20199,
+20200
+],
+"prereq": 0,
+"desc": "Increases the damage you deal with one-handed melee weapons by $s1%."
+},
+{
+"id": 1430,
+"tier": 6,
+"col": 1,
+"max": 1,
+"name": "Holy Shield",
+"spells": [
+20925
+],
+"prereq": 1431,
+"desc": "Increases chance to block by $s1% for $d, and deals $s2 Holy damage for each attack blocked while active.  Damage caused by Holy Shield causes 20% additional threat.  Each block expends a charge.  $n charges."
+}
+]
+}
+}
+}

@@ -1,0 +1,1853 @@
+{
+"charge": {
+"id": 11578,
+"name": "Charge",
+"speed": 0.0,
+"cast": {
+"chest": "Spells\\ChargeTrail.mdx",
+"base": "Spells\\DustCloud_Land.mdx"
+}
+},
+"intercept": {
+"id": 20617,
+"name": "Intercept",
+"speed": 0.0,
+"cast": {
+"chest": "Spells\\ChargeTrail.mdx",
+"base": "Spells\\DustCloud_Land.mdx"
+}
+},
+"mortal": {
+"id": 21553,
+"name": "Mortal Strike",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Strike_Impact_Chest.mdx"
+}
+},
+"bloodthirst": {
+"id": 23894,
+"name": "Bloodthirst",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+}
+},
+"shieldslam": {
+"id": 23925,
+"name": "Shield Slam",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\ShieldBash_Impact_Chest.mdx"
+}
+},
+"heroic": {
+"id": 25286,
+"name": "Heroic Strike",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Strike_Impact_Chest.mdx"
+}
+},
+"overpower": {
+"id": 11585,
+"name": "Overpower",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Strike_Impact_Chest.mdx"
+}
+},
+"execute": {
+"id": 20662,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\BloodLust_State_Hand.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+}
+},
+"rend": {
+"id": 11574,
+"name": "Rend",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+}
+},
+"hamstring": {
+"id": 7373,
+"name": "Hamstring",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Maim_Impact_Chest.mdx"
+}
+},
+"pummel": {
+"id": 6554,
+"name": "Pummel",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Kick_Chest_Impact.mdx"
+}
+},
+"shieldbash": {
+"id": 1672,
+"name": "Shield Bash",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\ShieldBash_Impact_Chest.mdx"
+}
+},
+"disarm": {
+"id": 676,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Disarm_Impact_Chest.mdx"
+},
+"state": {
+"chest": "Spells\\Disarm_Impact_Chest.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+}
+},
+"shout": {
+"id": 5246,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\IntimidatingShout_Cast_Base.mdx"
+},
+"state": {
+"head": "Spells\\Fear_State_Head.mdx",
+"base": "spells\\fear_state_base.mdx"
+}
+},
+"zerkrage": {
+"id": 18499,
+"speed": 0.0,
+"cast": {
+"head": "Spells\\BeastRageCaster.mdx"
+},
+"state": {
+"lhand": "Spells\\BloodLust_State_Hand.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+}
+},
+"reckless": {
+"id": 1719,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Eviscerate_Cast_Hands.mdx",
+"rhand": "Spells\\Eviscerate_Cast_Hands.mdx"
+},
+"state": {
+"chest": "Spells\\Recklessness_Impact_Chest.mdx"
+}
+},
+"shieldwall": {
+"id": 871,
+"name": "Shield Wall",
+"speed": 0.0,
+"impact": {
+"base": "Spells\\DefensiveStance_Impact_Chest.mdx"
+}
+},
+"bloodrage": {
+"id": 2687,
+"name": "Bloodrage",
+"speed": 0.0
+},
+"battle": {
+"id": 2457,
+"name": "Battle Stance",
+"speed": 0.0,
+"cast": {
+"head": "spells\\battlestance_impact_head.mdx"
+}
+},
+"defensive": {
+"id": 71,
+"name": "Defensive Stance",
+"speed": 0.0,
+"cast": {
+"head": "spells\\defensivestance_impact_head.mdx"
+}
+},
+"berserker": {
+"id": 2458,
+"name": "Berserker Stance",
+"speed": 0.0,
+"cast": {
+"head": "spells\\berzerkerstance_impact_head.mdx"
+}
+},
+"frostbolt": {
+"id": 25304,
+"name": "Frostbolt",
+"speed": 28.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Ice_ImpactDD_Med_Chest.mdx"
+},
+"state": {
+"head": "Spells\\Ice_Precast_Uber_Head.mdx"
+},
+"missile": "Spells\\Frostbolt.mdx"
+},
+"fireball": {
+"id": 25306,
+"name": "Fireball",
+"speed": 24.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\MoltenBlast_Impact_Chest.mdx"
+},
+"missile": "Spells\\Fireball_Missile_Low.mdx"
+},
+"fireblast": {
+"id": 10199,
+"name": "Fire Blast",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Fire_ImpactDD_Chest.mdx"
+}
+},
+"missiles": {
+"id": 25345,
+"name": "Arcane Missiles",
+"speed": 0.0,
+"channel": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+}
+},
+"cone": {
+"id": 10161,
+"name": "Cone of Cold",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\ConeofCold_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Ice_ImpactDD_Med_Chest.mdx"
+},
+"state": {
+"head": "Spells\\Ice_Precast_Uber_Head.mdx"
+}
+},
+"nova": {
+"id": 10230,
+"name": "Frost Nova",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"cast": {
+"base": "Spells\\Frost_Nova_area.mdx"
+},
+"state": {
+"head": "Spells\\Ice_Precast_Uber_Head.mdx",
+"world": "Spells\\Frost_Nova_state.mdx"
+}
+},
+"poly": {
+"id": 12826,
+"name": "Polymorph",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\Polymorph_Impact_Base.mdx"
+}
+},
+"counter": {
+"id": 2139,
+"name": "Counterspell",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\CounterSpell_Impact_Chest.mdx"
+}
+},
+"blink": {
+"id": 1953,
+"name": "Blink",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "spells\\blink_impact_chest.mdx"
+}
+},
+"iceblock": {
+"id": 11958,
+"name": "Ice Block",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"state": {
+"base": "spells\\icebarrier_state.mdx"
+}
+},
+"manashield": {
+"id": 10193,
+"name": "Mana Shield",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"state": {
+"base": "Spells\\ManaShield_State_Base.mdx"
+}
+},
+"frostarmor": {
+"id": 10220,
+"name": "Ice Armor",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"impact": {
+"head": "Spells\\IceArmor_Low_Head.mdx"
+}
+},
+"explosion": {
+"id": 10202,
+"name": "Arcane Explosion",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"base": "Spells\\ArcaneExplosion_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\ArcaneExplosion_Impact_Chest.mdx"
+}
+},
+"evocation": {
+"id": 12051,
+"name": "Evocation",
+"speed": 0.0,
+"channel": {
+"base": "Spells\\CycloneWater_State.mdx",
+"lhand": "Spells\\Lightning_PreCast_Low_Hand.mdx",
+"rhand": "Spells\\Lightning_PreCast_Low_Hand.mdx"
+}
+},
+"apower": {
+"id": 12042,
+"name": "Arcane Power",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Lightning_PreCast_Low_Hand.mdx",
+"rhand": "Spells\\Lightning_PreCast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Lightning_Cast_Hand.mdx",
+"rhand": "Spells\\Lightning_Cast_Hand.mdx"
+},
+"state": {
+"chest": "spells\\arcanepower_state_chest.mdx"
+}
+},
+"combust": {
+"id": 11129,
+"name": "Combustion",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\FireWard_Impact_Chest.mdx"
+}
+},
+"barrier": {
+"id": 13033,
+"name": "Ice Barrier",
+"speed": 0.0,
+"precast": {
+"base": "Spells\\Ice_Precast_High_Base.mdx",
+"lhand": "Spells\\Ice_Precast_Uber_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Uber_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_High_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_High_Hand.mdx"
+},
+"state": {
+"base": "spells\\iceshield_state.mdx"
+}
+},
+"crip": {
+"id": 11202,
+"name": "Crippling Poison",
+"speed": 0.0
+},
+"numb": {
+"id": 11398,
+"name": "Mind-numbing Poison III",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Nature_PreCast_Low_Hand.mdx",
+"rhand": "Spells\\Nature_PreCast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Nature_Cast_Hand.mdx",
+"rhand": "Spells\\Nature_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Poison_Impact_Chest.mdx"
+}
+},
+"deadly": {
+"id": 25351,
+"name": "Deadly Poison V",
+"speed": 0.0
+},
+"stealth": {
+"id": 1787,
+"name": "Stealth",
+"speed": 0.0
+},
+"sap": {
+"id": 11297,
+"name": "Sap",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Sap_Cast_Base.mdx"
+},
+"state": {
+"head": "Spells\\ShadowWordBefuddle_Head.mdx"
+}
+},
+"cheapshot": {
+"id": 1833,
+"name": "Cheap Shot",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Sap_Cast_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\CheapShot_Impact_Chest.mdx"
+},
+"state": {
+"head": "Spells\\StunSwirl_State_Head.mdx"
+}
+},
+"garrote": {
+"id": 11290,
+"name": "Garrote",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+}
+},
+"ambush": {
+"id": 11269,
+"name": "Ambush",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\BackStab_Cast_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\BackStab_Impact_Chest.mdx"
+}
+},
+"sinister": {
+"id": 11294,
+"name": "Sinister Strike",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\SinisterStrike_Impact_Chest.mdx"
+}
+},
+"backstab": {
+"id": 25300,
+"name": "Backstab",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\BackStab_Cast_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\BackStab_Impact_Chest.mdx"
+}
+},
+"eviscerate": {
+"id": 31016,
+"name": "Eviscerate",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Eviscerate_Cast_Hands.mdx",
+"rhand": "Spells\\Eviscerate_Cast_Hands.mdx"
+},
+"impact": {
+"chest": "Spells\\Feint_Impact_Chest.mdx"
+}
+},
+"slice": {
+"id": 6774,
+"name": "Slice and Dice",
+"speed": 0.0,
+"cast": {
+"chest": "spells\\slicedice_chest.mdx"
+}
+},
+"rupture": {
+"id": 11275,
+"name": "Rupture",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\BloodLust_State_Hand.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+}
+},
+"kidney": {
+"id": 8643,
+"name": "Kidney Shot",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\KidneyShot_Base_Cast.mdx",
+"lhand": "Spells\\BloodLust_Cast_Hand.mdx",
+"rhand": "Spells\\BloodLust_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\CheapShot_Impact_Chest.mdx"
+},
+"state": {
+"head": "Spells\\StunSwirl_State_Head.mdx"
+}
+},
+"gouge": {
+"id": 11286,
+"name": "Gouge",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Gouge_Precast_State_Hand.mdx",
+"rhand": "Spells\\Gouge_Precast_State_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\BackStab_Impact_Chest.mdx"
+},
+"state": {
+"head": "Spells\\ShadowWordBefuddle_Head.mdx"
+}
+},
+"kick": {
+"id": 1769,
+"name": "Kick",
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Kick_Chest_Impact.mdx"
+}
+},
+"blind": {
+"id": 2094,
+"name": "Blind",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"state": {
+"head": "spells\\confused_state_head.mdx"
+}
+},
+"vanish": {
+"id": 1857,
+"name": "Vanish",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Vanish_Cast_Base.mdx"
+}
+},
+"evasion": {
+"id": 5277,
+"name": "Evasion",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Invisibility_Impact_Chest.mdx"
+}
+},
+"sprint": {
+"id": 11305,
+"name": "Sprint",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Sprint_Cast_Base.mdx"
+},
+"state": {
+"chest": "Spells\\RibbonTrail.mdx"
+}
+},
+"coldblood": {
+"id": 14177,
+"name": "Cold Blood",
+"speed": 0.0,
+"cast": {
+"rhand": "Spells\\Ice_Precast_High_Hand.mdx"
+},
+"state": {
+"rhand": "Spells\\Ice_Precast_Med_Hand.mdx"
+}
+},
+"adrenaline": {
+"id": 13750,
+"name": "Adrenaline Rush",
+"speed": 0.0,
+"cast": {
+"base": "spells\\adrenalinerush_cast_base.mdx"
+},
+"state": {
+"base": "spells\\adrenalinerush_cast_base.mdx"
+}
+},
+"prep": {
+"id": 14185,
+"name": "Preparation",
+"speed": 0.0
+},
+"sealR": {
+"id": 20293,
+"name": "Seal of Righteousness",
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+}
+},
+"sealJ": {
+"id": 20164,
+"name": "Seal of Justice",
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+}
+},
+"judgement": {
+"id": 20271,
+"name": "Judgement",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_Low_Chest.mdx"
+}
+},
+"hammer": {
+"id": 10308,
+"name": "Hammer of Justice",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\FistOfJustice_Cast_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\FistOfJustice_Impact_Chest.mdx"
+},
+"state": {
+"head": "Spells\\StunSwirl_State_Head.mdx"
+}
+},
+"flashlight": {
+"id": 19943,
+"name": "Flash of Light",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+}
+},
+"holylight": {
+"id": 25292,
+"name": "Holy Light",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"head": "Spells\\HolyLight_Low_Head.mdx"
+}
+},
+"bubble": {
+"id": 1020,
+"name": "Divine Shield",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"state": {
+"base": "Spells\\DivineShield_Low_Base.mdx"
+}
+},
+"freedom": {
+"id": 1044,
+"name": "Blessing of Freedom",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfFury_Impact_Base.mdx"
+},
+"state": {
+"base": "spells\\movementimmunity_base.mdx"
+}
+},
+"bop": {
+"id": 10278,
+"name": "Blessing of Protection",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfProtection_Impact_Base.mdx"
+},
+"state": {
+"base": "Spells\\BlessingofProtection_Base.mdx"
+}
+},
+"cleanse": {
+"id": 4987,
+"name": "Cleanse",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\Clense_Base.mdx"
+}
+},
+"loh": {
+"id": 10310,
+"name": "Lay on Hands",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\LayonHands_Low_Chest.mdx"
+}
+},
+"consecration": {
+"id": 20924,
+"name": "Consecration",
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Holy_Precast_Uber_Base.mdx",
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_Low_Chest.mdx"
+}
+},
+"holyshock": {
+"id": 25902,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\HolySmite_Low_Chest.mdx"
+},
+"name": "holyshock"
+},
+"holyshield": {
+"id": 20928,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Holy_ImpactDD_High_Base.mdx",
+"lhand": "Spells\\Holy_ImpactDD_High_Chest.mdx"
+},
+"name": "holyshield"
+},
+"repentance": {
+"id": 20066,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_Low_Chest.mdx"
+},
+"state": {
+"head": "Spells\\ShadowWordBefuddle_Head.mdx"
+},
+"name": "repentance"
+},
+"swp": {
+"id": 10894,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\ShadowWordPain_Chest.mdx"
+},
+"name": "swp"
+},
+"mindblast": {
+"id": 10947,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"impact": {
+"head": "Spells\\MindBlast_Head.mdx"
+},
+"name": "mindblast"
+},
+"flay": {
+"id": 18807,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\ManaFunnel_Impact_Chest.mdx"
+},
+"state": {
+"chest": "Spells\\ManaFunnel_Impact_Chest.mdx"
+},
+"channel": {
+"lhand": "Spells\\ManaFunnel_Impact_Chest.mdx"
+},
+"name": "flay"
+},
+"manaburn": {
+"id": 10876,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\ManaBurn_Chest.mdx"
+},
+"name": "manaburn"
+},
+"smite": {
+"id": 10934,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\HolySmite_Low_Chest.mdx"
+},
+"name": "smite"
+},
+"holyfire": {
+"id": 15261,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_Uber_Chest.mdx",
+"base": "Spells\\Flamestrike_Impact.mdx"
+},
+"name": "holyfire"
+},
+"pws": {
+"id": 10901,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"state": {
+"base": "Spells\\HolyDivineShield_State_Base.mdx"
+},
+"name": "pws"
+},
+"flash": {
+"id": 10917,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\FlashHeal_Base.mdx"
+},
+"name": "flash"
+},
+"gheal": {
+"id": 25314,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\GreaterHeal_Low_Base.mdx"
+},
+"name": "gheal"
+},
+"renew": {
+"id": 25315,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Renew_Chest.mdx"
+},
+"state": {
+"base": "Spells\\Renew_Base.mdx"
+},
+"name": "renew"
+},
+"scream": {
+"id": 10890,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\IntimidatingShout_Cast_Base.mdx"
+},
+"state": {
+"head": "Spells\\Fear_State_Head.mdx",
+"base": "spells\\fear_state_base.mdx"
+},
+"name": "scream"
+},
+"dispel": {
+"id": 988,
+"name": "Dispel Magic",
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\Dispel_Low_Base.mdx"
+}
+},
+"innerfire": {
+"id": 10952,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "innerfire"
+},
+"pi": {
+"id": 10060,
+"speed": 0.0,
+"precast": {
+"base": "Spells\\Holy_Precast_High_Base.mdx",
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"state": {
+"chest": "spells\\arcanepower_state_chest.mdx"
+},
+"name": "pi"
+},
+"desperate": {
+"id": 19243,
+"name": "Desperate Prayer",
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\LayonHands_Low_Chest.mdx"
+}
+},
+"silence": {
+"id": 15487,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"state": {
+"breath": "Spells\\ShadowWordSilence_Breath.mdx"
+},
+"name": "silence"
+},
+"shadowform": {
+"id": 15473,
+"speed": 0.0,
+"state": {
+"base": "Spells\\Shadow_Precast_Med_Base.mdx"
+},
+"name": "shadowform"
+},
+"sealCr": {
+"id": 20308,
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "sealCr"
+},
+"sealC": {
+"id": 20920,
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "sealC"
+},
+"wrath": {
+"id": 24239,
+"speed": 35.0,
+"precast": {
+"rhand": "spells\\holy_hammer_missile.mdx"
+},
+"cast": {
+"rhand": "spells\\holy_hammer_missile.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_Uber_Chest.mdx",
+"base": "Spells\\Holy_ImpactDD_Uber_Base.mdx"
+},
+"missile": "spells\\holy_hammer_missile.mdx",
+"name": "wrath"
+},
+"dfavor": {
+"id": 20216,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "spells\\innerfocus_impact_chest.mdx"
+},
+"name": "dfavor"
+},
+"pyroblast": {
+"id": 18809,
+"speed": 24.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\MoltenBlast_Impact_Chest.mdx"
+},
+"missile": "Spells\\PyroBlast_Missile.mdx",
+"name": "pyroblast"
+},
+"blastwave": {
+"id": 13021,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"base": "Spells\\FireNova_Area.mdx",
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"state": {
+"base": "Spells\\FireNova_State.mdx"
+},
+"name": "blastwave"
+},
+"pom": {
+"id": 12043,
+"speed": 0.0,
+"cast": {
+"base": "spells\\presenceofmind_cast_base.mdx"
+},
+"state": {
+"base": "spells\\presenceofmind_cast_base.mdx"
+},
+"name": "pom"
+},
+"coldsnap": {
+"id": 12472,
+"speed": 0.0,
+"cast": {
+"head": "Spells\\Ice_Precast_Uber_Head.mdx",
+"lhand": "Spells\\Ice_Precast_Uber_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Uber_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\FrostWard_Impact_Chest.mdx"
+},
+"name": "coldsnap"
+},
+"scorch": {
+"id": 10207,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Scorch_Low_Chest.mdx"
+},
+"name": "scorch"
+},
+"flamestrike": {
+"id": 10216,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"state": {
+"base": "Spells\\Immolate_State_Base.mdx"
+},
+"channel": {
+"lhand": "Spells\\Fire_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Low_Hand.mdx"
+},
+"name": "flamestrike"
+},
+"blizzard": {
+"id": 10187,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\Blizzard_Impact_Base.mdx"
+},
+"channel": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Low_Hand.mdx"
+},
+"name": "blizzard"
+},
+"fireward": {
+"id": 10225,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Fire_Precast_Hand.mdx",
+"rhand": "Spells\\Fire_Precast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Fire_Cast_Hand.mdx",
+"rhand": "Spells\\Fire_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\FireWard_Impact_Chest.mdx"
+},
+"name": "fireward"
+},
+"frostward": {
+"id": 28609,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Ice_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Ice_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Ice_Precast_Med_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\FrostWard_Impact_Chest.mdx"
+},
+"name": "frostward"
+},
+"riposte": {
+"id": 14251,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Disarm_Impact_Chest.mdx"
+},
+"state": {
+"chest": "Spells\\Disarm_Impact_Chest.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+},
+"name": "riposte"
+},
+"bladeflurry": {
+"id": 13877,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "bladeflurry"
+},
+"ghostly": {
+"id": 14278,
+"speed": 0.0,
+"impact": {
+"chest": "spells\\ghostlystrike_impact_chest.mdx"
+},
+"name": "ghostly"
+},
+"hemo": {
+"id": 17348,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\BloodyExplosion.mdx"
+},
+"name": "hemo"
+},
+"premed": {
+"id": 14183,
+"speed": 0.0,
+"name": "premed"
+},
+"expose": {
+"id": 11198,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\BloodLust_State_Hand.mdx",
+"rhand": "Spells\\BloodLust_State_Hand.mdx"
+},
+"impact": {
+"head": "Spells\\ExposeArmor_Head.mdx"
+},
+"name": "expose"
+},
+"sealL": {
+"id": 20349,
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "sealL"
+},
+"sealW": {
+"id": 20357,
+"speed": 0.0,
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+},
+"name": "sealW"
+},
+"dprot": {
+"id": 5573,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"state": {
+"base": "Spells\\DivineShield_Low_Base.mdx"
+},
+"name": "dprot"
+},
+"devotion": {
+"id": 10293,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\DevotionAura_Base.mdx"
+},
+"impact": {
+"base": "Spells\\DevotionAura_Base.mdx"
+},
+"name": "devotion"
+},
+"retaura": {
+"id": 10301,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\RetributionAuraRed_Base.mdx"
+},
+"impact": {
+"base": "Spells\\RetributionAuraRed_Base.mdx"
+},
+"name": "retaura"
+},
+"conc": {
+"id": 19746,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\MightAura_Impact_Base.mdx"
+},
+"name": "conc"
+},
+"sanctaura": {
+"id": 20218,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"impact": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"name": "sanctaura"
+},
+"shadowres": {
+"id": 19896,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"impact": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"name": "shadowres"
+},
+"frostres": {
+"id": 19898,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"impact": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"name": "frostres"
+},
+"fireres": {
+"id": 19900,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"impact": {
+"base": "Spells\\ResistanceAura_Base.mdx"
+},
+"name": "fireres"
+},
+"bom": {
+"id": 25291,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfMight_Impact_Base.mdx"
+},
+"name": "bom"
+},
+"bow": {
+"id": 25290,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfWisdom_Impact_Base.mdx"
+},
+"name": "bow"
+},
+"kings": {
+"id": 20217,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfWisdom_Impact_Base.mdx"
+},
+"name": "kings"
+},
+"sanctbless": {
+"id": 20914,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfFury_Impact_Base.mdx"
+},
+"name": "sanctbless"
+},
+"sacrifice": {
+"id": 20729,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Med_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Med_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\SealOfFury_Impact_Base.mdx"
+},
+"name": "sacrifice"
+},
+"heal": {
+"id": 6064,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\Heal_Low_Base.mdx"
+},
+"name": "heal"
+},
+"prayerheal": {
+"id": 25316,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"chest": "Spells\\PrayerofHealing_Chest.mdx"
+},
+"impact": {
+"head": "Spells\\HolyLight_Impact_Head.mdx"
+},
+"name": "prayerheal"
+},
+"holynova": {
+"id": 27801,
+"speed": 0.0,
+"precast": {
+"base": "Spells\\Holy_Precast_High_Base.mdx",
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"cast": {
+"base": "spells\\holynova_impact_base.mdx",
+"lhand": "Spells\\Holy_Precast_High_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_High_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\Holy_ImpactDD_High_Chest.mdx"
+},
+"name": "holynova"
+},
+"fortitude": {
+"id": 10938,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\HolyWord_Fortitude_Impact_Base.mdx"
+},
+"name": "fortitude"
+},
+"divinespirit": {
+"id": 27841,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\HolyProtection_Chest.mdx"
+},
+"missile": "Spells\\FireBolt_ImpactDD_Med_Chest.mdx",
+"name": "divinespirit"
+},
+"innerfocus": {
+"id": 14751,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Magic_Cast_Hand.mdx",
+"rhand": "Spells\\Magic_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "spells\\innerfocus_impact_chest.mdx"
+},
+"state": {
+"lhand": "Spells\\Magic_PreCast_Hand.mdx",
+"rhand": "Spells\\Magic_PreCast_Hand.mdx"
+},
+"name": "innerfocus"
+},
+"vampiric": {
+"id": 15286,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Shadow_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Shadow_Precast_Low_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\SoothingKiss_Impact_Head.mdx"
+},
+"name": "vampiric"
+},
+"cleave": {
+"id": 20569,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Cleave_Cast_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\Cleave_Impact_Chest.mdx"
+}
+},
+"demoshout": {
+"id": 11556,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\DemoralizingShout_Cast_Base.mdx"
+},
+"impact": {
+"head": "Spells\\DemoralizingShout_Impact_Head.mdx"
+}
+},
+"battleshout": {
+"id": 25289,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\BattleShout_Cast_Base.mdx"
+}
+},
+"retaliation": {
+"id": 20230,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Eviscerate_Cast_Hands.mdx",
+"rhand": "Spells\\Eviscerate_Cast_Hands.mdx"
+},
+"state": {
+"base": "Spells\\Retaliation_State_Chest.mdx"
+}
+},
+"shieldblock": {
+"id": 2565,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\ShieldWall_Impact_Base.mdx"
+}
+},
+"thunderclap": {
+"id": 11581,
+"speed": 0.0,
+"cast": {
+"lhand": "Spells\\Lightning_Cast_Hand.mdx",
+"rhand": "Spells\\Lightning_Cast_Hand.mdx"
+},
+"impact": {
+"chest": "Spells\\LightningBolt_Impact_Chest.mdx"
+},
+"state": {
+"base": "Spells\\Slow_Impact_Base.mdx"
+}
+},
+"revenge": {
+"id": 25288,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Strike_Impact_Chest.mdx"
+}
+},
+"sunder": {
+"id": 11597,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Sunder_Impact_Chest.mdx"
+}
+},
+"whirlwind": {
+"id": 1680,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\Whirlwind_State_Base.mdx"
+},
+"impact": {
+"chest": "Spells\\Strike_Impact_Chest.mdx"
+}
+},
+"laststand": {
+"id": 12975,
+"speed": 0.0
+},
+"howl": {
+"id": 12323,
+"speed": 0.0,
+"cast": {
+"base": "Spells\\DemoralizingShout_Cast_Base.mdx"
+},
+"impact": {
+"head": "spells\\piercinghowl_impact_head.mdx"
+},
+"state": {
+"base": "Spells\\Slow_Impact_Base.mdx"
+}
+},
+"concussion": {
+"id": 12809,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Slam_Impact_Chest.mdx"
+},
+"state": {
+"head": "Spells\\StunSwirl_State_Head.mdx"
+}
+},
+"sweeping": {
+"id": 12292,
+"speed": 0.0,
+"precast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"cast": {
+"lhand": "Spells\\Holy_Precast_Low_Hand.mdx",
+"rhand": "Spells\\Holy_Precast_Low_Hand.mdx"
+},
+"impact": {
+"base": "Spells\\InnerFire_Base.mdx"
+}
+},
+"deathwish": {
+"id": 12328,
+"speed": 0.0,
+"cast": {
+"lhand": "spells\\deathwish_state_hand.mdx",
+"rhand": "spells\\deathwish_state_hand.mdx"
+},
+"state": {
+"lhand": "spells\\deathwish_state_hand.mdx",
+"rhand": "spells\\deathwish_state_hand.mdx"
+}
+},
+"slam": {
+"id": 11605,
+"speed": 0.0,
+"impact": {
+"chest": "Spells\\Slam_Impact_Chest.mdx"
+}
+}
+}

@@ -1,0 +1,446 @@
+<meta charset="utf-8">
+<title>Кольцо Клинков</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Интерфейс в стиле WoW 1.12: оригинальные текстуры из patch.MPQ, шрифт Friz Quadrata (кириллица падает на Philosopher) */
+@font-face{font-family:"FrizQT";src:url(assets/ui/friz.ttf) format("truetype");font-display:swap}
+:root{
+  --bg:#05070a; --fg:#fff; --muted:#a8a294; --gold:#ffd100; --line:#5b4f36;
+  --hp:#00c000; --rage:#e00000; --mana:#1a3cff; --energy:#ffe000; --red:#ff2020; --green:#20ff20;
+  --wow:"FrizQT","Philosopher",Georgia,serif; --mono:"JetBrains Mono",Consolas,monospace;
+  --s:1; color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--wow);font-size:14px}
+canvas#c{position:fixed;left:var(--sx,0px);top:var(--sy,0px);width:var(--sw,100%);height:var(--sh,100%);display:block;touch-action:none}
+button{font-family:var(--wow);color:var(--gold);cursor:url(assets/ui/cur_point.png) 1 1,pointer}
+html,body,canvas,input,.tm,.bicon,.lslot,.lbook,.mbar,.uf{cursor:url(assets/ui/cur_point.png) 1 1,default!important}
+body.cur-atk canvas{cursor:url(assets/ui/cur_attack.png) 1 1,crosshair!important}
+#pf{cursor:url(assets/ui/cur_point.png) 1 1,pointer}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.out{text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
+#hud{position:fixed;left:var(--sx,0px);top:var(--sy,0px);width:var(--sw,100%);height:var(--sh,100%);pointer-events:none}
+html.wide body{background:#000}
+#settings .card{width:min(460px,100%)}
+.vrow{display:grid;grid-template-columns:130px minmax(0,1fr) 44px;gap:10px;align-items:center}
+.vrow input{width:100%;accent-color:#d4a017}
+.vrow output{text-align:right;color:var(--muted)}
+#hud>*{pointer-events:auto}
+/* рамки юнитов: размеры как в FrameXML (232×100, портрет 64, полоски 119×12) */
+#frames{position:absolute;left:calc(4px + env(safe-area-inset-left,0px));top:calc(4px + env(safe-area-inset-top,0px));width:480px;height:150px;transform:scale(var(--s));transform-origin:0 0;pointer-events:none}
+.uf{position:absolute;top:0;width:232px;height:100px;pointer-events:auto}
+#pf{left:0}#tf{left:236px}
+.uf .art{position:absolute;inset:0;background:url(assets/ui/tframe.png) -24px 0/256px 128px no-repeat;pointer-events:none}
+#pf .art{transform:scaleX(-1)}
+.uf .por{position:absolute;top:12px;width:64px;height:64px;border-radius:50%}
+#pf .por{left:42px}#tf .por{left:126px}
+.uf .fb{position:absolute;width:119px;height:12px;background:rgba(0,0,0,.55);overflow:hidden}
+#pf .fb{left:106px}#tf .fb{left:7px}
+.uf .hb{top:41px}.uf .rb{top:52px}
+.fb>i{position:absolute;inset:0 auto 0 0;width:100%;background:url(assets/ui/statusbar.png) 0 0/100% 100%,var(--c,var(--hp));background-blend-mode:multiply;transition:width .1s linear}
+.fb>b{position:absolute;inset:0 auto 0 0;width:0;background:rgba(220,240,255,.6)}
+.fb>span{position:absolute;inset:0;display:grid;place-items:center;font-size:9.5px;line-height:1;font-variant-numeric:tabular-nums;color:#fff}
+.uf .nm{position:absolute;top:24px;width:119px;height:16px;display:grid;place-items:center;font-size:11px;color:var(--gold);white-space:nowrap;overflow:hidden}
+#pf .nm{left:106px}#tf .nm{left:7px}
+#tf .nbg{position:absolute;left:7px;top:22px;width:119px;height:19px;background:linear-gradient(rgba(204,0,0,.85),rgba(150,0,0,.85))}
+#tf .nm{color:#fff}
+.uf .lv{position:absolute;top:58px;width:24px;height:16px;display:grid;place-items:center;font-size:11px;color:var(--gold)}
+#pf .lv{left:41px}#tf .lv{left:167px}
+.uf .cls{position:absolute;top:2px;font-size:10px;color:var(--muted);white-space:nowrap}
+#pf .cls{left:106px}#tf .cls{left:7px}
+.uf .lv.combat{color:#ff3030;font-size:0}.uf .lv.combat::after{content:"⚔";font-size:15px}
+#combo{position:absolute;left:192px;top:14px;width:30px;height:76px;pointer-events:none}
+#combo i{position:absolute;width:12px;height:16px;background:url(assets/ui/combopoint.png) 0 0/32px 16px}
+#combo i.on::after{content:"";position:absolute;left:3px;top:0;width:6px;height:16px;background:url(assets/ui/combopoint.png) -12px 0/32px 16px}
+.fbk{position:absolute;left:42px;top:30px;width:64px;text-align:center;font-size:20px;font-weight:700;pointer-events:none;opacity:0}
+#tauras{position:absolute;left:241px;top:98px;width:200px;display:flex;flex-wrap:wrap;gap:3px}
+#tdr{position:absolute;left:241px;top:148px;width:240px;font-size:10px;color:var(--muted)}
+.aura{position:relative;width:21px;height:21px;background-image:url(assets/ui/icons.webp);border:1px solid #000;box-sizing:border-box;pointer-events:auto}
+.aura.bad{border-color:#c00}
+.aura small{position:absolute;left:-6px;right:-6px;top:22px;text-align:center;font-size:9px;color:#fff;font-variant-numeric:tabular-nums}
+.aura em{position:absolute;right:0;bottom:-1px;font-size:10px;font-style:normal;color:#fff}
+#tcast:not([hidden])+#tauras{top:124px}
+#tcast{position:absolute;left:236px;top:86px;transform:scale(.62);transform-origin:0 0}
+#buffs{position:absolute;right:calc(10px + env(safe-area-inset-right,0px));top:calc(48px + env(safe-area-inset-top,0px));display:flex;flex-wrap:wrap-reverse;flex-direction:row-reverse;gap:14px 5px;max-width:320px;transform:scale(var(--s));transform-origin:100% 0}
+#buffs .aura{width:30px;height:30px}
+#buffs .aura small{top:31px;font-size:10px}
+/* окно потери контроля: по центру экрана, как в ретейле */
+#loc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(calc(var(--s) * var(--ls,1)));display:flex;align-items:center;gap:14px;padding:14px 60px;pointer-events:none;z-index:5;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.75) 30%,rgba(0,0,0,0) 72%)}
+#loc::before,#loc::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:linear-gradient(90deg,transparent,#e01818 20%,#ff3a3a 50%,#e01818 80%,transparent);box-shadow:0 0 10px #f00}
+#loc::before{top:0}#loc::after{bottom:0}
+#loc .locic{width:52px;height:52px;background-image:url(assets/ui/icons.webp);border:1px solid #000;box-shadow:0 0 4px #000}
+#loc b{display:block;color:#ffd100;font-size:22px;font-weight:bold;white-space:nowrap}
+#loc span{display:block;color:#fff;font-size:22px;white-space:nowrap}
+/* полоска каста (CastingBarFrame) */
+.cbar{position:relative;width:256px;height:64px;pointer-events:none}
+.cbar::after{content:"";position:absolute;inset:0;background:url(assets/ui/castborder.png) 0 0/256px 64px}
+.cbar>i{position:absolute;left:31px;top:26px;width:0;height:13px;background:url(assets/ui/statusbar.png) 0 0/100% 100%,#ffb300;background-blend-mode:multiply}
+.cbar::before{content:"";position:absolute;left:31px;top:26px;width:195px;height:13px;background:rgba(0,0,0,.6)}
+.cbar>em{position:absolute;top:18px;width:32px;height:32px;margin-left:-16px;background:url(assets/ui/castspark2.png) 0 0/32px 32px;z-index:1}
+.cbar>span{position:absolute;left:31px;top:26px;width:195px;height:13px;display:grid;place-items:center;font-size:11px;z-index:2;color:#fff;white-space:nowrap}
+.cbar.ok>i{background-color:#00e000}.cbar.fail>i{background-color:#e00000;width:195px!important}
+#castwrap{position:absolute;left:50%;bottom:calc(110px*var(--s) + 70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) scale(var(--s));transform-origin:50% 100%;pointer-events:none}
+/* панель действий (MainMenuBar): две полосы по 6 ячеек, львы по краям */
+#barwrap{position:absolute;left:50%;bottom:calc(2px + env(safe-area-inset-bottom,0px));width:512px;height:43px;transform:translateX(-50%) scale(var(--s));transform-origin:50% 100%}
+#bar{position:absolute;inset:0}
+.strip{position:absolute;top:0;width:256px;height:43px;background:url(assets/ui/mainbar.png) 0 -213px/256px 256px}
+.strip.s1{left:256px;background-position:0 -149px}
+.cap{position:absolute;bottom:0;width:128px;height:128px;background:url(assets/ui/endcap.png) 0 0/128px 128px;pointer-events:none}
+.cap.l{left:-96px}.cap.r{right:-96px;transform:scaleX(-1)}
+.slot{position:absolute;top:3px;width:36px;height:36px}
+.ab{position:absolute;inset:0;padding:0;border:0;background-image:url(assets/ui/icons.webp);background-color:#000}
+.ab::after{content:"";position:absolute;left:-15px;top:-15px;width:66px;height:66px;background:url(assets/ui/quickslot.png) 0 0/66px 66px;pointer-events:none}
+.ab:hover::before{content:"";position:absolute;inset:0;background:url(assets/ui/btnhilite.png) 0 0/36px 36px;mix-blend-mode:screen;z-index:1}
+.ab kbd{position:absolute;top:1px;right:2px;font:10px var(--wow);color:#d0d0d0;z-index:3}
+.ab kbd.far{color:#ff2020}
+.ab .cd{position:absolute;inset:0;display:grid;place-items:center;font:700 15px var(--wow);color:#ffd100;z-index:2}
+.ab.nores{filter:sepia(1) hue-rotate(190deg) saturate(3) brightness(.6)}
+.ab.off{filter:grayscale(1) brightness(.5)}
+.ab.flash::before{content:"";position:absolute;inset:0;background:url(assets/ui/btnpushed.png) 0 0/36px 36px;mix-blend-mode:screen;z-index:1}
+.ab.empty{background:url(assets/ui/quickslotempty.png) -15px -15px/66px 66px;cursor:default}
+#slots2{position:absolute;left:0;top:-46px;width:512px;height:40px;z-index:2}
+#slots2.allempty{display:none}
+#stancebar{position:absolute;left:0;top:-92px;width:512px;height:40px;z-index:2}
+#slots2.allempty~#stancebar{top:-46px}
+.cap{z-index:1}#slots{position:absolute;inset:0;z-index:2}
+.ab.active::before{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px #ffd100,inset 0 0 10px rgba(255,209,0,.6);z-index:1}
+.ab.bindsel{outline:2px solid #20ff20;outline-offset:2px}
+body.binding .ab kbd{color:#20ff20}
+body.binding #slots2{display:block}
+.dragghost{position:fixed;width:36px;height:36px;background-image:url(assets/ui/icons.webp);border:1px solid #000;transform:translate(-50%,-50%);pointer-events:none;z-index:50;opacity:.9}
+#bindbar{position:absolute;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(560px,calc(100vw - 24px));background:rgba(0,0,8,.94);border:3px solid #8f7a52;border-radius:8px;padding:12px 14px;display:grid;gap:8px;color:#e8e2d0}
+#bindbar b{color:var(--gold);font-weight:400;font-size:17px}
+#bindSlot{color:#20ff20}
+#bookList{display:grid;gap:6px;overflow:auto;max-height:52vh}
+.brow{display:flex;gap:10px;align-items:center}
+.brow b{display:block;font-weight:400;color:#fff}.brow small{color:var(--muted);font-size:11px}
+.bicon{flex:none;width:36px;height:36px;padding:0;border:1px solid #000;background-image:url(assets/ui/icons.webp);cursor:grab;touch-action:none}
+.ab.empty::after{display:none}
+/* подсказка как GameTooltip */
+#tip{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(116px*var(--s) + 70px);width:min(300px,80vw);background:rgba(0,0,16,.92);border:2px solid #9a9a9a;border-radius:5px;box-shadow:inset 0 0 0 1px #000;padding:8px 10px;line-height:1.35;pointer-events:none;font-size:13px}
+#tip h4,.tinfo h4{margin:0 0 2px;font-size:15px;font-weight:400;color:#fff}
+#tip .row2{display:flex;justify-content:space-between;color:#fff;gap:10px}
+#tip p,.tinfo p{margin:4px 0 0;color:var(--gold)}
+.tinfo .meta{color:#fff;font-size:12px}
+#err{position:absolute;left:50%;top:18%;transform:translateX(-50%);color:#ff2020;font-size:17px;pointer-events:none;transition:opacity .4s;white-space:nowrap}
+/* журнал как окно чата */
+#log{position:absolute;left:calc(8px + env(safe-area-inset-left,0px));bottom:calc(126px*var(--s) + 20px + env(safe-area-inset-bottom,0px));width:min(380px,32vw);max-height:150px;overflow:hidden;font-size:12px;line-height:1.4;color:#fff;display:flex;flex-direction:column-reverse;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.15));padding:4px 6px}
+#log span{color:#9f9f9f}
+#log b{color:var(--gold);font-weight:400}
+#fct{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ft{position:absolute;font-family:var(--wow);white-space:nowrap;transform:translate(-50%,-100%);line-height:1;will-change:left,top,opacity}
+#party{position:absolute;left:calc(8px + env(safe-area-inset-left,0px));top:calc(160px*var(--s) + 8px);display:flex;flex-direction:column;gap:4px;transform:scale(var(--s));transform-origin:0 0}
+#arenaf{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:34%;display:flex;flex-direction:column;gap:6px;transform:scale(var(--s));transform-origin:100% 0}
+.tm{position:relative;display:grid;grid-template-columns:30px 150px;gap:0 5px;padding:4px;background:rgba(0,0,0,.65);border:1px solid #3a3a3a;border-radius:3px;cursor:pointer;font-size:11px;color:#fff;pointer-events:auto}
+.tm.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.tm.dead{opacity:.45}
+.tm.fr{border-color:#3fd35a;box-shadow:0 0 0 1px #3fd35a}
+.tm.fr::after{content:"лечение";position:absolute;right:4px;bottom:-1px;font-size:9px;color:#7dff8f}
+.tm>i{grid-row:1/4;width:30px;height:30px;background-image:url(assets/ui/icons.webp);border:1px solid #000}
+.tm>b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:12px}
+.tm .fb{position:relative;width:150px;height:9px}
+.tm .fb.r{height:5px;margin-top:1px}
+.tm em{position:absolute;right:4px;top:3px;font-style:normal;font-size:10px;color:#ffd060}
+#topbtns{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:4px}
+.btn{background:url(assets/ui/pbtnup.png) 0 0/160% 145.5% no-repeat;border:0;padding:5px 14px 6px;font-size:13px;color:var(--gold);min-width:84px;min-height:24px;text-shadow:1px 1px 0 #000}
+.btn:hover{filter:brightness(1.3);color:#fff}
+.btn:active{background-image:url(assets/ui/pbtndown.png)}
+.btn:disabled{filter:grayscale(1);opacity:.6;cursor:default}
+.btn.primary{font-size:15px;padding:7px 22px 8px}
+#countdown{position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);font-size:96px;color:var(--gold);-webkit-text-stroke:4px #000;paint-order:stroke fill;pointer-events:none}
+#joy{position:absolute;left:calc(24px + env(safe-area-inset-left,0px));bottom:calc(110px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;border:1px solid var(--line);background:rgba(20,25,31,.45);display:none;touch-action:none}
+#knob{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(255,209,0,.45)}
+#jumpBtn{position:absolute;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(110px*var(--s) + 70px);width:64px;height:64px;border-radius:50%;border:1px solid var(--line);background:rgba(20,25,31,.5);color:var(--gold);display:none}
+@media (pointer:coarse){#joy,#jumpBtn{display:block}#log{display:none}}
+/* окна в стиле диалогов WoW */
+#gver{position:absolute;right:12px;bottom:6px;text-align:right;line-height:1.4;font-size:12px;color:#c9b98a;text-shadow:0 1px 2px #000;z-index:5;pointer-events:none;white-space:nowrap}#gver.old b#gverMe{color:#ff6a5a}
+#menu.csel{display:block;background:radial-gradient(ellipse at 50% 55%,transparent 35%,rgba(0,0,0,.55));padding:0}
+.cs-panel{background:rgba(0,0,0,.72) url(assets/ui/dlgbg.png);border:2px solid #8f7a52;outline:1px solid #000;border-radius:6px;padding:12px;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start}
+.cs-panel h1{margin:0;font-size:26px;font-weight:400;color:var(--gold);text-shadow:2px 2px 0 #000}
+.cs-panel h2{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.cs-logo{position:absolute;left:16px;top:12px;display:grid;color:var(--gold);text-shadow:2px 2px 0 #000;line-height:1}
+.cs-logo b{font-size:30px;font-weight:400}.cs-logo span{font-size:14px;color:#e8e2d0;margin-top:4px}
+.cs-left{position:absolute;left:16px;top:80px;width:290px;max-height:calc(100% - 140px);overflow:auto}
+.cs-desc{margin:0;font-size:13px;line-height:1.4;color:#e8e2d0}
+.cs-right{position:absolute;right:16px;top:12px;width:260px;max-height:calc(100% - 80px);overflow:auto}
+.cs-realm{text-align:center;color:var(--gold);font-size:18px;text-shadow:1px 1px 0 #000}
+.cs-list{display:grid;gap:4px}
+.cs-char{display:grid;grid-template-columns:40px 1fr;gap:2px 8px;align-items:center;text-align:left;background:rgba(20,16,10,.6);border:1px solid transparent;border-radius:4px;padding:5px;color:#fff;font:inherit;cursor:pointer}
+.cs-char i{background-image:url(assets/ui/icons.webp);grid-row:span 2;width:40px;height:40px;border:1px solid #000;border-radius:3px}
+.cs-char b{font-weight:400;font-size:15px;color:var(--gold)}.cs-char span{font-size:12px;color:#cfc6b0}
+.cs-char[aria-selected="true"]{background:rgba(120,95,30,.45);border-color:var(--gold)}
+.cs-char:hover{border-color:#8f7a52}
+.cs-bottom{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;width:min(720px,calc(100% - 640px))}
+.cs-name{font-size:24px;margin-bottom:-4px;color:var(--gold);text-shadow:2px 2px 0 #000}
+.cs-bots{width:100%;grid-template-columns:minmax(0,1fr)}.cs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.cs-teams{border-top:1px solid #4a4030;padding-top:8px}
+.cs-bots .note{grid-column:1/-1}
+.cs-icons .opt{padding:2px;font-size:0;gap:0}
+.cs-go{font-size:18px!important;min-width:200px;padding:9px 28px 10px!important}
+.cs-gorow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cs-bl{position:absolute;left:16px;bottom:14px;display:grid;gap:6px}
+@media (max-width:1100px){#menu.csel{overflow:auto;display:grid;place-items:stretch;gap:10px;padding:12px 16px;align-content:start}.cs-logo,.cs-left,.cs-right,.cs-bottom,.cs-bl{position:static;transform:none;width:auto;max-height:none}.cs-bl{display:flex;flex-wrap:wrap}.cs-bottom{order:3}.cs-left{order:4}.cs-bl{order:5}}
+.overlay{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center,rgba(0,0,0,.35),rgba(0,0,0,.85));padding:16px;overflow:auto}
+.card{width:min(760px,100%);background:#000 url(assets/ui/dlgbg.png) repeat;background-color:rgba(0,0,0,.9);border:3px solid #8f7a52;outline:1px solid #000;box-shadow:inset 0 0 0 1px #2b2418,0 10px 40px #000;border-radius:8px;padding:22px;display:grid;gap:16px;box-sizing:border-box}
+.card h1{margin:0;font-size:clamp(28px,5vw,42px);font-weight:400;color:var(--gold);text-shadow:2px 2px 0 #000;text-wrap:balance}
+.card h2{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.lead{margin:0;color:#e8e2d0;line-height:1.5;max-width:64ch}
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:start}
+.group{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start;min-width:0}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{display:inline-flex;align-items:center;gap:6px;background:rgba(30,26,18,.9);border:1px solid #4a4030;border-radius:4px;padding:4px 10px 4px 4px;color:#e8e2d0;font-size:13px}
+.opt.txt{padding:6px 12px}
+.opt i{width:24px;height:24px;background-image:url(assets/ui/icons.webp);border:1px solid #000;flex:none}
+.opt[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.score,.note{color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:12px}
+.lobby{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;padding:6px 8px;background:rgba(0,0,0,.35);border:1px solid #4a4030;border-radius:4px}.lobby .note{flex-basis:100%}
+.lteam{min-width:150px}.lteam h3{margin:0 0 3px;font:600 12px var(--wow);color:#ffd100}.lp{display:flex;align-items:center;gap:5px;font-size:13px;line-height:22px}.lp i{width:20px;height:20px;flex:none;border-radius:3px}.lp b{color:#fff;font-weight:600}.lp span{color:var(--muted)}.lp.me b{color:#ffd100}.lp.bot b{color:var(--muted)}.lp.wait{color:var(--muted);font-style:italic}
+.stats{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 18px;font-variant-numeric:tabular-nums}
+.stats div:nth-child(3n+1){color:var(--muted)}
+.panel{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));top:calc(44px + env(safe-area-inset-top,0px));width:min(470px,calc(100vw - 24px));max-height:calc(100% - 80px);background:rgba(0,0,8,.94);border:3px solid #8f7a52;outline:1px solid #000;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:auto;box-sizing:border-box;z-index:5}
+.panel h3{margin:0;font-size:20px;font-weight:400;color:var(--gold)}
+.panel p,.panel li{color:#e8e2d0;line-height:1.5;margin:0}
+.panel ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.panel li b{color:var(--gold);font-weight:400}
+textarea#balTxt{width:100%;box-sizing:border-box;min-height:320px;flex:1;background:#06080b;color:#d9e2ec;border:1px solid var(--line);border-radius:4px;padding:10px;font:12px/1.5 var(--mono);resize:vertical}
+#balMsg{font-size:12px;color:var(--gold);min-height:16px}
+/* таланты */
+#talents{z-index:6}
+#talents .card{width:min(1080px,100%);gap:12px}
+.thead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.thead h1{font-size:clamp(24px,4vw,34px)}
+.pts{font-size:20px;color:var(--gold);font-variant-numeric:tabular-nums}
+.trees{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tree{position:relative;border:2px solid #5b4f36;border-radius:6px;padding:10px;display:grid;gap:8px;align-content:start;background:#000 center/cover no-repeat;min-height:380px}
+.tree::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.25);border-radius:4px;pointer-events:none}
+.tree>*{position:relative}
+.tree header{display:flex;justify-content:space-between;align-items:baseline;text-shadow:1px 1px 0 #000}
+.tree header b{font-size:17px;font-weight:400;color:var(--gold)}
+.tree header span{color:#fff;font-variant-numeric:tabular-nums}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:50px;gap:6px;justify-items:center}
+.tgrid .tal{position:relative;z-index:1}.tarrow{justify-self:center;width:6px;margin:25px 0;background:#3a3a3a;border:1px solid #111;pointer-events:none;z-index:0}.tarrow.h{width:auto;height:6px;justify-self:stretch;align-self:center;margin:0 25%}.tarrow.ok{background:#e8c440}
+.tal{position:relative;width:40px;height:40px;border:1px solid #000;padding:0;background-image:url(assets/ui/icons.webp);box-shadow:0 0 0 2px #3b3b3b}
+.tal i{position:absolute;right:-9px;bottom:-8px;font:11px var(--wow);font-style:normal;background:#000;border:1px solid #6d6d6d;border-radius:3px;padding:0 3px;font-variant-numeric:tabular-nums;color:#20ff20}
+.tal.lock{filter:grayscale(1) brightness(.5)}
+.tal.lock i{color:#bbb}
+.tal.open{box-shadow:0 0 0 2px #1fa51f}
+.tal.max{box-shadow:0 0 0 2px var(--gold)}
+.tal.max i{color:var(--gold)}
+.tal.sel{outline:2px solid #fff;outline-offset:3px}
+#loadout .card{width:min(980px,100%);gap:12px}
+.lobar{display:grid;gap:4px}
+#plates{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.npl{position:absolute;width:150px;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:2px;transform-origin:50% 100%}
+.npl .cc{display:flex;gap:3px}.npl .db{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:170px}
+.npl .ic{position:relative;background-image:url(assets/ui/icons.webp);border:1px solid #000;box-shadow:0 0 0 1px #b01818}
+.npl .cc .ic{width:34px;height:34px;box-shadow:0 0 0 2px #e01818,0 0 6px #000}.npl .db .ic{width:20px;height:20px}
+.npl .ic b{position:absolute;right:1px;bottom:0;font:700 12px/1 sans-serif;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}.npl .cc .ic b{font-size:15px;color:#fff;left:0;right:0;bottom:auto;text-align:center;top:9px;text-shadow:0 0 3px #000,0 0 3px #000,0 0 2px #000}
+.npl .nm{font:700 13px/1.1 Friz,Georgia,serif;color:#fff;text-shadow:0 0 2px #000,0 0 3px #000;white-space:nowrap}
+.npl .row{position:relative;display:flex;align-items:center}
+.npl .hp{position:relative;width:132px;height:12px;background:rgba(0,0,0,.75);border:1px solid #000;box-shadow:0 0 0 1px #6b6b6b}
+.npl .hp i{position:absolute;left:0;top:0;bottom:0;background:#c41f1f}.npl .hp span{position:absolute;inset:0;text-align:center;font:700 10px/12px sans-serif;color:#fff;text-shadow:0 0 2px #000}
+.npl.tg .hp{box-shadow:0 0 0 1px #ffd100,0 0 6px #ffd100}.npl.tg .nm{color:#ffd100}
+.npl .hv{position:absolute;left:100%;margin-left:5px;width:30px;height:30px;background-image:url(assets/ui/icons.webp);border:1px solid #000;box-shadow:0 0 0 2px #3fa9ff,0 0 10px #3fa9ff}
+.npl .hv b{position:absolute;right:1px;bottom:0;font:700 12px/1 sans-serif;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
+.npl .cb{width:132px;height:6px;background:rgba(0,0,0,.7);border:1px solid #000}.npl .cb i{display:block;height:100%;background:#ffb400}
+.lopages{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px}.lopage{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border:1px solid #5a4a2a;border-radius:4px;background:rgba(0,0,0,.5);color:#cfc3a0;font:inherit;font-size:14px;cursor:pointer}.lopage i{width:22px;height:22px;display:inline-block;background-image:url(assets/ui/icons.webp);border:1px solid #000}.lopage.on{border-color:#ffd100;color:#ffd100;box-shadow:0 0 6px rgba(255,209,0,.5)}
+#loInfo .row2{display:flex;justify-content:space-between;color:#fff;gap:10px}
+#loHint{min-height:0}
+.lorow{display:flex;flex-wrap:wrap;gap:4px}
+.lslot{position:relative;width:44px;height:44px;padding:0;border:1px solid #000;outline:1px solid #4a4030;background-color:rgba(20,18,14,.9);background-image:url(assets/ui/icons.webp);cursor:grab;touch-action:none}
+.lslot.empty{background-image:none}
+.lslot.sel{outline:2px solid #20ff20}
+.lslot kbd{position:absolute;top:1px;right:2px;font:11px var(--wow);color:#d0d0d0;pointer-events:none}
+.lslot.sel kbd{color:#20ff20}
+.lomain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:12px;align-items:start}
+@media (max-width:640px){.lomain{grid-template-columns:1fr}}
+#loBook{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.lbook{display:flex;gap:8px;align-items:center;cursor:grab;touch-action:none;padding:2px;border-radius:4px}
+.lbook:hover{background:rgba(255,255,255,.06)}
+.lbook i{flex:none;width:36px;height:36px;border:1px solid #000;background-image:url(assets/ui/icons.webp)}
+.lbook b{display:block;font-weight:400;color:#fff;font-size:13px}.lbook small{color:var(--muted);font-size:11px}
+.lbook.off i{filter:grayscale(.8) brightness(.7)}
+.mbar{display:flex;gap:2px;padding:3px;background:rgba(0,0,0,.5);border:1px solid #4a4030;border-radius:4px;cursor:pointer;width:max-content;max-width:100%;flex-wrap:wrap}
+.mbar i{position:relative;width:26px;height:26px;border:1px solid #000;background-image:url(assets/ui/icons.webp);background-color:rgba(20,18,14,.9)}
+.mbar i.empty{background-image:none}
+.mbar i em{position:absolute;right:1px;top:0;font:9px var(--wow);font-style:normal;color:#d0d0d0}
+.tinfo{background:rgba(0,0,16,.9);border:2px solid #9a9a9a;border-radius:5px;padding:8px 12px;line-height:1.4;min-height:64px}
+.tinfo .next{color:#bdbdbd;margin-top:4px}
+@media (max-width:820px){.trees{grid-template-columns:1fr}.tree{min-height:0}}
+@media (max-width:700px){.cap{display:none}}
+@media (prefers-reduced-motion:reduce){.fb>i{transition:none}}
+</style>
+
+<canvas id="c"></canvas>
+<div id="hud" hidden><div id="plates"></div><div id="netInfo" hidden style="position:absolute;left:8px;bottom:4px;font-size:11px;color:#cfc6a8;text-shadow:1px 1px 0 #000;pointer-events:none;z-index:4"></div>
+  <div id="frames">
+    <div class="uf" id="pf"><canvas class="por" id="ppor" width="128" height="128"></canvas>
+      <div class="fb hb"><i id="php"></i><b id="pab"></b><span class="out" id="phpt"></span></div>
+      <div class="fb rb"><i id="pr"></i><span class="out" id="prt"></span></div>
+      <div class="art"></div><span class="nm out" id="pn"></span><span class="lv out" id="plv">60</span><span class="cls out" id="pc"></span>
+      <div class="fbk out" id="pfbk"></div></div>
+    <div class="uf" id="tf"><canvas class="por" id="tpor" width="128" height="128"></canvas><div class="nbg"></div>
+      <div class="fb hb"><i id="thp"></i><b id="tab"></b><span class="out" id="thpt"></span></div>
+      <div class="fb rb"><i id="tr"></i><span class="out" id="trt"></span></div>
+      <div class="art"></div><span class="nm out" id="tn"></span><span class="lv out" id="tlv">60</span><span class="cls out" id="tc"></span>
+      <div id="combo"></div></div>
+    <div id="tcast" class="cbar" hidden><i></i><span class="out"></span></div>
+    <div id="tauras"></div>
+    <div id="tdr" class="out"></div>
+  </div>
+  <div id="buffs"></div>
+  <div id="party" hidden></div><div id="arenaf" hidden></div>
+  <div id="loc" hidden><div class="locic"></div><div><b class="out"></b><span class="out"></span></div></div>
+  <div id="castwrap"><div class="cbar" id="pcast" hidden><i></i><em></em><span class="out"></span></div></div>
+  <div id="barwrap"><div id="bar"><div class="strip s0"></div><div class="strip s1"></div><div class="cap l"></div><div class="cap r"></div><div id="slots"></div><div id="slots2"></div><div id="stancebar" hidden></div></div></div>
+  <div id="tip" hidden></div>
+  <div id="err" class="out" style="opacity:0"></div>
+  <div id="log" class="out"></div>
+  <div id="fct"></div>
+  <div id="topbtns"><button class="btn" id="btnBook">Способности</button><button class="btn" id="btnBind">Клавиши</button><button class="btn" id="btnHelp">Справка</button><button class="btn" id="btnBal">Баланс</button><button class="btn" id="btnSnd">Настройки</button><button class="btn" id="btnFb">Отзыв</button><button class="btn" id="btnMenu">Меню</button></div>
+  <div id="countdown" hidden></div>
+  <div id="bindbar" hidden><b>Назначение клавиш</b><span id="bindSlot"></span><span class="note">Наведите курсор на ячейку и нажмите клавишу или сочетание с Shift, Ctrl, Alt. Backspace стирает клавишу. Клавиши движения, занятые способностью, перестают двигать персонажа.</span>
+    <div class="row"><button class="btn" id="bindReset">Клавиши по умолчанию</button><button class="btn" id="barReset">Раскладка по умолчанию</button><button class="btn primary" id="bindDone">Готово</button></div></div>
+  <div id="book" class="panel" hidden><h3>Способности</h3><p class="note">Перетащите иконку на любую ячейку панели. Иконку с панели можно перетащить на другую ячейку или убрать, бросив мимо панели. Окно открывается клавишей P.</p><div id="bookList"></div><div class="row"><button class="btn" id="bookClose">Закрыть</button></div></div>
+  <div id="joy"><div id="knob"></div></div>
+  <button id="jumpBtn" aria-label="Прыжок">Прыжок</button>
+</div>
+
+<div id="menu" class="overlay csel">
+  <div id="gver">Ваша версия игры: <b id="gverMe"></b><br>Версия на сервере: <b id="gverSrv">…</b></div>
+  <div class="cs-logo"><b>World of Warcraft</b><span>Арена · классика</span></div>
+  <aside class="cs-left cs-panel">
+    <h1 id="csCls">Класс</h1><p class="note" id="csRole"></p><p class="cs-desc" id="csDesc"></p>
+    <span class="note" id="buildP"></span>
+    <div class="opts"><button class="btn" id="btnTal">Таланты</button><button class="btn" id="btnLoadout">Способности</button></div>
+    <h2>Панель способностей</h2><button class="mbar" id="menuBar" aria-label="Открыть раскладку панели и клавиши"></button>
+    <div class="group" id="optPoison" hidden><h2>Яды разбойника</h2><span class="note">Правая рука</span><div class="opts" id="poisonMH"></div><span class="note">Левая рука</span><div class="opts" id="poisonOH"></div></div>
+  </aside>
+  <aside class="cs-right cs-panel">
+    <div class="cs-realm">Награнд</div>
+    <div id="optP" class="cs-list" role="listbox" aria-label="Персонаж"></div>
+    <span class="score" id="score"></span>
+  </aside>
+  <div class="cs-bottom">
+    <div class="cs-name" id="csName"></div>
+    <div class="cs-bots cs-panel" id="csBots">
+      <div class="cs-row"><div class="group"><h2>Формат</h2><div class="opts" id="optMode"></div></div><div class="group"><h2>Сложность</h2><div class="opts" id="optD"></div></div></div>
+      <div class="cs-row cs-teams"><div class="group"><h2>Противники</h2><div class="opts cs-icons" id="optE"></div><div class="opts cs-icons" id="duoPick"><div class="opts cs-icons" id="optE2"></div></div><div class="opts cs-icons" id="trioPick"><div class="opts cs-icons" id="optE3"></div></div></div>
+        <div class="group" id="allyCol"><h2 id="optAh">Союзники</h2><div class="opts cs-icons" id="optA"></div><div class="opts cs-icons" id="optA2"></div></div></div>
+      <span class="note" id="modeNote"></span><span class="note" id="buildE"></span>
+    </div>
+    <div class="cs-gorow"><button class="btn primary cs-go" id="btnLobby">Лобби</button><button class="btn primary cs-go" id="btnStart">На арену</button></div>
+    <span class="note" id="loadNote">Загружаю модели…</span>
+  </div>
+  <div class="cs-bl"><button class="btn" id="btnHelp2">Управление</button><button class="btn" id="btnSnd2">Настройки</button><button class="btn" id="btnRm">Дорожная карта</button><button class="btn" id="btnFb2">Отзыв</button><a class="btn" id="btnDonate" href="https://www.donationalerts.com/r/switer92" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Донат</a></div>
+</div>
+<div id="lobbyWin" class="overlay" hidden>
+  <div class="card">
+    <h1 style="font-size:28px">Лобби</h1>
+    <div class="group"><div class="opts"><input id="netNick" maxlength="16" placeholder="Ваш ник" aria-label="Ваш ник" style="width:150px;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"></div><div class="opts"><button class="btn" id="netHost">Создать комнату</button><span id="netJoinRow" class="opts"><input id="netCode" maxlength="4" placeholder="Код" aria-label="Код комнаты" style="width:64px;text-transform:uppercase;font:inherit;padding:4px 6px;background:#111;color:#fff;border:1px solid #4a4030;border-radius:4px"><button class="btn" id="netJoin">Войти</button></span><button class="btn" id="netLeave" hidden>Выйти из комнаты</button></div><label class="note" id="netPubRow" style="display:block;margin:2px 0"><input type="checkbox" id="netPub" checked> Открытая комната: видна всем в списке ниже</label><span class="note" id="netStatus">Введите ник, создайте комнату и скажите другу код, или введите код друга.</span><div id="lobby" class="lobby" hidden></div><div id="pubBox" style="margin-top:8px"><div class="note" id="pubOnline">Сейчас в игре: …</div><div id="pubList"></div></div></div>
+    <div class="row"><button class="btn primary" id="lobbyStart">В бой</button><button class="btn" id="lobbyClose">Закрыть</button></div>
+  </div>
+</div>
+
+<div id="rmbox" class="overlay" hidden>
+  <div class="card" style="width:min(560px,100%);max-height:85vh;overflow:auto">
+    <div class="group"><h2>Что дальше</h2><h1>Дорожная карта</h1></div>
+    <div class="group" id="rmList">Загружаю…</div>
+    <div style="display:flex;justify-content:flex-end"><button class="btn" id="rmClose">Закрыть</button></div>
+  </div>
+</div>
+<div id="fbox" class="overlay" hidden>
+  <div class="card" style="width:min(460px,100%)">
+    <div class="group"><h2>Отзыв</h2><h1>Баг или предложение</h1></div>
+    <div class="group" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:14px"><label><input type="radio" name="fbk" value="bug" checked> Баг</label><label><input type="radio" name="fbk" value="idea"> Предложение</label></div>
+      <textarea id="fbText" maxlength="2000" rows="6" placeholder="Что случилось или что хотите предложить? Для бага: что делали, что ожидали, что произошло." style="width:100%;box-sizing:border-box;background:#0b0b12;color:#eee;border:1px solid #8f7a52;border-radius:4px;padding:8px;font:inherit;resize:vertical"></textarea>
+      <input id="fbHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px"><div id="fbMsg" style="min-height:1.2em;color:#ffd200"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="fbCancel">Закрыть</button><button class="btn" id="fbSend">Отправить</button></div>
+    </div>
+  </div>
+</div>
+<div id="settings" class="overlay" hidden>
+  <div class="card">
+    <div class="group"><h2>Настройки</h2><h1>Звук и экран</h1></div>
+    <div class="group">
+      <label class="vrow"><span>Общая громкость</span><input type="range" min="0" max="100" id="volMaster"><output id="volMasterV"></output></label>
+      <label class="vrow"><span>Заклинания</span><input type="range" min="0" max="100" id="volSpell"><output id="volSpellV"></output></label>
+      <label class="vrow"><span>Удары и оружие</span><input type="range" min="0" max="100" id="volMelee"><output id="volMeleeV"></output></label>
+      <label class="vrow"><span>Звук включён</span><input type="checkbox" id="sndOn" style="width:auto;justify-self:start"><span></span></label>
+    </div>
+    <div class="group"><h2>Сглаживание</h2><div class="opts" id="optAA"></div><span class="note">Высокое и Ультра рисуют картинку в 2–3 раза крупнее и ужимают: гладко, но нагружает видеокарту.</span></div>
+    <div class="group"><h2>Фильтр FXAA</h2><div class="opts" id="optFXAA"></div><span class="note">Дополнительно сглаживает все края, включая тени и эффекты. Картинка чуть мягче.</span></div>
+    <div class="group"><h2>Формат экрана</h2><div class="opts" id="optAspect"></div><span class="note">16:9 оставляет чёрные полосы, если окно другой формы.</span></div>
+    <div class="row"><button class="btn primary" id="setDone">Готово</button></div>
+  </div>
+</div>
+
+<div id="loadout" class="overlay" hidden>
+  <div class="card">
+    <div class="group"><h2>Подготовка к бою</h2><h1 id="loTitle">Панель и клавиши</h1>
+      <p class="lead">Перетащите способность из книги на ячейку. Иконки на панели меняются местами перетаскиванием, а брошенная мимо панели убирается. Чтобы назначить клавишу, наведите курсор на ячейку (на телефоне коснитесь её) и нажмите клавишу или сочетание с Shift, Ctrl, Alt. Backspace стирает клавишу.</p></div>
+    <div class="lobar"><span class="note">Верхняя панель</span><div class="lorow" id="loTop"></div><span class="note" id="loBotLbl">Нижняя панель</span><div class="lopages" id="loPages" hidden></div><div class="lorow" id="loBot"></div></div>
+    <div class="tinfo" id="loHint"></div>
+    <div class="lomain"><div id="loBook"></div><div class="tinfo" id="loInfo"><p>Наведите курсор на способность, чтобы прочитать описание.</p></div></div>
+    <div class="row"><button class="btn" id="loBarReset">Раскладка по умолчанию</button><button class="btn" id="loKeyReset">Клавиши по умолчанию</button><button class="btn primary" id="loDone">Готово</button></div>
+  </div>
+</div>
+
+<div id="result" class="overlay" hidden>
+  <div class="card">
+    <div class="group"><h2 id="resSub"></h2><h1 id="resTitle"></h1></div>
+    <div class="stats" id="resStats"></div>
+    <div class="row"><button class="btn primary" id="btnAgain">Ещё раунд</button><button class="btn" id="btnTal2">Таланты</button><button class="btn" id="btnBack">Сменить классы</button></div>
+  </div>
+</div>
+
+<div id="talents" class="overlay" hidden>
+  <div class="card">
+    <div class="thead">
+      <div class="group"><h2>Таланты · 51 очко, как на 60 уровне</h2><h1 id="talTitle">Таланты</h1></div>
+      <div class="row"><div class="opts" id="talCls"></div><span class="pts" id="talPts"></span></div>
+    </div>
+    <div class="trees" id="trees"></div>
+    <div class="tinfo" id="tinfo"><p class="note">Нажмите на талант, чтобы вложить очко. Правая кнопка мыши или «−» забирает очко. Каждый следующий ряд открывается через 5 очков в этой ветке.</p></div>
+    <div class="row"><button class="btn" id="talMinus">− Очко</button><span class="note">Готовые сборки:</span><span class="opts" id="talPresets"></span><button class="btn" id="talReset">Сбросить</button><button class="btn primary" id="talClose">Готово</button></div>
+  </div>
+</div>
+
+<div id="balance" class="panel" hidden>
+  <h3>Баланс</h3>
+  <p>Все правила в одной таблице: здоровье, урон, восстановление, контроль, шаги убывания и значения талантов (v — прибавка за одно очко). Урон и кулдауны меняются сразу, здоровье и ресурсы со следующего раунда.</p>
+  <textarea id="balTxt" spellcheck="false"></textarea>
+  <div id="balMsg"></div>
+  <div class="row"><button class="btn primary" id="balApply">Применить</button><button class="btn" id="balCopy">Скопировать</button><button class="btn" id="balReset">По умолчанию</button><button class="btn" id="balClose">Закрыть</button></div>
+</div>
+
+<div id="help" class="panel" hidden>
+  <h3>Управление и правила</h3>
+  <ul>
+    <li><b>W / S</b> вперёд и назад (назад медленнее). <b>A / D</b> поворот, с зажатой правой кнопкой мыши шаг вбок. <b>Q / E</b> шаг вбок. <b>Пробел</b> прыжок.</li>
+    <li><b>Левая кнопка мыши</b> вращает камеру вокруг персонажа. <b>Правая</b> поворачивает персонажа вслед за камерой. <b>Обе кнопки</b> бег вперёд. Пока кнопка зажата, курсор скрыт. Колесо приближает камеру, до упора вид от первого лица. Камера сама за спину не доворачивается.</li>
+    <li><b>Num Lock</b> автобег (W или S его снимают). <b>Num /</b> шаг вместо бега.</li>
+    <li><b>Две панели.</b> Нижняя: 1…0, −, =. Верхняя: Shift+1…Shift+=. Кнопка «Клавиши» назначает любые клавиши, «Способности» (P) открывает книгу, откуда иконки перетаскиваются на панель.</li>
+    <li><b>В бою и вне боя.</b> Любой урон или контроль вводит в бой на 5 с. Вне боя здоровье и мана восстанавливаются быстрее, ярость гаснет, можно есть и пить, войти в скрытность и сделать Рывок. Значок ⚔ на портрете значит «в бою».</li>
+    <li><b>Скрытность.</b> Разбойник начинает бой невидимым. Его видно ближе 3 м спереди и 1,5 м сзади. Урон и удары по площади выбивают из скрытности.</li>
+    <li><b>Глобальный кулдаун.</b> После большинства способностей остальные недоступны 1,5 с. Заклинания с кастом и каналы читаются только стоя.</li>
+    <li><b>Прерывание</b> сбивает заклинание и блокирует его школу. <b>Убывание контроля:</b> оглушение, обездвиживание, выведение из строя и страх считаются отдельно: 100%, 50%, 25%, затем иммунитет на 18 с.</li>
+    <li><b>Снятие эффектов.</b> Рамка отрицательного эффекта показывает тип: синяя магия, зелёная яд, коричневая болезнь, красная физический (не снимается). Рассеивание жреца снимает магию, Очищение паладина магию, яд и болезнь.</li>
+    <li><b>2 на 2.</b> <b>Tab</b> или щелчок по врагу (или его рамке справа) меняет цель. Лечение, щиты и защитные благословения идут на союзника, если выбрать его клавишей <b>F2</b> или щелчком по нему или его рамке; <b>F1</b> возвращает их на себя. Дальность до союзника 40 м.</li>
+    <li><b>Знак отличия</b> есть у всех: снимает оглушение, страх, превращение и обездвиживание раз в 2 минуты.</li>
+    <li><b>Усталость.</b> Через 60 с боя любое исцеление слабеет на 1% в секунду.</li>
+  </ul>
+  <div class="row"><button class="btn" id="helpClose">Закрыть</button></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
